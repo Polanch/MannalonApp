@@ -1,0 +1,512 @@
+.farm-admin-container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    min-height: 100vh;
+    background: #f4f7f4;
+}
+
+.farm-admin-header{
+    width: 100%;
+    height: 60px;
+    display: grid;
+    grid-template-columns: auto 1fr 300px;
+    grid-template-rows: 1fr;
+    background-color: #105621;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-left:2rem;
+    z-index: 20;
+}
+
+.farm-admin-logo{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: "Oswald", sans-serif;
+}
+
+.farm-admin-logo-img{
+    height: 40px;
+    width: auto;
+}
+
+.farm-admin-search{
+    height: 30px;
+    border-radius: 15px;
+    border: none;
+    padding: 0 10px;
+    font-size: 14px;
+    margin-left: 1rem;
+}
+
+.farm-admin-search:focus{
+    outline: none;
+}
+
+.farm-admin-menu{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap:2rem;
+}
+
+.farm-admin-menu-img{
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+}
+
+.farm-admin-menu button{
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+}
+
+.farm-admin-confirm-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: rgba(23, 53, 31, 0.48);
+}
+
+.farm-admin-confirm-dialog {
+    width: min(100%, 420px);
+    padding: 24px;
+    border: 1px solid #d4dfd5;
+    border-top: 4px solid #105621;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 18px 48px rgba(15, 39, 22, 0.24);
+}
+
+.farm-admin-confirm-dialog h2 {
+    margin: 0 0 10px;
+    color: #17351f;
+    font-size: 20px;
+}
+
+.farm-admin-confirm-dialog > p:not(.farm-admin-eyebrow) {
+    margin: 0;
+    color: #47534b;
+    line-height: 1.5;
+}
+
+.farm-admin-confirm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.farmadmin-dashboard {
+    min-height: calc(100vh - 60px);
+    margin-top: 60px;
+}
+
+.farm-admin-land {
+    width: 100%;
+    min-height: calc(100vh - 60px);
+    padding: 90px 24px 40px;
+    box-sizing: border-box;
+}
+
+.farm-admin-land-panel {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 1px solid #dfe7df;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(15, 39, 22, 0.06);
+    padding: 24px;
+}
+
+.farm-admin-land-header-row,
+.farm-admin-form-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.farm-admin-eyebrow {
+    margin: 0 0 8px;
+    color: #72907a;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.farm-admin-land-header-row h2,
+.farm-admin-form-head h2,
+.farm-admin-form-step h3,
+.farm-admin-success-panel h2 {
+    margin: 0;
+    color: #17351f;
+}
+
+.farm-admin-primary-button,
+.farm-admin-secondary-button,
+.farm-admin-link-button,
+.farm-admin-text-button {
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.farm-admin-primary-button:hover,
+.farm-admin-secondary-button:hover,
+.farm-admin-link-button:hover,
+.farm-admin-text-button:hover {
+    opacity: 0.94;
+}
+
+.farm-admin-primary-button {
+    background: #105621;
+    color: #fff;
+    min-height: 40px;
+    padding: 0 18px;
+}
+
+.farm-admin-secondary-button {
+    background: #eef4ee;
+    color: #183d21;
+    border: 1px solid #d4dfd5;
+    min-height: 40px;
+    padding: 0 16px;
+}
+
+.farm-admin-link-button,
+.farm-admin-text-button {
+    background: transparent;
+    color: #105621;
+    padding: 0;
+    font-size: 13px;
+}
+
+.farm-admin-land-table-wrap {
+    overflow-x: auto;
+}
+
+.farm-admin-land-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+}
+
+.farm-admin-land-table th,
+.farm-admin-land-table td {
+    padding: 14px 10px;
+    border-bottom: 1px solid #e7efe8;
+    text-align: left;
+    color: #2a392f;
+    font-size: 14px;
+}
+
+.farm-admin-land-table th {
+    background: #f5f8f5;
+    color: #49615a;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.farm-admin-table-action.muted {
+    color: #6d7b74;
+}
+
+.farm-admin-empty-state {
+    display: grid;
+    place-items: center;
+    min-height: 280px;
+    padding: 24px 0 8px;
+}
+
+.farm-admin-empty-card {
+    display: grid;
+    gap: 18px;
+    place-items: center;
+    width: min(100%, 420px);
+    padding: 40px 20px;
+    border: 1px dashed #c7d5c8;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #f8fbf8 0%, #edf5ef 100%);
+    text-align: center;
+}
+
+.farm-admin-empty-card h3 {
+    margin: 0;
+    color: #3f5345;
+    font-size: clamp(1.2rem, 2vw, 1.8rem);
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 24px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.status-pending {
+    background: #fff3d6;
+    color: #875d00;
+}
+
+.status-approved {
+    background: #dff4e5;
+    color: #176b32;
+}
+
+.status-rejected {
+    background: #fde4e1;
+    color: #a02e25;
+}
+
+.farm-admin-form-panel {
+    max-width: 980px;
+}
+
+.farm-admin-stepper {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 26px;
+    margin-top: 6px;
+}
+
+.farm-admin-step {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #edf3ee;
+    color: #5a6e62;
+    font-weight: 700;
+}
+
+.farm-admin-step.active {
+    background: #105621;
+    color: #ffffff;
+}
+
+.farm-admin-error-banner {
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid #efb8b2;
+    background: #fff0ee;
+    color: #8c2a22;
+    font-size: 14px;
+}
+
+.farm-admin-form-body {
+    display: block;
+}
+
+.farm-admin-form-step {
+    display: grid;
+    gap: 18px;
+}
+
+.farm-admin-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.farm-admin-field {
+    display: grid;
+    gap: 8px;
+    color: #1f3227;
+    font-weight: 600;
+}
+
+.farm-admin-field span {
+    font-size: 14px;
+}
+
+.farm-admin-field em {
+    color: #a02e25;
+    font-style: normal;
+}
+
+.farm-admin-field input,
+.farm-admin-field select {
+    width: 100%;
+    min-height: 44px;
+    border: 1px solid #d2ddd2;
+    border-radius: 8px;
+    background: #fff;
+    padding: 0 12px;
+    color: #1b2d22;
+    font: inherit;
+    box-sizing: border-box;
+}
+
+.farm-admin-field input:focus,
+.farm-admin-field select:focus {
+    outline: 2px solid rgba(16, 86, 33, 0.15);
+    border-color: #105621;
+}
+
+.farm-admin-field small {
+    margin-top: 6px;
+    color: #49615a;
+    font-size: 12px;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+.farm-admin-documents {
+    display: grid;
+    gap: 18px;
+}
+
+.farm-admin-document-card {
+    padding: 18px;
+    border: 1px solid #dfe7df;
+    background: #f7faf7;
+    border-radius: 10px;
+    display: grid;
+    gap: 14px;
+}
+
+.farm-admin-document-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    color: #17351f;
+    font-weight: 700;
+}
+
+.farm-admin-document-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.add-document-button {
+    margin-top: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+}
+
+.farm-admin-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 24px;
+    border-top: 1px solid #e5ece6;
+    margin-top: 24px;
+}
+
+.farm-admin-review-section {
+    background: #f8faf8;
+    border: 1px solid #e2eae2;
+    border-radius: 10px;
+    padding: 18px;
+}
+
+.farm-admin-review-section h4 {
+    margin: 0 0 12px;
+    color: #17351f;
+}
+
+.farm-admin-review-section ul {
+    margin: 0;
+    padding-left: 1.2rem;
+    display: grid;
+    gap: 8px;
+    color: #2a392f;
+}
+
+.farm-admin-success-panel {
+    max-width: 640px;
+    text-align: center;
+    padding: 42px 24px;
+    display: grid;
+    gap: 18px;
+    justify-items: center;
+}
+
+.farm-admin-success-icon {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: #e9f7ed;
+    color: #176b32;
+    display: grid;
+    place-items: center;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.farm-admin-success-panel p {
+    margin: 0;
+    color: #51665c;
+    line-height: 1.6;
+}
+
+.farm-admin-success-status,
+.farm-admin-success-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #23342c;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .farm-admin-land {
+        padding: 86px 14px 28px;
+    }
+
+    .farm-admin-land-panel {
+        padding: 18px 14px;
+    }
+
+    .farm-admin-land-header-row,
+    .farm-admin-form-head,
+    .farm-admin-document-header,
+    .farm-admin-form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .farm-admin-form-grid,
+    .farm-admin-document-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .farm-admin-primary-button,
+    .farm-admin-secondary-button {
+        width: 100%;
+    }
+}

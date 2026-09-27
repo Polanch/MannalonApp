@@ -1,0 +1,1481 @@
+/* 
+Color pallete:
+Green: #468432 
+Light green: #9AD872
+Yellow: #FFEF91
+Orange: #FFA02E
+*/
+
+.farm-admin-login-container{
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: 1fr;
+    width: 700px;
+    height: 550px;
+    border-radius: 30px;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.landing-container{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.f-admin-box:nth-child(1){
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    color: white;
+    font-family: "Oswald", sans-serif;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap:1rem;
+    background-color: #115621;
+    min-width: 0;
+}
+
+.f-admin-box:nth-child(1) h1{
+    font-size: 28px;
+    z-index: 2;
+}
+
+.f-admin-box:nth-child(1) p{
+    font-size: 12px;
+    z-index: 2;
+}
+
+.tagline{
+    opacity: 0.9;
+}
+
+.f-admin-box:nth-child(1) .logo-holder p:nth-child(2){
+    display: flex;
+    align-items: end;
+}
+
+.f-admin-box:nth-child(1) .logo-holder p:nth-child(3){
+    display: flex;
+    align-items: start;
+    font-size: 10px;
+}
+
+.f-admin-box:nth-child(1) h1 sup {
+    font-size: 16px;
+    vertical-align: top;
+    margin-left: 3px;
+    z-index: 2;
+}
+
+
+.logo-holder{
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+}
+
+
+.grass2{
+    position: absolute;
+    width: 200px;
+    height: auto;
+    bottom:0;
+    right:-40px;
+    opacity:0.2;
+}
+
+.logo{
+    width:200px;
+    height: auto;
+    z-index: 2;
+    place-self: center;
+}
+
+.hero3{
+    width: 100%;
+    height: auto;
+    z-index: 2;
+}
+
+.maologo{
+    width: 50px;
+    height: auto;
+    grid-row: span 2;
+    margin-right: 10px;
+}
+.f-underline{
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    z-index: 2;
+}
+
+.fcircle{
+    display: block;
+    flex: 0 0 15px;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    aspect-ratio: 1;
+    background-color: #F0AD04;
+}
+
+.fline{
+    display: block;
+    width: 100%;
+    height: 5px;
+    border-radius: 5px;
+    background-color: white;
+}
+
+.check{
+    width: 15px;
+}
+.ads-info {
+  position: absolute;
+  bottom: 5rem;
+  left: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap:1rem;
+  font-family: "Oswald", sans-serif;
+}
+
+.ads-info p {
+    display: flex;
+    gap:5px;
+    text-align: center;
+    font-family: "Nunito", sans-serif;
+    margin: 0;
+    font-style: italic;
+}
+
+.f-admin-box:nth-child(2){
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    background-color: white;
+}
+
+.auth-panel-viewport{
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.auth-panel-track{
+    display: flex;
+    width: 200%;
+    height: 100%;
+    min-width: 0;
+    transform: translateX(0);
+    transition: transform 0.8s ease-in-out;
+}
+
+.auth-panel-track.register-active{
+    transform: translateX(-50%);
+}
+
+.f-login-wrapper{
+    flex: 0 0 50%;
+    padding: 2rem;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto 30px auto 50px;
+    gap:1rem;
+    width: 100%;
+    height: 100%;
+}
+
+.register-slide-wrapper{
+    flex: 0 0 50%;
+    min-width: 0;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+.register-slide-wrapper .farm-admin-register-container{
+    width: 100%;
+    height: 100%;
+}
+
+.f-admin-group1{
+    display: flex;
+    flex-direction: column;
+    gap:0.5rem;
+    width: 100%;
+    min-width: 0;
+}
+
+.f-admin-group1 input{
+    width: 100%;
+    min-width: 0;
+    height: 40px;
+    border-radius: 5px;
+    color: #115621;
+    border:2px solid #115621;
+    background: none;
+    padding: 5px;
+}
+
+.f-admin-group1 label{
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap:0.5rem;
+}
+
+.icn{
+    width: 15px;
+    height: 15px;
+}
+
+.f-admin-box:nth-child(2) a{
+    color: #115621;
+    font-size: 12px;
+    text-align: end;
+}
+
+.f-login-btn{
+    width: 100%;
+    height: 35px;
+    border-radius: 5px;
+    border: none;
+    background-color: #115621;
+    color: white;
+    cursor: pointer;
+}
+
+.f-login-btn:hover{
+    filter: brightness(1.2);
+}
+
+.f-admin-group2{
+    border-top: 2px solid rgb(235, 235, 235);
+    width: 100%;
+    height: 100%;
+}
+
+.f-admin-group2{
+    font-size: 12px;
+    display: flex;
+    padding: 1rem;
+}
+
+.f-admin-group2 p{
+    width: 100%;
+    text-align: center;
+}
+
+.f-admin-group2 a{
+    text-decoration: none;
+}
+
+.create-account-btn{
+    color: #115621;
+    border: none;
+    padding: 0;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+}
+
+.create-account-btn:disabled{
+    cursor: wait;
+}
+
+.loading-dots{
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 86px;
+    justify-content: center;
+}
+
+.loading-dots span{
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: #468432;
+    animation: loading-dot-jump 0.9s infinite ease-in-out;
+}
+
+.loading-dots span:nth-child(2){
+    animation-delay: 0.15s;
+}
+
+.loading-dots span:nth-child(3){
+    animation-delay: 0.3s;
+}
+
+@keyframes loading-dot-jump{
+    0%, 60%, 100%{
+        transform: translateY(0);
+    }
+    30%{
+        transform: translateY(-6px);
+    }
+}
+
+.close-btn{
+    border: none;
+    background: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    cursor: pointer;
+    z-index: 3;
+}
+
+.close-btn:hover{
+    transform: scale(1.1);
+}
+
+.farm-admin-register-container{
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) 32px auto;
+    min-height: 0;
+}
+
+.farm-admin-register-container h1{
+    font-size: 24px;
+}
+
+.f-register-phase{
+    display: none;
+    grid-column: 1;
+    grid-row: 1;
+    gap: 1rem;
+    width: 100%;
+    min-width: 0;
+}
+
+.f-register-phase.active{
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.submission-phase{
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    text-align: center;
+}
+
+.submission-phase h1{
+    margin: 0;
+}
+
+.submission-message{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 320px;
+    color: #222;
+    font-size: 14px;
+}
+
+.submission-message p{
+    margin: 0;
+}
+
+.understand-button{
+    width: min(100%, 260px) !important;
+    margin-top: 0.5rem;
+}
+
+.register-phase-content{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: 100%;
+    min-height: 0;
+    min-width: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 0.5rem;
+}
+
+.register-logo{
+    display: block;
+    width: min(200px, 70%);
+    height: auto;
+    margin: 0 auto 1rem;
+}
+
+.f-register-phase > h1,
+.f-register-phase > .register-navigation{
+    flex: 0 0 auto;
+}
+
+.document-phase-content{
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.document-id-field{
+    display: flex;
+    align-items: center;
+}
+
+.document-id-field label{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 12px;
+}
+
+.document-phase-content > select{
+    width: 100%;
+    flex: 0 0 auto;
+}
+
+.f-register-phase button{
+    width: 100%;
+    min-height: 35px;
+    border: none;
+    border-radius: 5px;
+    background-color: #115621;
+    color: white;
+    cursor: pointer;
+}
+
+.f-register-phase button:disabled{
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.register-navigation{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: auto;
+}
+
+.register-navigation.next-only{
+    grid-template-columns: 1fr;
+}
+
+.registration-error{
+    margin: 0;
+    color: #a11a1a;
+    font-size: 12px;
+    text-align: center;
+}
+
+.register-fields{
+    display: grid;
+    width: 100%;
+    min-width: 0;
+    gap: 0.75rem;
+}
+
+.register-fields.two-columns{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.register-fields input,
+.account-email-input,
+.f-register-phase select{
+    min-width: 0;
+    height: 38px;
+    padding: 5px;
+    border: 2px solid #115621;
+    border-radius: 5px;
+}
+
+.account-email-input{
+    width: 100%;
+}
+
+.f-register-phase > label{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 12px;
+}
+
+.top-nav{
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    height: 65px;
+    display:grid;
+    background-color: white;
+    grid-template-columns: 200px 1fr 300px;
+    grid-template-rows: 1fr;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.landing-logo-holder,
+.landing-menu-holder,
+.landing-button-holder {
+    display: flex;
+    align-items: center;
+}
+
+.landing-logo-holder {
+    justify-content: center;
+    gap: 8px;
+}
+
+.l-logo {
+    height: 60px;
+    width: auto;
+}
+
+.landing-menu-holder {
+    justify-content: flex-end;
+}
+
+.landing-menu {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+    list-style: none;
+}
+
+.menu-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.landing-button-holder {
+    justify-content: center;
+    gap: 10px;
+}
+
+.portal-btn,
+.download-btn {
+    border: none;
+    background: #105621;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.portal-btn {
+    border-radius: 15px;
+}
+
+.download-btn {
+    border-radius: 20px;
+}
+
+.section-1 {
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+}
+
+.section-1-container {
+    position: relative;
+    width: 100%;
+    height: 350px;
+    margin-top: 100px;
+    padding: 0 3rem;
+}
+
+.section-1-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    height: 100%;
+    padding: 20px 0 20px 50px;
+    border-radius: 15px;
+    background-color: #105621;
+}
+
+.land-hero {
+    position: absolute;
+    right: -20px;
+    bottom: -10px;
+    z-index: 3;
+    width: auto;
+    height: 450px;
+}
+
+.section-1-content-logo {
+    display: grid;
+    grid-template-columns: 50px 1fr;
+    grid-template-rows: 1fr 1fr;
+    width: auto;
+    height: 50px;
+}
+
+.mao-logo {
+    grid-row: span 2;
+    height: 100%;
+}
+
+.section-1-content-logo p {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding-left: 10px;
+    color: white;
+    font-family: "Oswald", sans-serif;
+    font-size: 14px;
+}
+
+.section-1-content-logo p:nth-child(2) {
+    align-items: end;
+    font-weight: 700;
+}
+
+.section-1-content-header {
+    color: white;
+}
+
+.section-1-content-header h1 {
+    margin-bottom: 10px;
+    font-family: "Oswald", sans-serif;
+}
+
+.section-1-content-header p {
+    margin: 0;
+    font-size: 16px;
+}
+
+.section-1-content-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.section-1-content-buttons button {
+    width: 120px;
+    height: 40px;
+    border: 2px solid white;
+    border-radius: 20px;
+    background: none;
+    color: white;
+    cursor: pointer;
+}
+
+.section-1-content-buttons button:nth-child(1) {
+    background-color: white;
+    color: #105621;
+}
+
+.rice {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 200px;
+    z-index: 1;
+    width: 500px;
+    height: 100%;
+    margin: auto;
+    opacity: 0.3;
+}
+
+.rice-holder {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.rice-img {
+    position: absolute;
+    right: 0;
+    left: -150px;
+    width: auto;
+    height: 500px;
+    margin: auto;
+}
+
+.section-2 {
+    width: 100%;
+    margin-top: 64px;
+    padding: 0 6vw 72px;
+}
+
+.section-2-container,
+.section-3-container {
+    max-width: 1220px;
+    margin: 0 auto;
+}
+
+.section-2-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.section-2-container h2,
+.section-3-container h2 {
+    color: #071a35;
+    font-size: clamp(28px, 3vw, 38px);
+    line-height: 1.15;
+    text-align: center;
+}
+
+.section-2-intro,
+.section-3-intro {
+    color: #36516e;
+    font-size: 18px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.section-2-intro {
+    max-width: 780px;
+    margin-top: 18px;
+}
+
+.section-2-boxes,
+.section-3-services {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+}
+
+.section-2-boxes {
+    gap: 32px;
+    margin-top: 60px;
+}
+
+.s2-box {
+    min-height: 280px;
+    padding: 32px 32px 28px;
+    border-top: 4px solid #0b8f68;
+    border-radius: 12px 12px 0 0;
+    background: #fff;
+    text-align: center;
+}
+
+.s2-box:nth-child(2) { border-top-color: #00a878; }
+.s2-box:nth-child(3) { border-top-color: #16c784; }
+
+.s2-icon {
+    display: block;
+    height: 54px;
+    margin-bottom: 16px;
+    font-size: 42px;
+    line-height: 1;
+}
+
+.s2-box h3,
+.service-card h3 {
+    color: #071a35;
+    line-height: 1.2;
+}
+
+.s2-box h3 { font-size: 24px; }
+
+.s2-box p {
+    max-width: 330px;
+    margin: 16px auto 0;
+    color: #36516e;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.section-3 {
+    width: 100%;
+    padding: 56px 6vw 88px;
+    background: #f8fafb;
+}
+
+.section-3-container { max-width: 1120px; }
+.section-3-container h2 { margin: 0; }
+.section-3-intro { margin: 16px auto 0; }
+
+.section-3-services {
+    gap: 30px;
+    margin-top: 56px;
+}
+
+.service-card {
+    min-height: 250px;
+    padding: 30px;
+    border: 1px solid #dce2e7;
+    border-radius: 11px;
+    background: #fff;
+    box-shadow: 0 5px 16px rgba(7, 26, 53, 0.03);
+}
+
+.service-icon {
+    display: block;
+    height: 42px;
+    font-size: 32px;
+    line-height: 1;
+}
+
+.service-card h3 {
+    margin-top: 18px;
+    font-size: 23px;
+}
+
+.service-card p {
+    margin-top: 12px;
+    color: #36516e;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.service-card a {
+    display: inline-block;
+    margin-top: 18px;
+    color: #078867;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.service-card a span { margin-left: 3px; }
+
+.landing-footer {
+    padding: 56px 6vw 24px;
+    background: #105621;
+    color: #fff;
+}
+
+.landing-footer-content,
+.landing-footer-bottom {
+    max-width: 1120px;
+    margin: 0 auto;
+}
+
+.landing-footer-content {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 48px;
+    padding-bottom: 42px;
+}
+
+.landing-footer h2,
+.landing-footer h3,
+.landing-footer p { margin: 0; }
+.landing-footer h2 { color: #8de0b9; font-size: 26px; }
+.landing-footer h3 { margin-bottom: 16px; font-size: 16px; }
+
+.landing-footer p,
+.landing-footer a {
+    color: #c8d5e2;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.landing-footer-brand p { margin-top: 10px; }
+
+.landing-footer-contact,
+.landing-footer-legal {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.landing-footer a { text-decoration: none; }
+.landing-footer a:hover,
+.landing-footer a:focus-visible { color: #8de0b9; }
+
+.landing-footer-legal nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.landing-footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(200, 213, 226, 0.25);
+}
+
+.landing-footer-bottom p { font-size: 13px; }
+
+.admin-portal-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(7, 26, 53, 0.58);
+}
+
+.admin-portal-modal .farm-admin-login-container {
+    max-width: 100%;
+    max-height: calc(100vh - 48px);
+}
+
+@media (max-width: 760px) {
+    .section-2 { margin-top: 48px; padding: 0 24px 56px; }
+    .section-2-intro,
+    .section-3-intro { font-size: 16px; }
+    .section-2-boxes,
+    .section-3-services { grid-template-columns: 1fr; gap: 20px; margin-top: 40px; }
+    .s2-box,
+    .service-card { min-height: 0; }
+    .section-3 { padding: 48px 24px 64px; }
+    .section-3-services { gap: 18px; margin-top: 36px; }
+    .service-card { padding: 26px; }
+    .landing-footer { padding: 44px 24px 22px; }
+    .landing-footer-content { grid-template-columns: 1fr; gap: 30px; padding-bottom: 32px; }
+    .landing-footer-bottom { flex-direction: column; gap: 8px; }
+    .admin-portal-modal { align-items: flex-start; overflow-y: auto; padding: 24px 12px; }
+    .admin-portal-modal .farm-admin-login-container {
+        width: min(700px, 100%);
+        height: auto;
+        min-height: 550px;
+    }
+}
+
+.f-register-phase > label img{
+    flex: 0 0 15px;
+}
+
+.f-register-phase > label + select{
+    height: 38px;
+    padding: 5px;
+    border: 2px solid #115621;
+    border-radius: 5px;
+}
+
+.file-upload-group{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+    width: 100%;
+    min-width: 0;
+}
+
+.file-upload-button{
+    display: inline-flex;
+    flex: 1;
+    width: auto;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    min-height: 38px;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid #115621;
+    border-radius: 5px;
+    background-color: #115621;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.file-upload-button:hover{
+    filter: brightness(1.15);
+}
+
+.file-upload-group input{
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.file-name{
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    color: #115621;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-upload-actions{
+    display: flex;
+    width: 100%;
+    gap: 0.5rem;
+}
+
+.remove-file-button{
+    flex: 0 0 auto;
+    width: auto !important;
+    min-height: 30px !important;
+    padding: 0.35rem 0.5rem;
+    border: 1px solid #115621 !important;
+    background-color: white !important;
+    color: #115621 !important;
+    font-size: 12px;
+}
+
+.remove-file-button:hover{
+    background-color: #f2f2f2 !important;
+}
+
+.f-register-progress-tracker{
+    grid-column: 1;
+    grid-row: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.register-login-link{
+    grid-column: 1;
+    grid-row: 3;
+    width: 100%;
+    min-height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    color: #111;
+    font: inherit;
+    font-size: 12px;
+}
+
+.register-login-link button{
+    border: none;
+    padding: 0;
+    background: none;
+    color: #115621;
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+}
+
+.register-login-link button:hover:not(:disabled){
+    text-decoration: underline;
+}
+
+.register-login-link button:disabled{
+    cursor: wait;
+}
+
+.f-register-progress-tracker span{
+    width: 12px;
+    height: 12px;
+    border: 2px solid #115621;
+    border-radius: 50%;
+}
+
+.f-register-progress-tracker span.active{
+    background-color: #115621;
+}
+
+/* Farmer logs styles */
+
+.farmer-log-wrapper{
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    inset:0;
+    margin:auto;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 10;
+}
+
+.farmer-login-box{
+    width: 500px;
+    height: auto;
+    background-color: #105621;
+    z-index: 5;
+    position: relative;
+    border-radius: 20px;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.farmer-close-btn{
+    position: absolute;
+    z-index: 5;
+    top: 20px;
+    right: 20px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.farmer-close-btn img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.farmer-login-form{
+    flex: 0 0 50%;
+    box-sizing: border-box;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-top:0;
+    padding-bottom: 20px;
+    padding-right: 20px;
+    padding-left: 20px;
+    z-index: 2;
+    background-color:#EBEFEE;
+}
+
+.farmer-auth-viewport{
+    width: calc(100% + 40px);
+    min-width: 0;
+    margin: 40px -20px -20px;
+    overflow-x: clip;
+    overflow-y: visible;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+}
+
+.farmer-auth-track{
+    display: flex;
+    align-items: stretch;
+    width: 200%;
+    transition: transform 0.45s ease-in-out;
+}
+
+.farmer-auth-track.register-active{
+    transform: translateX(-50%);
+}
+
+.farmer-register-form-panel{
+    display: flex;
+    flex: 0 0 50%;
+    flex-direction: column;
+    box-sizing: border-box;
+    min-width: 0;
+    padding: 0 20px 20px;
+    background-color: #fff;
+}
+
+.farmer-login-box:not(.is-registering) .farmer-register-form-panel{
+    height: 0;
+    padding-bottom: 0;
+}
+
+.farmer-login-header{
+    z-index: 3;
+    position: relative;
+    width: 100%;
+    height: 180px;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    color:white;
+    font-family:"Oswald", sans-serif;
+}
+
+.farmer-login-header h1{
+    margin: 0;
+    font-size: 45px;
+}
+
+.farmer-login-header p{
+    margin: 0;
+    letter-spacing: 0.5px;
+    font-size: 14px;
+}
+
+
+.farmer-login-subheader{
+    position: relative;
+    width: 100%;
+    height: 80px;
+    padding: 2rem;
+    color:#105621;
+    display: flex;
+    align-items: center;
+}
+
+.rice1{
+    width:100%;
+    height: auto;
+    position: absolute;
+    top: 0px;
+    transform: rotate(105deg) translateX(-80px) translateY(200px);
+    opacity: 0.2;
+}
+.rice2{
+    width:150px;
+    height: auto;
+    position: absolute;
+    right: 0;
+    bottom: 30px;
+}
+
+.farmer-login-inputs{
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem;
+}
+
+.farmer-login-field{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.farmer-login-field label{
+    color: #105621;
+    font-size: 14px;
+}
+
+
+.farmer-login-inputs input{
+    padding: 15px;
+    background: none;
+    background-color: white;
+    border:none;
+    border-radius: 5px;
+    font-size: 16px;
+    border-radius: 25px;
+
+}
+
+.farmer-login-inputs input:focus{
+    outline: none;
+    background-color: white;
+    box-shadow: 0 0 5px rgba(16, 86, 33, 0.5);
+}
+
+.forgot-password-link{
+    color: #105621;
+    font-size: 16px;
+    align-self: flex-end;
+}
+
+.farmer-login-submit{
+    padding: 15px;
+    background-color: #105621;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.farmer-login-submit:hover{
+    background-color: #0d4518;
+}
+
+.farmer-login-inputs p{
+    margin-top: 20px;
+    font-size: 14px;
+    color: #105621;
+    text-align: center;
+}
+
+.farmer-register-switch{
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #105621;
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.farmer-login-box.is-registering{
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    height: min(760px, calc(100vh - 72px));
+}
+
+.farmer-login-box.is-registering .farmer-login-header{
+    flex: 0 0 180px;
+}
+
+.farmer-login-box.is-registering .farmer-auth-viewport{
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.farmer-register-panel{
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    background-color: #fff;
+}
+
+.farmer-register-panel form{
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.farmer-register-step{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0 2rem 0.5rem;
+}
+
+.farmer-register-step h2,
+.farmer-register-complete h2{
+    margin: 0;
+    color: #105621;
+    font-size: 20px;
+}
+
+.farmer-register-progress,
+.farmer-register-note{
+    margin: 0;
+    color: #4d6254;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.farmer-register-progress{
+    color: #105621;
+    font-weight: 700;
+}
+
+.farmer-register-field{
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.farmer-register-field label{
+    color: #105621;
+    font-size: 13px;
+}
+
+.farmer-register-field input,
+.farmer-register-field select{
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 42px;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid #cbd8ce;
+    border-radius: 10px;
+    background-color: #fff;
+    color: #173b22;
+    font: inherit;
+}
+
+.farmer-register-field input:focus,
+.farmer-register-field select:focus{
+    outline: 2px solid rgba(16, 86, 33, 0.3);
+    border-color: #105621;
+}
+
+.farmer-register-navigation{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: auto;
+    padding: 1rem 2rem 2rem;
+}
+
+.farmer-register-navigation button,
+.farmer-register-camera-button,
+.farmer-register-retake,
+.farmer-register-back-login{
+    min-height: 42px;
+    padding: 0.65rem 1rem;
+    border: 1px solid #105621;
+    border-radius: 22px;
+    background-color: #105621;
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+}
+
+.farmer-register-navigation .farmer-register-secondary,
+.farmer-register-retake,
+.farmer-register-back-login{
+    background-color: #fff;
+    color: #105621;
+}
+
+.farmer-register-navigation button:disabled{
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.farmer-register-video,
+.farmer-register-selfie{
+    display: block;
+    width: 100%;
+    max-height: 260px;
+    border-radius: 12px;
+    background-color: #e9efeb;
+    object-fit: cover;
+}
+
+.farmer-register-camera-button,
+.farmer-register-retake{
+    width: 100%;
+}
+
+.farmer-register-error{
+    margin: 0;
+    color: #a11a1a;
+    font-size: 13px;
+}
+
+.farmer-register-complete{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem;
+    text-align: center;
+}
+
+.farmer-register-complete p{
+    margin: 0;
+    color: #4d6254;
+    font-size: 14px;
+}
+
+.farmer-register-back-login{
+    min-width: 180px;
+}
+
+@media (prefers-reduced-motion: reduce){
+    .farmer-auth-track{
+        transition: none;
+    }
+}
