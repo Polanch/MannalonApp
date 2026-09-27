@@ -8,7 +8,7 @@ const initialFormData = {
     firstName: '',
     middleName: '',
     birthdate: '',
-    status: '',
+    civilStatus: '',
     gender: '',
     houseLotBlock: '',
     street: '',
@@ -19,12 +19,18 @@ const initialFormData = {
     zipCode: '',
 }
 
-function FarmerRegister({ onCancel }) {
+function FarmerRegister({ onCancel, onSubmitRegistration }) {
     const [step, setStep] = useState(1)
     const [formData, setFormData] = useState(initialFormData)
     const [cameraStream, setCameraStream] = useState(null)
     const [cameraError, setCameraError] = useState('')
-    const [selfie, setSelfie] = useState('')
+    const [selfie, setSelfie] = useState(null)
+    const [selfiePreviewUrl, setSelfiePreviewUrl] = useState('')
+    const [isSelfieAccepted, setIsSelfieAccepted] = useState(false)
+    const [isVerifyingFarmCode, setIsVerifyingFarmCode] = useState(false)
+    const [isFarmCodeVerified, setIsFarmCodeVerified] = useState(false)
+    const [registrationError, setRegistrationError] = useState('')
+    const [isSubmitting, setIsSubmitting] = useState(false)
     const [isSubmitted, setIsSubmitted] = useState(false)
     const videoRef = useRef(null)
     const streamRef = useRef(null)
@@ -39,6 +45,17 @@ function FarmerRegister({ onCancel }) {
         }
     }, [cameraStream])
 
+    useEffect(() => {
+        if (!selfie) {
+            setSelfiePreviewUrl('')
+            return undefined
+        }
+
+        const previewUrl = URL.createObjectURL(selfie)
+        setSelfiePreviewUrl(previewUrl)
+        return () => URL.revokeObjectURL(previewUrl)
+    }, [selfie])
+
     function updateField(event) {
         const { name, value } = event.target
         const fieldValue = name === 'mobileNumber'
@@ -46,6 +63,9 @@ function FarmerRegister({ onCancel }) {
             : value
 
         setFormData((currentData) => ({ ...currentData, [name]: fieldValue }))
+        if (name === 'farmCode') {
+            setIsFarmCodeVerified(false)
+        }
     }
 
     function stopCamera() {
@@ -84,21 +104,93 @@ function FarmerRegister({ onCancel }) {
         const canvas = document.createElement('canvas')
         canvas.width = video.videoWidth
         canvas.height = video.videoHeight
-        canvas.getContext('2d')?.drawImage(video, 0, 0)
-        setSelfie(canvas.toDataURL('image/jpeg', 0.9))
-        setCameraError('')
-        stopCamera()
-    }
+        const context = canvas.getContext('2d')
+        if (!context) {
+            setCameraError('Could not capture the picture. Please try again.')
+            return
+        }
 
-    function handleContinue(event) {
-        event.preventDefault()
-
-        if (step === 5) {
-            if (!selfie) {
+        context.drawImage(video, 0, 0)
+        canvas.toBlob((blob) => {
+            if (!blob) {
+                setCameraError('Could not capture the picture. Please try again.')
                 return
             }
+
+            setSelfie(new File([blob], 'farmer-selfie.jpg', { type: 'image/jpeg' }))
+            setIsSelfieAccepted(false)
+            setCameraError('')
             stopCamera()
-            setIsSubmitted(true)
+        }, 'image/jpeg', 0.9)
+    }
+
+    async function handleContinue(event) {
+        event.preventDefault()
+        setRegistrationError('')
+
+        if (step === 1) {
+            const farmCode = formData.farmCode.trim()
+            if (!farmCode) {
+                setRegistrationError('Enter the Farm Code provided by your Farm-Admin.')
+                return
+            }
+
+            setIsVerifyingFarmCode(true)
+            try {
+                const query = new URLSearchParams({ code: farmCode })
+                const response = await fetch(`http://localhost:8080/api/farmer/verify-farm-code?${query}`)
+                if (response.status === 404) {
+                    setIsFarmCodeVerified(false)
+                    setRegistrationError('Invalid Farm Code. Please check with your Farm-Admin.')
+                    return
+                }
+                if (!response.ok) {
+                    throw new Error('Unable to verify the Farm Code. Please try again.')
+                }
+
+                setFormData((currentData) => ({ ...currentData, farmCode }))
+                setIsFarmCodeVerified(true)
+                setStep(2)
+            } catch (error) {
+                setRegistrationError(error.message || 'Unable to verify the Farm Code. Please try again.')
+            } finally {
+                setIsVerifyingFarmCode(false)
+            }
+            return
+        }
+
+        if (step === 5) {
+            if (!selfie || !isSelfieAccepted) {
+                setRegistrationError('Capture and accept your selfie before submitting.')
+                return
+            }
+
+            if (!onSubmitRegistration) {
+                setRegistrationError('Registration is not connected yet. Your information has not been submitted.')
+                return
+            }
+
+            setIsSubmitting(true)
+            stopCamera()
+            try {
+                const registrationData = new FormData()
+                Object.entries(formData).forEach(([name, value]) => {
+                    registrationData.append(name, name === 'farmCode' ? value.trim() : value)
+                })
+                registrationData.append('selfie', selfie)
+                await onSubmitRegistration(registrationData)
+                setIsSubmitted(true)
+            } catch (error) {
+                setRegistrationError(
+                    error.response?.data?.message ||
+                    error.response?.data?.detail ||
+                    error.response?.data?.error ||
+                    error.message ||
+                    'Registration could not be submitted. Please try again.'
+                )
+            } finally {
+                setIsSubmitting(false)
+            }
             return
         }
 
@@ -135,7 +227,7 @@ function FarmerRegister({ onCancel }) {
         return (
             <div className="farmer-register-panel farmer-register-complete" role="status">
                 <h2>Registration submitted</h2>
-                <p>This is a demo. Your details and selfie were not sent to a server.</p>
+            <p>Registration submitted successfully. Your account is pending approval from your Farm-Admin.</p>
                 <button type="button" className="farmer-register-back-login" onClick={onCancel}>
                     Return to Login
                 </button>
@@ -152,7 +244,7 @@ function FarmerRegister({ onCancel }) {
                     {step === 1 && (
                         <>
                             <h2>Farm Code</h2>
-                            <p className="farmer-register-note">Enter the approved Farm Code provided to you. Code approval is mocked for now.</p>
+                            <p className="farmer-register-note">Enter the Farm Code provided to you by your Farm-Admin.</p>
                             {renderField('farmCode', 'Approved Farm Code')}
                         </>
                     )}
@@ -200,8 +292,8 @@ function FarmerRegister({ onCancel }) {
                             {renderField('middleName', 'Middle Name', 'text', false)}
                             {renderField('birthdate', 'Birthdate', 'date')}
                             <div className="farmer-register-field">
-                                <label htmlFor="farmer-register-status">Status *</label>
-                                <select id="farmer-register-status" name="status" value={formData.status} onChange={updateField} required>
+                                <label htmlFor="farmer-register-civilStatus">Status *</label>
+                                <select id="farmer-register-civilStatus" name="civilStatus" value={formData.civilStatus} onChange={updateField} required>
                                     <option value="">Select status</option>
                                     <option value="single">Single</option>
                                     <option value="married">Married</option>
@@ -238,25 +330,38 @@ function FarmerRegister({ onCancel }) {
                     {step === 5 && (
                         <>
                             <h2>Selfie Verification</h2>
-                            <p className="farmer-register-note">Allow camera access, then take a clear selfie for verification.</p>
+                            <p className="farmer-register-note">Take a selfie while holding your valid ID. Make sure your face and ID are clearly visible.</p>
                             {cameraStream && (
                                 <video className="farmer-register-video" ref={videoRef} autoPlay playsInline muted />
                             )}
-                            {selfie && <img className="farmer-register-selfie" src={selfie} alt="Captured verification selfie" />}
+                            {selfiePreviewUrl && <img className="farmer-register-selfie" src={selfiePreviewUrl} alt="Captured verification selfie" />}
                             {!cameraStream && !selfie && (
                                 <button type="button" className="farmer-register-camera-button" onClick={openCamera}>
-                                    Open Camera
-                                </button>
-                            )}
-                            {cameraStream && (
-                                <button type="button" className="farmer-register-camera-button" onClick={captureSelfie}>
                                     Take Selfie
                                 </button>
                             )}
+                            {cameraStream && (
+                                <>
+                                    <button type="button" className="farmer-register-camera-button" onClick={captureSelfie}>
+                                        Capture
+                                    </button>
+                                    <button type="button" className="farmer-register-retake" onClick={stopCamera}>
+                                        Close Camera
+                                    </button>
+                                </>
+                            )}
                             {selfie && (
-                                <button type="button" className="farmer-register-retake" onClick={() => setSelfie('')}>
-                                    Retake Selfie
-                                </button>
+                                <>
+                                    <button type="button" className="farmer-register-camera-button" onClick={() => setIsSelfieAccepted(true)} disabled={isSelfieAccepted}>
+                                        {isSelfieAccepted ? 'Selfie Accepted' : 'Accept Selfie'}
+                                    </button>
+                                    <button type="button" className="farmer-register-retake" onClick={() => {
+                                        setSelfie(null)
+                                        setIsSelfieAccepted(false)
+                                    }}>
+                                        Retake Selfie
+                                    </button>
+                                </>
                             )}
                             {cameraError && <p className="farmer-register-error" role="alert">{cameraError}</p>}
                         </>
@@ -269,10 +374,12 @@ function FarmerRegister({ onCancel }) {
                     ) : (
                         <button type="button" className="farmer-register-secondary" onClick={onCancel}>Back to Login</button>
                     )}
-                    <button type="submit" className="farmer-register-primary" disabled={step === 5 && !selfie}>
-                        {step === 5 ? 'Submit' : 'Continue'}
+                    <button type="submit" className="farmer-register-primary" disabled={isSubmitting || isVerifyingFarmCode || (step === 5 && (!selfie || !isSelfieAccepted))}>
+                        {isSubmitting ? 'Submitting...' : isVerifyingFarmCode ? 'Checking Farm Code...' : step === 5 ? 'Submit Registration' : 'Continue'}
                     </button>
                 </div>
+                {step === 1 && isFarmCodeVerified && <p className="farmer-register-success" role="status">Farm Code verified.</p>}
+                {registrationError && <p className="farmer-register-error" role="alert">{registrationError}</p>}
             </form>
         </div>
     )

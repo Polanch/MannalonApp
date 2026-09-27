@@ -9,8 +9,7 @@ import FarmAdminLogin from '../components/FarmAdminLogin.jsx';
 import FarmerLogin from '../components/FarmerLogin.jsx';
 function LandingPage(){
     const [isAdminPortalOpen, setIsAdminPortalOpen] = useState(false)
-    const [isFarmerLoginOpen, setIsFarmerLoginOpen] = useState(false)
-    const [farmerLoginStartsOnRegister, setFarmerLoginStartsOnRegister] = useState(false)
+    const [farmerAuthInitialView, setFarmerAuthInitialView] = useState(null)
 
     return (
         <div className="landing-page">
@@ -29,14 +28,8 @@ function LandingPage(){
                             <p>Transform your farming operations with intelligent monitoring,<br/> real-time market insights, and weather-driven decision making.</p>
                         </div>
                         <div className="section-1-content-buttons">
-                            <button type="button" onClick={() => {
-                                setFarmerLoginStartsOnRegister(true)
-                                setIsFarmerLoginOpen(true)
-                            }}>Create Account</button>
-                            <button type="button" onClick={() => {
-                                setFarmerLoginStartsOnRegister(false)
-                                setIsFarmerLoginOpen(true)
-                            }}>Login</button>
+                            <button type="button" onClick={() => setFarmerAuthInitialView('register')}>Create Account</button>
+                            <button type="button" onClick={() => setFarmerAuthInitialView('login')}>Login</button>
                         </div>
                     </div>
                     <div className="rice">
@@ -114,10 +107,11 @@ function LandingPage(){
                 </div>
             </div>
             <LandingFooter />
-            {isFarmerLoginOpen && (
+            {farmerAuthInitialView && (
                 <FarmerLogin
-                    initialView={farmerLoginStartsOnRegister ? 'register' : 'login'}
-                    onClose={() => setIsFarmerLoginOpen(false)}
+                    key={farmerAuthInitialView}
+                    initialView={farmerAuthInitialView}
+                    onClose={() => setFarmerAuthInitialView(null)}
                 />
             )}
             {isAdminPortalOpen && (

@@ -532,6 +532,11 @@ Orange: #FFA02E
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.mobile-menu-toggle,
+.landing-mobile-dropdown{
+    display: none;
+}
+
 .landing-logo-holder,
 .landing-menu-holder,
 .landing-button-holder {
@@ -698,7 +703,7 @@ Orange: #FFA02E
     width: 500px;
     height: 100%;
     margin: auto;
-    opacity: 0.3;
+    opacity: 0.2;
 }
 
 .rice-holder {
@@ -936,7 +941,223 @@ Orange: #FFA02E
     max-height: calc(100vh - 48px);
 }
 
+@media (min-width: 761px) and (max-width: 900px) {
+    .section-1-container{
+        box-sizing: border-box;
+        height: 380px;
+        margin-top: 64px;
+        padding: 0 24px;
+    }
+
+    .section-1-content{
+        box-sizing: border-box;
+        padding-left: 32px;
+    }
+
+    .section-1-content-header{
+        width: 55%;
+        max-width: 400px;
+    }
+
+    .section-1-content-header h1{
+        max-width: 11ch;
+        font-size: clamp(28px, 3.6vw, 32px);
+        line-height: 1.05;
+    }
+
+    .section-1-content-header p{
+        font-size: 14px;
+        line-height: 1.35;
+    }
+
+    .land-hero{
+        right: -12px;
+        bottom: -8px;
+        height: min(390px, 48vw);
+    }
+}
+
 @media (max-width: 760px) {
+    .farm-admin-login-container{
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: 200px minmax(0, 1fr);
+    }
+
+    .f-admin-box:nth-child(1){
+        box-sizing: border-box;
+        height: 200px;
+        gap: 0.5rem;
+        padding: 1rem 1.5rem;
+    }
+
+    .f-admin-box:nth-child(1) h1{
+        margin: 0;
+        font-size: 24px;
+    }
+
+    .f-admin-box:nth-child(1) .tagline{
+        margin: 0;
+        font-size: 12px;
+        line-height: 1.3;
+    }
+
+    .ads-info{
+        display: none;
+    }
+
+    .f-admin-box:nth-child(2){
+        min-height: 0;
+    }
+
+    .f-login-wrapper{
+        gap: 0.65rem;
+        padding: 1rem 1.5rem;
+        grid-template-rows: auto auto auto auto auto auto;
+    }
+
+    .top-nav{
+        grid-template-columns: 1fr auto;
+        padding: 0 16px;
+    }
+
+    .landing-logo-holder{
+        justify-content: flex-start;
+    }
+
+    .landing-menu-holder,
+    .top-nav > .landing-button-holder{
+        display: none;
+    }
+
+    .mobile-menu-toggle{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 42px;
+        padding: 8px;
+        border: 1px solid #dce5df;
+        border-radius: 6px;
+        background: #fff;
+        cursor: pointer;
+    }
+
+    .mobile-menu-toggle img{
+        display: block;
+        width: 24px;
+        height: 24px;
+        object-fit: contain;
+    }
+
+    .landing-mobile-dropdown{
+        position: absolute;
+        top: 100%;
+        right: 0;
+        left: 0;
+        display: none;
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px 16px 16px;
+        border-top: 1px solid #e6ece7;
+        background: #fff;
+        box-shadow: 0 8px 16px rgba(7, 26, 53, 0.12);
+    }
+
+    .landing-mobile-dropdown.is-open{
+        display: flex;
+    }
+
+    .landing-mobile-dropdown .landing-menu{
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        margin: 0;
+        padding: 0;
+    }
+
+    .landing-mobile-dropdown .landing-menu li{
+        border-bottom: 1px solid #edf1ee;
+    }
+
+    .landing-mobile-dropdown .menu-btn{
+        width: 100%;
+        padding: 12px 4px;
+        color: #17351f;
+        text-align: left;
+    }
+
+    .landing-mobile-dropdown .landing-button-holder{
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .landing-mobile-dropdown .portal-btn,
+    .landing-mobile-dropdown .download-btn{
+        width: 100%;
+        border-radius: 6px;
+    }
+
+    .section-1-container{
+        height: 420px;
+        margin-top: 40px;
+        padding: 0 16px;
+    }
+
+    .section-1-content{
+        z-index: 4;
+        width: 100%;
+        padding: 28px 24px;
+        border-radius: 12px;
+        background-color: rgba(16, 86, 33, 0.84);
+    }
+
+    .land-hero{
+        right: -18px;
+        bottom: -8px;
+        width: min(58vw, 300px);
+        height: auto;
+    }
+
+    .section-1-content-logo{
+        grid-template-columns: 40px 1fr;
+        height: 42px;
+        max-width: 65%;
+    }
+
+    .section-1-content-logo p{
+        padding-left: 7px;
+        font-size: 11px;
+    }
+
+    .section-1-content-header{
+        width: 68%;
+    }
+
+    .section-1-content-header h1{
+        font-size: clamp(26px, 7vw, 38px);
+        line-height: 1.05;
+    }
+
+    .section-1-content-header p{
+        font-size: 13px;
+        line-height: 1.35;
+    }
+
+    .section-1-content-buttons{
+        position: relative;
+        z-index: 4;
+        margin-top: 12px;
+    }
+
+    .section-1-content-buttons button{
+        width: 112px;
+        height: 38px;
+        font-size: 13px;
+    }
+
     .section-2 { margin-top: 48px; padding: 0 24px 56px; }
     .section-2-intro,
     .section-3-intro { font-size: 16px; }
@@ -953,8 +1174,8 @@ Orange: #FFA02E
     .admin-portal-modal { align-items: flex-start; overflow-y: auto; padding: 24px 12px; }
     .admin-portal-modal .farm-admin-login-container {
         width: min(700px, 100%);
-        height: auto;
-        min-height: 550px;
+        height: min(700px, calc(100vh - 48px));
+        min-height: min(550px, calc(100vh - 48px));
     }
 }
 
@@ -1107,7 +1328,10 @@ Orange: #FFA02E
 
 .farmer-login-box{
     width: 500px;
-    height: auto;
+    height: min(760px, calc(100vh - 72px));
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
     background-color: #105621;
     z-index: 5;
     position: relative;
@@ -1154,8 +1378,10 @@ Orange: #FFA02E
 }
 
 .farmer-auth-viewport{
+    flex: 1 1 auto;
     width: calc(100% + 40px);
     min-width: 0;
+    min-height: 0;
     margin: 40px -20px -20px;
     overflow-x: clip;
     overflow-y: visible;
@@ -1167,6 +1393,7 @@ Orange: #FFA02E
     display: flex;
     align-items: stretch;
     width: 200%;
+    height: 100%;
     transition: transform 0.45s ease-in-out;
 }
 
@@ -1190,6 +1417,7 @@ Orange: #FFA02E
 }
 
 .farmer-login-header{
+    flex: 0 0 180px;
     z-index: 3;
     position: relative;
     width: 100%;
@@ -1311,22 +1539,6 @@ Orange: #FFA02E
     font: inherit;
     text-decoration: underline;
     cursor: pointer;
-}
-
-.farmer-login-box.is-registering{
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    height: min(760px, calc(100vh - 72px));
-}
-
-.farmer-login-box.is-registering .farmer-login-header{
-    flex: 0 0 180px;
-}
-
-.farmer-login-box.is-registering .farmer-auth-viewport{
-    flex: 1 1 auto;
-    min-height: 0;
 }
 
 .farmer-register-panel{

@@ -3,6 +3,7 @@ import '../assets/styles/farmadmin.css'
 import FarmAdminHeader from '../components/FarmAdminHeader';
 import FarmAdminDashboard from '../components/FarmAdminDashboard';
 import FarmAdminLand from '../components/FarmAdminLand';
+import FarmAdminFarmers from '../components/FarmAdminFarmers.jsx';
 import FarmAdminLogin from '../components/FarmAdminLogin.jsx'
 import { useNavigate } from 'react-router-dom'
 
@@ -14,7 +15,7 @@ function FarmAdmin() {
     const [isLogoutConfirmationOpen, setIsLogoutConfirmationOpen] = useState(false)
     const [activeView, setActiveView] = useState(() => {
         const savedView = sessionStorage.getItem(FARM_ADMIN_VIEW_KEY)
-        return savedView === 'land' ? savedView : 'dashboard'
+        return ['land', 'farmers'].includes(savedView) ? savedView : 'dashboard'
     })
 
     function selectView(view) {
@@ -53,10 +54,13 @@ function FarmAdmin() {
             <FarmAdminHeader
                 onHomeClick={() => selectView('dashboard')}
                 onLandClick={() => selectView('land')}
+                onFarmersClick={() => selectView('farmers')}
                 onLogout={() => setIsLogoutConfirmationOpen(true)}
             />
             {activeView === 'land' ? (
                 <FarmAdminLand />
+            ) : activeView === 'farmers' ? (
+                <FarmAdminFarmers />
             ) : (
                 <FarmAdminDashboard />
             )}
