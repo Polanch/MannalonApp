@@ -2,11 +2,11 @@ import FarmerDashboardLeftNavigation from './farmer_components/FarmerDashboardLe
 import FarmerDashboardMiddleNavigation from './farmer_components/FarmerDashboardMiddleNavigation.jsx'
 import FarmerDashboardRightNavigation from './farmer_components/FarmerDashboardRightNavigation.jsx'
 
-function FarmerDashboard() {
+function FarmerDashboard({ session }) {
     return (
         <div className="farmer-dashboard">
             <FarmerDashboardLeftNavigation/>
-            <FarmerDashboardMiddleNavigation/>
+            <FarmerDashboardMiddleNavigation session={session}/>
             <FarmerDashboardRightNavigation/>
         </div>
     );

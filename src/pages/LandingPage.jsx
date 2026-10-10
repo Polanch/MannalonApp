@@ -7,9 +7,15 @@ import rice from '../assets/images/rice.png';
 import LandingFooter from '../components/LandingFooter.jsx';
 import FarmAdminLogin from '../components/FarmAdminLogin.jsx';
 import FarmerLogin from '../components/FarmerLogin.jsx';
+import { Navigate } from 'react-router-dom'
+import { getFarmerSession } from '../services/farmerApi.js'
 function LandingPage({ initialAdminPortalOpen = false, onAdminLoginSuccess, onAdminPortalClose }){
     const [isAdminPortalOpen, setIsAdminPortalOpen] = useState(initialAdminPortalOpen)
     const [farmerAuthInitialView, setFarmerAuthInitialView] = useState(null)
+
+    if (getFarmerSession()) {
+        return <Navigate to="/farmer" replace />
+    }
 
     function closeAdminPortal() {
         setIsAdminPortalOpen(false)

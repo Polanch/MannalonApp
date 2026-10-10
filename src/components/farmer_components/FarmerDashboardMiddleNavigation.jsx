@@ -6,13 +6,27 @@ import videoIcon from '../../assets/images/m-icon6.png'
 import nextIcon from '../../assets/images/m-icon4.png'
 import deleteIcon from '../../assets/images/m-icon7.png'
 import FarmerPost from './FarmerPost'
-function FarmerDashboardMiddleNavigation() {
+import { createPost, fetchPosts, getApiErrorMessage } from '../../services/farmerApi.js'
+
+const PAGE_SIZE = 10
+
+function FarmerDashboardMiddleNavigation({ session }) {
     const photoInputRef = useRef(null)
     const videoInputRef = useRef(null)
     const mediaPreviewUrlRef = useRef(null)
+    const sentinelRef = useRef(null)
+    const isFetchingRef = useRef(false)
     const [mediaPreview, setMediaPreview] = useState(null)
     const [postText, setPostText] = useState('')
+    const [isPosting, setIsPosting] = useState(false)
+    const [postError, setPostError] = useState('')
+    const [posts, setPosts] = useState([])
+    const [nextPage, setNextPage] = useState(0)
+    const [hasMore, setHasMore] = useState(true)
+    const [isLoadingPosts, setIsLoadingPosts] = useState(false)
+    const [feedError, setFeedError] = useState('')
     const hasContent = postText.trim() !== '' || mediaPreview !== null
+    const canPost = postText.trim() !== '' && !isPosting
 
     useEffect(() => {
         return () => {
@@ -21,6 +35,79 @@ function FarmerDashboardMiddleNavigation() {
             }
         }
     }, [])
+
+    async function loadMorePosts() {
+        if (isFetchingRef.current) {
+            return
+        }
+
+        isFetchingRef.current = true
+        setIsLoadingPosts(true)
+        setFeedError('')
+
+        try {
+            const data = await fetchPosts({ userId: session.userId, page: nextPage, size: PAGE_SIZE })
+            const items = Array.isArray(data) ? data : data.content ?? []
+
+            setPosts((current) => {
+                const knownIds = new Set(current.map((post) => post.id))
+                return [...current, ...items.filter((post) => !knownIds.has(post.id))]
+            })
+            setNextPage(nextPage + 1)
+            setHasMore(Array.isArray(data) ? items.length === PAGE_SIZE : Boolean(data.hasNext))
+        } catch (error) {
+            setFeedError(getApiErrorMessage(error, 'Unable to load posts.'))
+        } finally {
+            isFetchingRef.current = false
+            setIsLoadingPosts(false)
+        }
+    }
+
+    useEffect(() => {
+        const sentinel = sentinelRef.current
+        if (!sentinel || !hasMore || isLoadingPosts || feedError) {
+            return undefined
+        }
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    loadMorePosts()
+                }
+            },
+            { rootMargin: '300px' },
+        )
+        observer.observe(sentinel)
+
+        return () => observer.disconnect()
+    })
+
+    async function submitPost(event) {
+        event.preventDefault()
+        if (!canPost) {
+            return
+        }
+
+        setPostError('')
+        setIsPosting(true)
+
+        try {
+            const saved = await createPost({
+                userId: session.userId,
+                content: postText.trim(),
+                media: mediaPreview?.file ?? null,
+            })
+            const newPost = { ...saved, authorName: saved.authorName || session.fullName }
+
+            setPosts((current) => [newPost, ...current.filter((post) => post.id !== newPost.id)])
+            setPostText('')
+            removeMedia()
+        } catch (error) {
+            setPostError(getApiErrorMessage(error, 'Unable to publish your post. Please try again.'))
+        } finally {
+            setIsPosting(false)
+        }
+    }
 
     function handleMediaSelect(event) {
         const file = event.target.files?.[0]
@@ -92,7 +179,7 @@ function FarmerDashboardMiddleNavigation() {
                 )}
                 <div className="post-box">
                     <div className="farmer-name">
-                        <p>Kuya Mannalon</p>
+                        <p>{session.fullName}</p>
                     </div>
                     <img src={hasContent ? farmer2 : farmer} alt="Farmer" className="post-farmer"/>
                     <textarea
@@ -103,17 +190,32 @@ function FarmerDashboardMiddleNavigation() {
                     ></textarea>
                     <a
                         href="#"
-                        className="post-next"
-                        onClick={(event) => event.preventDefault()}
+                        className={`post-next${canPost ? '' : ' is-disabled'}`}
+                        aria-disabled={!canPost}
+                        onClick={submitPost}
                     >
                         <img src={nextIcon} alt="" className="post-next-icon" />
-                        Post
+                        {isPosting ? 'Posting...' : 'Post'}
                     </a>
                 </div>
+                {postError && <p className="post-error" role="alert">{postError}</p>}
             </div>
-            <FarmerPost />
-            <FarmerPost />
-            <FarmerPost />
+            {posts.map((post) => (
+                <FarmerPost key={post.id} post={post} session={session} />
+            ))}
+            {feedError && (
+                <p className="feed-status feed-status-error" role="alert">
+                    {feedError}{' '}
+                    <button type="button" onClick={loadMorePosts}>Try again</button>
+                </p>
+            )}
+            {isLoadingPosts && <p className="feed-status">Loading posts...</p>}
+            {!hasMore && !feedError && (
+                <p className="feed-status">
+                    {posts.length === 0 ? 'No posts yet. Be the first to post!' : "You're all caught up."}
+                </p>
+            )}
+            <div ref={sentinelRef} className="feed-sentinel" aria-hidden="true"></div>
         </div>
     );
 }

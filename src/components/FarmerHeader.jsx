@@ -5,7 +5,7 @@ import mIcon2 from '../assets/images/m-icon2.png'
 import mIcon3 from '../assets/images/m-icon3.png'
 import mIcon4 from '../assets/images/m-icon4.png'
 import placeholder from '../assets/images/placeholder.png'
-function FarmerHeader({ onHomeClick, onProfileClick, onLogout }) {
+function FarmerHeader({ session, onLogout }) {
     return (
         <div className="farmer-header">
             <div className="logo-holder">
@@ -22,9 +22,18 @@ function FarmerHeader({ onHomeClick, onProfileClick, onLogout }) {
                     <span className="pfp-holder">
                         <img src={placeholder} className="pfp" alt="Profile Placeholder" />
                     </span>
-                    <a href="http://">Lloyd</a>
+                    <a href="http://">{session?.firstName || session?.fullName}</a>
                     <a href="http://">Home</a>
                     <a href="http://">FarmTE</a>
+                    <a
+                        href="#"
+                        onClick={(event) => {
+                            event.preventDefault()
+                            onLogout?.()
+                        }}
+                    >
+                        Logout
+                    </a>
                 </div>
                 <button>
                     <img src={mIcon1} className="menu-icon1" alt="Menu Icon" />
