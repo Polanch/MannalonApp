@@ -83,7 +83,7 @@ function FarmerLogin({ onClose, initialView = 'login' }) {
             const { success, role, status, accountStatus } = response.data;
             const farmerStatus = status || accountStatus;
 
-            if (success && role === 'Farmer' && (!farmerStatus || ['ACTIVE', 'APPROVED'].includes(farmerStatus.toUpperCase()))) {
+            if (success && role?.toLowerCase() === 'farmer' && (!farmerStatus || ['ACTIVE', 'APPROVED'].includes(farmerStatus.toUpperCase()))) {
                 saveFarmerSession(buildFarmerSession(response.data, mobileNumber));
                 navigate('/farmer');
                 return;
