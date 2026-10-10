@@ -315,6 +315,22 @@
     color: #111827;
 }
 
+.farmer-announcement-body {
+    margin: 0.25rem 0;
+    color: #4B5563;
+    font-size: 0.8rem;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+.farmer-announcement-image {
+    width: 100%;
+    max-height: 160px;
+    margin: 0.25rem 0;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
 .farmer-announcement-date {
     margin: 0;
     font-size: 0.7rem;
@@ -550,6 +566,13 @@
     display:grid;
     grid-template-columns: 50px auto 100px;
     align-items: center;
+}
+
+.post-author-farm {
+    margin: 0;
+    color: #115621;
+    font-size: 0.75rem;
+    font-weight: 600;
 }
 
 .post-description{
@@ -817,6 +840,85 @@
     white-space: pre-wrap;
 }
 
+.post-comment-item {
+    list-style: none;
+}
+
+.post-comment-main {
+    min-width: 0;
+    flex: 1;
+}
+
+.post-comment-main > .post-comment-body {
+    display: inline-block;
+    max-width: 100%;
+}
+
+.post-comment-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin-top: 0.2rem;
+    padding-left: 0.4rem;
+}
+
+.post-comment-votes {
+    display: inline-flex;
+    gap: 0.25rem;
+    align-items: center;
+    padding: 0 0.25rem;
+    border-radius: 999px;
+    background: #E5E7EB;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.post-comment-votes button {
+    display: grid;
+    place-items: center;
+    width: 1.35rem;
+    height: 1.35rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+}
+
+.post-comment-votes button img {
+    width: 0.8rem;
+    height: 0.8rem;
+}
+
+.post-comment-votes button:hover,
+.post-comment-votes button.is-active {
+    background: #D1D5DB;
+}
+
+.post-comment-link {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #6B7280;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.post-comment-link:hover {
+    text-decoration: underline;
+}
+
+.post-reply-list {
+    margin-top: 0.5rem;
+    padding-left: 0.75rem;
+    border-left: 2px solid #E5E7EB;
+}
+
+.post-reply-form {
+    margin-top: 0.4rem;
+}
+
 .feed-status {
     margin: 0;
     padding: 0.5rem;
@@ -842,3 +944,287 @@
 .feed-sentinel {
     height: 1px;
 }
+.farmer-profile-layout {
+    grid-template-columns: 1fr 2fr 1fr;
+}
+
+.farmer-profile {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.farmer-profile-cover {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 180px;
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+    background: #cfd8cf center / cover no-repeat;
+}
+
+.farmer-profile-image-hint {
+    padding: 4px 12px;
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.farmer-profile-cover:hover .farmer-profile-image-hint,
+.farmer-profile-pfp-button:hover .farmer-profile-image-hint,
+.farmer-profile-cover:disabled .farmer-profile-image-hint {
+    opacity: 1;
+}
+
+.farmer-profile-pfp-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    cursor: pointer;
+    margin-top: -48px;
+}
+
+.farmer-profile-pfp-button .farmer-profile-image-hint {
+    position: absolute;
+}
+
+.farmer-profile-info {
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    padding: 0 16px 14px;
+}
+
+.farmer-profile-pfp {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #fff;
+    background: #fff;
+}
+
+.farmer-profile-text {
+    flex: 1;
+}
+
+.farmer-profile-text h2,
+.farmer-profile-text p {
+    margin: 2px 0;
+}
+
+.farmer-profile-bio {
+    font-size: 14px;
+    color: #444;
+}
+
+.farmer-profile-edit,
+.farmer-profile-actions button {
+    padding: 6px 14px;
+    border-radius: 16px;
+    border: 1px solid #156a2a;
+    background: #fff;
+    color: #156a2a;
+    cursor: pointer;
+}
+
+.farmer-profile-actions button[type="submit"] {
+    background: #156a2a;
+    color: #fff;
+}
+
+.farmer-profile-form {
+    display: grid;
+    gap: 10px;
+    padding: 0 16px 16px;
+}
+
+.farmer-profile-form label {
+    display: grid;
+    gap: 4px;
+    font-size: 13px;
+}
+
+.farmer-profile-form input[type="text"],
+.farmer-profile-form input[type="date"] {
+    padding: 6px 8px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+}
+
+.farmer-receipt {
+    margin-bottom: 12px;
+    padding: 16px 14px 18px;
+    background: #fff;
+    color: #222;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+    border-bottom: 3px dotted #bbb;
+}
+
+.farmer-receipt-logo {
+    display: block;
+    width: 110px;
+    margin: 0 auto 6px;
+}
+
+.farmer-receipt-edit {
+    display: block;
+    margin: 0 auto 10px;
+    font-family: inherit;
+    font-size: 12px;
+}
+
+.farmer-receipt-title,
+.farmer-receipt-sub,
+.farmer-receipt-foot {
+    margin: 2px 0;
+    text-align: center;
+}
+
+.farmer-receipt-title {
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.farmer-receipt-divider {
+    border: 0;
+    border-top: 1px dashed #555;
+    margin: 10px 0;
+}
+
+.farmer-receipt-list {
+    margin: 0;
+}
+
+.farmer-receipt-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 2px 0;
+}
+
+.farmer-receipt-row dt {
+    color: #555;
+    text-transform: uppercase;
+    font-size: 11px;
+}
+
+.farmer-receipt-row dd {
+    margin: 0;
+    text-align: right;
+    font-weight: bold;
+    word-break: break-word;
+}
+
+.farmer-receipt-foot {
+    font-size: 11px;
+}
+
+.farmer-confirm-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.farmer-confirm-dialog {
+    display: grid;
+    gap: 12px;
+    justify-items: center;
+    max-width: 460px;
+    width: 90%;
+    padding: 20px;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.farmer-confirm-dialog h3 {
+    margin: 0;
+}
+
+.farmer-confirm-cover {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.farmer-confirm-pfp {
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.farmer-profile-bio-section {
+    display: grid;
+    gap: 6px;
+    justify-items: start;
+    padding: 0 16px 16px;
+}
+
+.farmer-profile-bio-section h3 {
+    margin: 0;
+    font-size: 13px;
+    color: #6B7280;
+}
+
+.farmer-profile-bio-section .farmer-profile-bio {
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+.farmer-profile-bio-form {
+    display: grid;
+    gap: 6px;
+    width: 100%;
+}
+
+.farmer-profile-bio-form textarea {
+    padding: 6px 8px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    font: inherit;
+    resize: vertical;
+}
+
+.farmer-profile-details {
+    margin: 0 0 12px;
+    display: grid;
+    gap: 6px;
+}
+
+.farmer-profile-details dt {
+    font-size: 11px;
+    color: #6B7280;
+}
+
+.farmer-profile-details dd {
+    margin: 0;
+    font-size: 14px;
+}
+
+.farmer-profile-actions {
+    display: flex;
+    gap: 8px;
+}
+

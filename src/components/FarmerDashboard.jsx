@@ -7,7 +7,7 @@ function FarmerDashboard({ session }) {
         <div className="farmer-dashboard">
             <FarmerDashboardLeftNavigation/>
             <FarmerDashboardMiddleNavigation session={session}/>
-            <FarmerDashboardRightNavigation/>
+            <FarmerDashboardRightNavigation session={session}/>
         </div>
     );
 }

@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+import { resolveMediaUrl } from '../services/farmerApi.js'
 import mannalonlogo from '../assets/images/MannalonLogo3.png'
 import search from '../assets/images/search.png'
 import mIcon1 from '../assets/images/m-icon1.png'
@@ -20,10 +22,10 @@ function FarmerHeader({ session, onLogout }) {
             <div className="menu-holder">
                 <div className="profile-holder">
                     <span className="pfp-holder">
-                        <img src={placeholder} className="pfp" alt="Profile Placeholder" />
+                        <img src={session?.profilePictureUrl ? resolveMediaUrl(session.profilePictureUrl) : placeholder} className="pfp" alt="Profile" />
                     </span>
-                    <a href="http://">{session?.firstName || session?.fullName}</a>
-                    <a href="http://">Home</a>
+                    <Link to="/farmer/profile">{session?.firstName || session?.fullName}</Link>
+                    <Link to="/farmer">Home</Link>
                     <a href="http://">FarmTE</a>
                     <a
                         href="#"

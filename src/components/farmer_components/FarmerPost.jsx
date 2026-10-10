@@ -2,6 +2,7 @@ import { useState } from 'react';
 import placeholderImage from '../../assets/images/placeholder.png';
 import upIcon from '../../assets/images/m-icon8.png';
 import downIcon from '../../assets/images/m-icon9.png';
+import FarmerComment from './FarmerComment.jsx';
 import {
     createComment,
     fetchComments,
@@ -71,7 +72,7 @@ function FarmerPost({ post, session }) {
         setCommentError('');
         setAreCommentsLoading(true);
         try {
-            const loaded = await fetchComments({ postId: post.id });
+            const loaded = await fetchComments({ postId: post.id, userId: session.userId });
             setComments(Array.isArray(loaded) ? loaded : loaded.content ?? []);
         } catch (error) {
             setCommentError(getApiErrorMessage(error, 'Unable to load comments.'));
@@ -105,10 +106,11 @@ function FarmerPost({ post, session }) {
         <div className="farmer-post-box">
             <div className="post-header">
                 <div className="farmer-pfp">
-                    <img src={placeholderImage} alt="Farmer Profile" />
+                    <img src={post.authorProfilePictureUrl ? resolveMediaUrl(post.authorProfilePictureUrl) : placeholderImage} alt="Farmer Profile" />
                 </div>
                 <div className="farmer-username">
                     <p>{post.authorName}</p>
+                    {post.authorFarmName && <p className="post-author-farm">{post.authorFarmName}</p>}
                 </div>
                 <div className="post-date">
                     <p>{formatRelativeTime(post.createdAt)}</p>
@@ -197,16 +199,13 @@ function FarmerPost({ post, session }) {
                     ) : (
                         <ul className="post-comment-list">
                             {comments.map((comment) => (
-                                <li className="post-comment" key={comment.id}>
-                                    <img src={placeholderImage} alt="" />
-                                    <div className="post-comment-body">
-                                        <p className="post-comment-meta">
-                                            <strong>{comment.authorName}</strong>
-                                            <span>{formatRelativeTime(comment.createdAt)}</span>
-                                        </p>
-                                        <p className="post-comment-text">{comment.content}</p>
-                                    </div>
-                                </li>
+                                <FarmerComment
+                                    key={comment.id}
+                                    comment={comment}
+                                    postId={post.id}
+                                    session={session}
+                                    onReplyAdded={() => setCommentCount((count) => count + 1)}
+                                />
                             ))}
                         </ul>
                     )}

@@ -22,13 +22,13 @@ function shorten(text, maxLength = 60) {
     return text.length > maxLength ? `${text.slice(0, maxLength).trimEnd()}...` : text;
 }
 
-function FarmerDashboardRightNavigation() {
+function FarmerDashboardRightNavigation({ session }) {
     return (
         <aside className="farmer-dashboard-right-navigation">
             <div className="farmer-right-content">
                 <section className="farmer-sidebar-section farmer-right-first-section">
                     <h2>Announcements</h2>
-                    <FarmerAnnouncements />
+                    <FarmerAnnouncements session={session} />
                 </section>
 
                 <section className="farmer-sidebar-section">

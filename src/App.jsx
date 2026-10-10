@@ -15,6 +15,7 @@ function App() {
         <Route path="/admin/:registrationId" element={<Admin />} />
         <Route path="/farmadmin" element={<FarmAdmin />} />
         <Route path="/farmer" element={<Farmer />} />
+        <Route path="/farmer/profile" element={<Farmer />} />
       </Routes>
     </BrowserRouter>
   )

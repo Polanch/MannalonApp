@@ -1,6 +1,15 @@
 import mao from '../assets/images/mao.png';
-import placeholder from '../assets/images/placeholder.png';
-function FarmAdminHeader({ onHomeClick, onLandClick, onFarmersClick, onLogout }) {
+
+const NAV_ITEMS = [
+    { key: 'dashboard', label: 'Home', handler: 'onHomeClick' },
+    { key: 'farmers', label: 'Farmers', handler: 'onFarmersClick' },
+    { key: 'roles', label: 'Roles', handler: 'onRolesClick' },
+    { key: 'land', label: 'Land', handler: 'onLandClick' },
+    { key: 'market', label: 'Market' },
+    { key: 'community', label: 'Community' },
+];
+
+function FarmAdminHeader({ activeView, onLogout, ...handlers }) {
     return (
         <div className="farm-admin-header">
             <div className="farm-admin-logo">
@@ -9,17 +18,27 @@ function FarmAdminHeader({ onHomeClick, onLandClick, onFarmersClick, onLogout })
                 <input type="text" placeholder="Search..." className="farm-admin-search"/>
             </div>
             <ul className="farm-admin-menu">
-                <li><button type="button" onClick={onHomeClick}><img src={placeholder} alt="Home" className="farm-admin-menu-img"/></button></li>
-                <li><button><img src={placeholder} alt="Market" className="farm-admin-menu-img"/></button></li>
-                <li><button type="button" onClick={onLandClick}><img src={placeholder} alt="Land" className="farm-admin-menu-img"/></button></li>
+                {NAV_ITEMS.map(({ key, label, handler }) => (
+                    <li key={key}>
+                        {handler ? (
+                            <button
+                                type="button"
+                                className={`farm-admin-nav-link${activeView === key ? ' is-active' : ''}`}
+                                aria-current={activeView === key ? 'page' : undefined}
+                                onClick={handlers[handler]}
+                            >
+                                {label}
+                            </button>
+                        ) : (
+                            <button type="button" className="farm-admin-nav-link" disabled title="Coming soon">
+                                {label}
+                            </button>
+                        )}
+                    </li>
+                ))}
                 <li>
-                    <button type="button" className="farm-admin-farmers-menu-button" onClick={onFarmersClick} aria-label="Farmers">
-                        <img src={placeholder} alt="" className="farm-admin-menu-img"/>
-                        <span>Farmers</span>
-                    </button>
+                    <button type="button" className="farm-admin-nav-link farm-admin-nav-logout" onClick={onLogout}>Logout</button>
                 </li>
-                <li><button><img src={placeholder} alt="Community" className="farm-admin-menu-img"/></button></li>
-                <li><button type="button" onClick={onLogout}>Logout</button></li>
             </ul>
         </div>
     );

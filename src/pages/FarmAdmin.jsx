@@ -4,6 +4,7 @@ import FarmAdminHeader from '../components/FarmAdminHeader';
 import FarmAdminDashboard from '../components/FarmAdminDashboard';
 import FarmAdminLand from '../components/FarmAdminLand';
 import FarmAdminFarmers from '../components/FarmAdminFarmers.jsx';
+import FarmAdminRoles from '../components/FarmAdminRoles.jsx';
 import LandingPage from './LandingPage.jsx'
 import { useNavigate } from 'react-router-dom'
 
@@ -15,7 +16,7 @@ function FarmAdmin() {
     const [isLogoutConfirmationOpen, setIsLogoutConfirmationOpen] = useState(false)
     const [activeView, setActiveView] = useState(() => {
         const savedView = sessionStorage.getItem(FARM_ADMIN_VIEW_KEY)
-        return ['land', 'farmers'].includes(savedView) ? savedView : 'dashboard'
+        return ['land', 'farmers', 'roles'].includes(savedView) ? savedView : 'dashboard'
     })
 
     function selectView(view) {
@@ -31,6 +32,8 @@ function FarmAdmin() {
     function handleLogout() {
         sessionStorage.removeItem('farmAdminAuthenticated')
         sessionStorage.removeItem('farmAdminUserId')
+        sessionStorage.removeItem('farmAdminName')
+        sessionStorage.removeItem('farmAdminProfilePictureUrl')
         sessionStorage.removeItem(FARM_ADMIN_VIEW_KEY)
         setIsAuthenticated(false)
         navigate('/')
@@ -54,17 +57,21 @@ function FarmAdmin() {
     return (
         <div className="farm-admin-container">
             <FarmAdminHeader
+                activeView={activeView}
                 onHomeClick={() => selectView('dashboard')}
                 onLandClick={() => selectView('land')}
                 onFarmersClick={() => selectView('farmers')}
+                onRolesClick={() => selectView('roles')}
                 onLogout={() => setIsLogoutConfirmationOpen(true)}
             />
             {activeView === 'land' ? (
                 <FarmAdminLand />
             ) : activeView === 'farmers' ? (
                 <FarmAdminFarmers />
+            ) : activeView === 'roles' ? (
+                <FarmAdminRoles />
             ) : (
-                <FarmAdminDashboard />
+                <FarmAdminDashboard onNavigate={selectView} />
             )}
             {isLogoutConfirmationOpen && (
                 <div className="farm-admin-confirm-backdrop" role="presentation">

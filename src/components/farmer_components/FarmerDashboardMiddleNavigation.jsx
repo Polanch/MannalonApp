@@ -10,7 +10,7 @@ import { createPost, fetchPosts, getApiErrorMessage } from '../../services/farme
 
 const PAGE_SIZE = 10
 
-function FarmerDashboardMiddleNavigation({ session }) {
+function FarmerDashboardMiddleNavigation({ session, authorId, header }) {
     const photoInputRef = useRef(null)
     const videoInputRef = useRef(null)
     const mediaPreviewUrlRef = useRef(null)
@@ -46,7 +46,7 @@ function FarmerDashboardMiddleNavigation({ session }) {
         setFeedError('')
 
         try {
-            const data = await fetchPosts({ userId: session.userId, page: nextPage, size: PAGE_SIZE })
+            const data = await fetchPosts({ userId: session.userId, authorId, page: nextPage, size: PAGE_SIZE })
             const items = Array.isArray(data) ? data : data.content ?? []
 
             setPosts((current) => {
@@ -97,7 +97,9 @@ function FarmerDashboardMiddleNavigation({ session }) {
                 content: postText.trim(),
                 media: mediaPreview?.file ?? null,
             })
-            const newPost = { ...saved, authorName: saved.authorName || session.fullName }
+            const newPost = { ...saved, authorName: saved.authorName || session.fullName,
+                authorProfilePictureUrl: saved.authorProfilePictureUrl || session.profilePictureUrl,
+            }
 
             setPosts((current) => [newPost, ...current.filter((post) => post.id !== newPost.id)])
             setPostText('')
@@ -134,6 +136,7 @@ function FarmerDashboardMiddleNavigation({ session }) {
 
     return (
         <div className="farmer-dashboard-middle-navigation">
+            {header}
             <div className="create-post-container">
                 <div className="post-mini-menu">
                     <div className="post-media">
@@ -179,7 +182,7 @@ function FarmerDashboardMiddleNavigation({ session }) {
                 )}
                 <div className="post-box">
                     <div className="farmer-name">
-                        <p>{session.fullName}</p>
+                        <p>Kuya Mannalon</p>
                     </div>
                     <img src={hasContent ? farmer2 : farmer} alt="Farmer" className="post-farmer"/>
                     <textarea

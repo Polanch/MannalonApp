@@ -1,0 +1,15 @@
+export const PERSONAL_FIELDS = [
+    ['firstName', 'First name'],
+    ['middleName', 'Middle name'],
+    ['lastName', 'Last name'],
+    ['birthdate', 'Birthdate', 'date'],
+    ['civilStatus', 'Civil status'],
+    ['gender', 'Gender'],
+    ['houseLotBlock', 'House / Lot / Block'],
+    ['street', 'Street'],
+    ['barangay', 'Barangay'],
+    ['municipalityCity', 'Municipality / City'],
+    ['province', 'Province'],
+    ['region', 'Region'],
+    ['zipCode', 'Zip code'],
+]

@@ -49,6 +49,8 @@ function FarmAdminLogin({ onClose, onLoginSuccess }){
             if (success && role === 'Farm-Admin') {
                 sessionStorage.setItem('farmAdminAuthenticated', 'true')
                 sessionStorage.setItem('farmAdminUserId', userId)
+                sessionStorage.setItem('farmAdminName', response.data.fullName || userId)
+                sessionStorage.setItem('farmAdminProfilePictureUrl', response.data.profilePictureUrl || '')
                 if (onLoginSuccess) {
                     onLoginSuccess()
                 }

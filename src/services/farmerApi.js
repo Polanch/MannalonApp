@@ -15,6 +15,7 @@ export function buildFarmerSession(loginData, fallbackUserId) {
         lastName,
         fullName: fullName || fallbackUserId,
         farmId: loginData.farmId ?? null,
+        profilePictureUrl: loginData.profilePictureUrl || '',
     }
 }
 
@@ -47,11 +48,38 @@ export function getApiErrorMessage(error, fallback) {
     return data?.message || data?.detail || data?.error || fallback
 }
 
-export async function fetchPosts({ userId, page, size }) {
+export async function fetchPosts({ userId, authorId, page, size }) {
     const response = await axios.get(`${FARMER_API}/posts`, {
-        params: { userId, page, size },
+        params: { userId, authorId, page, size },
         withCredentials: true,
     })
+    return response.data
+}
+
+export async function fetchProfile({ userId }) {
+    const response = await axios.get(`${FARMER_API}/profile`, {
+        params: { userId },
+        withCredentials: true,
+    })
+    return response.data
+}
+
+export async function updateProfile({ userId, fields, profilePicture, coverPhoto }) {
+    const formData = new FormData()
+    formData.append('userId', userId)
+    Object.entries(fields).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+            formData.append(key, value)
+        }
+    })
+    if (profilePicture) {
+        formData.append('profilePicture', profilePicture)
+    }
+    if (coverPhoto) {
+        formData.append('coverPhoto', coverPhoto)
+    }
+
+    const response = await axios.put(`${FARMER_API}/profile`, formData, { withCredentials: true })
     return response.data
 }
 
@@ -76,17 +104,37 @@ export async function setPostReaction({ postId, userId, reaction }) {
     return response.data
 }
 
-export async function fetchComments({ postId }) {
-    const response = await axios.get(`${FARMER_API}/posts/${postId}/comments`, { withCredentials: true })
+export async function fetchComments({ postId, userId }) {
+    const response = await axios.get(`${FARMER_API}/posts/${postId}/comments`, {
+        params: { userId },
+        withCredentials: true,
+    })
     return response.data
 }
 
-export async function createComment({ postId, userId, content }) {
+export async function createComment({ postId, userId, content, parentCommentId }) {
     const response = await axios.post(
         `${FARMER_API}/posts/${postId}/comments`,
-        { userId, content },
+        { userId, content, parentCommentId: parentCommentId ?? null },
         { withCredentials: true },
     )
+    return response.data
+}
+
+export async function setCommentReaction({ postId, commentId, userId, reaction }) {
+    const response = await axios.put(
+        `${FARMER_API}/posts/${postId}/comments/${commentId}/reaction`,
+        { userId, reaction },
+        { withCredentials: true },
+    )
+    return response.data
+}
+
+export async function fetchFarmerAnnouncements({ userId }) {
+    const response = await axios.get(`${FARMER_API}/announcements`, {
+        params: { userId },
+        withCredentials: true,
+    })
     return response.data
 }
 
