@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import logo from '../assets/images/MannalonLogo.png';
 import menuIcon from '../assets/images/menu.png';
+import menuIcon2 from '../assets/images/menu2.png';
 
 function LandingHeader({ onAdminPortal }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -39,7 +40,7 @@ function LandingHeader({ onAdminPortal }) {
                 aria-controls="landing-mobile-menu"
                 onClick={() => setIsMenuOpen((open) => !open)}
             >
-                <img src={menuIcon} alt="" />
+                <img src={menuIcon2} alt="" />
             </button>
             <div id="landing-mobile-menu" className={`landing-mobile-dropdown${isMenuOpen ? ' is-open' : ''}`}>
                 <ul className="landing-menu">

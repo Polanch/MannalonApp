@@ -4,7 +4,7 @@ import FarmAdminHeader from '../components/FarmAdminHeader';
 import FarmAdminDashboard from '../components/FarmAdminDashboard';
 import FarmAdminLand from '../components/FarmAdminLand';
 import FarmAdminFarmers from '../components/FarmAdminFarmers.jsx';
-import FarmAdminLogin from '../components/FarmAdminLogin.jsx'
+import LandingPage from './LandingPage.jsx'
 import { useNavigate } from 'react-router-dom'
 
 const FARM_ADMIN_VIEW_KEY = 'farmAdminActiveView'
@@ -43,9 +43,11 @@ function FarmAdmin() {
 
     if (!isAuthenticated) {
         return (
-            <div className="farm-admin-auth-gate">
-                <FarmAdminLogin onClose={handleLogout} onLoginSuccess={handleLoginSuccess} />
-            </div>
+            <LandingPage
+                initialAdminPortalOpen
+                onAdminLoginSuccess={handleLoginSuccess}
+                onAdminPortalClose={handleLogout}
+            />
         )
     }
 

@@ -1,10 +1,12 @@
 import '../assets/styles/farmer.css'
-
+import FarmerHeader from '../components/FarmerHeader.jsx'
+import FarmerDashboard from '../components/FarmerDashboard.jsx'
 function Farmer() {
     return (
-        <div>
-            <h1>Farmer Page</h1>
-        </div>
+      <div className="farmer-page">
+      <FarmerHeader/>
+      <FarmerDashboard/>
+      </div>
     );
 }
 

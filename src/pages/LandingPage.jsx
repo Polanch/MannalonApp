@@ -7,9 +7,14 @@ import rice from '../assets/images/rice.png';
 import LandingFooter from '../components/LandingFooter.jsx';
 import FarmAdminLogin from '../components/FarmAdminLogin.jsx';
 import FarmerLogin from '../components/FarmerLogin.jsx';
-function LandingPage(){
-    const [isAdminPortalOpen, setIsAdminPortalOpen] = useState(false)
+function LandingPage({ initialAdminPortalOpen = false, onAdminLoginSuccess, onAdminPortalClose }){
+    const [isAdminPortalOpen, setIsAdminPortalOpen] = useState(initialAdminPortalOpen)
     const [farmerAuthInitialView, setFarmerAuthInitialView] = useState(null)
+
+    function closeAdminPortal() {
+        setIsAdminPortalOpen(false)
+        onAdminPortalClose?.()
+    }
 
     return (
         <div className="landing-page">
@@ -117,11 +122,12 @@ function LandingPage(){
             {isAdminPortalOpen && (
                 <div className="admin-portal-modal" role="presentation" onMouseDown={(event) => {
                     if (event.target === event.currentTarget) {
-                        setIsAdminPortalOpen(false)
+                        closeAdminPortal()
                     }
                 }}>
                     <FarmAdminLogin
-                        onClose={() => setIsAdminPortalOpen(false)}
+                        onClose={closeAdminPortal}
+                        onLoginSuccess={onAdminLoginSuccess}
                     />
                 </div>
             )}
