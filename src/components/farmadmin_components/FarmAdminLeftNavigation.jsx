@@ -11,11 +11,16 @@ const SECTIONS = [
     },
     {
         title: 'Farm Operations',
-        items: [{ label: 'Crops' }, { label: 'Harvest Schedule' }, { label: 'Inventory' }, { label: 'Reports' }],
+        items: [{ label: 'Weather', view: 'weather' }, { label: 'Rental', view: 'rentals' }, { label: 'Crops' }, { label: 'Harvest Schedule' }, { label: 'Inventory' }, { label: 'Reports' }],
     },
     {
         title: 'Community',
-        items: [{ label: 'Farm Feed', view: 'dashboard' }, { label: 'Group Chats' }, { label: 'Market' }],
+        items: [
+            { label: 'Farm Feed', view: 'dashboard' },
+            { label: 'Programs', view: 'community' },
+            { label: 'Group Chats' },
+            { label: 'Market', view: 'market' },
+        ],
     },
     {
         title: 'Resources',

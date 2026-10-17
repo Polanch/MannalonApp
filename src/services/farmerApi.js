@@ -104,26 +104,26 @@ export async function setPostReaction({ postId, userId, reaction }) {
     return response.data
 }
 
-export async function fetchComments({ postId, userId }) {
-    const response = await axios.get(`${FARMER_API}/posts/${postId}/comments`, {
+export async function fetchComments({ postId, userId, resource = 'posts' }) {
+    const response = await axios.get(`${FARMER_API}/${resource}/${postId}/comments`, {
         params: { userId },
         withCredentials: true,
     })
     return response.data
 }
 
-export async function createComment({ postId, userId, content, parentCommentId }) {
+export async function createComment({ postId, userId, content, parentCommentId, resource = 'posts' }) {
     const response = await axios.post(
-        `${FARMER_API}/posts/${postId}/comments`,
+        `${FARMER_API}/${resource}/${postId}/comments`,
         { userId, content, parentCommentId: parentCommentId ?? null },
         { withCredentials: true },
     )
     return response.data
 }
 
-export async function setCommentReaction({ postId, commentId, userId, reaction }) {
+export async function setCommentReaction({ postId, commentId, userId, reaction, resource = 'posts' }) {
     const response = await axios.put(
-        `${FARMER_API}/posts/${postId}/comments/${commentId}/reaction`,
+        `${FARMER_API}/${resource}/${postId}/comments/${commentId}/reaction`,
         { userId, reaction },
         { withCredentials: true },
     )
@@ -160,4 +160,154 @@ export function formatRelativeTime(isoDate) {
         }
     }
     return 'just now'
+}
+
+export async function fetchPrograms({ userId }) {
+    const response = await axios.get(`${FARMER_API}/programs`, {
+        params: { userId },
+        withCredentials: true,
+    })
+    return response.data
+}
+
+export function getRequirementId(requirement) {
+    return requirement?.id ?? requirement?.requirementId ?? null
+}
+
+export async function applyToProgram({ programId, userId, requirements, files }) {
+    const formData = new FormData()
+    formData.append('userId', userId)
+    requirements.forEach((requirement) => {
+        const requirementId = getRequirementId(requirement)
+        if (requirementId != null && files[requirementId]) {
+            formData.append(`requirement_${requirementId}`, files[requirementId])
+        }
+    })
+
+    const response = await axios.post(`${FARMER_API}/programs/${programId}/apply`, formData, { withCredentials: true })
+    return response.data
+}
+
+export async function fetchProgramBenefit({ programId, userId }) {
+    const response = await axios.get(`${FARMER_API}/programs/${programId}/benefit`, {
+        params: { userId },
+        withCredentials: true,
+    })
+    return response.data
+}
+
+export async function setProgramVote({ programId, userId, vote }) {
+    const response = await axios.put(
+        `${FARMER_API}/programs/${programId}/vote`,
+        { userId, vote },
+        { withCredentials: true },
+    )
+    return response.data
+}
+
+export async function fetchTimeEntries({ userId }) {
+    const response = await axios.get(`${FARMER_API}/farmte/time-entries`, { params: { userId }, withCredentials: true })
+    return response.data
+}
+
+export async function createTimeEntry({ userId, date, activity, hours, notes, seasonId }) {
+    const response = await axios.post(`${FARMER_API}/farmte/time-entries`, { userId, date, activity, hours: Number(hours), notes: notes || null, seasonId: seasonId ? Number(seasonId) : null }, { withCredentials: true })
+    return response.data
+}
+
+export async function deleteTimeEntry({ id, userId }) {
+    await axios.delete(`${FARMER_API}/farmte/time-entries/${id}`, { params: { userId }, withCredentials: true })
+}
+
+export async function fetchExpenseEntries({ userId }) {
+    const response = await axios.get(`${FARMER_API}/farmte/expense-entries`, { params: { userId }, withCredentials: true })
+    return response.data
+}
+
+export async function createExpenseEntry({ userId, date, category, amount, notes, seasonId }) {
+    const response = await axios.post(`${FARMER_API}/farmte/expense-entries`, { userId, date, category, amount: Number(amount), notes: notes || null, seasonId: seasonId ? Number(seasonId) : null }, { withCredentials: true })
+    return response.data
+}
+
+export async function deleteExpenseEntry({ id, userId }) {
+    await axios.delete(`${FARMER_API}/farmte/expense-entries/${id}`, { params: { userId }, withCredentials: true })
+}
+
+export async function submitFarmReport({ userId, periodStart, periodEnd }) {
+    const response = await axios.post(`${FARMER_API}/farmte/reports`, { userId, periodStart, periodEnd }, { withCredentials: true })
+    return response.data
+}
+
+export async function fetchFarmReports({ userId }) {
+    const response = await axios.get(`${FARMER_API}/farmte/reports`, { params: { userId }, withCredentials: true })
+    return response.data
+}
+
+export async function fetchSeasons({ userId, farmId }) {
+    const response = await axios.get(`${FARMER_API}/farmte/seasons`, { params: { userId, farmId }, withCredentials: true })
+    return response.data
+}
+
+export async function createSeason({ userId, commodity, variety, seasonType, areaHa, plantingDate, irrigation }) {
+    const response = await axios.post(
+        `${FARMER_API}/farmte/seasons`,
+        { commodity, variety: variety || null, seasonType, areaHa: Number(areaHa), plantingDate: plantingDate || null, irrigation: irrigation || null },
+        { params: { userId }, withCredentials: true },
+    )
+    return response.data
+}
+
+export async function closeSeason({ userId, seasonId }) {
+    const response = await axios.put(`${FARMER_API}/farmte/seasons/${seasonId}/close`, null, { params: { userId }, withCredentials: true })
+    return response.data
+}
+
+export async function fetchSeasonSummary({ seasonId }) {
+    const response = await axios.get(`${FARMER_API}/farmte/seasons/${seasonId}/summary`, { withCredentials: true })
+    return response.data
+}
+
+export async function fetchHarvests({ seasonId }) {
+    const response = await axios.get(`${FARMER_API}/farmte/harvests`, { params: { seasonId }, withCredentials: true })
+    return response.data
+}
+
+export async function createHarvest({ userId, seasonId, harvestDate, sacks, kgPerSack, condition, notes }) {
+    const response = await axios.post(
+        `${FARMER_API}/farmte/harvests`,
+        { seasonId: Number(seasonId), harvestDate, sacks: Number(sacks), kgPerSack: Number(kgPerSack), condition, notes: notes || null },
+        { params: { userId }, withCredentials: true },
+    )
+    return response.data
+}
+
+export async function deleteHarvest({ id, userId }) {
+    await axios.delete(`${FARMER_API}/farmte/harvests/${id}`, { params: { userId }, withCredentials: true })
+}
+
+export async function fetchSales({ seasonId }) {
+    const response = await axios.get(`${FARMER_API}/farmte/sales`, { params: { seasonId }, withCredentials: true })
+    return response.data
+}
+
+export async function createSale({ userId, seasonId, saleDate, kgSold, pricePerKg, condition, buyerType, locationBarangay, locationMunicipality }) {
+    const response = await axios.post(
+        `${FARMER_API}/farmte/sales`,
+        {
+            seasonId: Number(seasonId),
+            saleDate,
+            kgSold: Number(kgSold),
+            pricePerKg: Number(pricePerKg),
+            condition,
+            buyerType,
+            locationBarangay: locationBarangay || null,
+            locationMunicipality: locationMunicipality || null,
+        },
+        { params: { userId }, withCredentials: true },
+    )
+    return response.data
+}
+
+export async function deleteSale({ id, userId }) {
+    await axios.delete(`${FARMER_API}/farmte/sales/${id}`, { params: { userId }, withCredentials: true })
 }

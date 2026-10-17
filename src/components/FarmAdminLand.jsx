@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import FarmLocationEditor from './FarmLocationEditor.jsx'
 
 const API_URL = 'http://localhost:8080/api/farm-admin'
 
@@ -45,6 +46,7 @@ function FarmAdminLand() {
     const [isLoading, setIsLoading] = useState(true)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [submittedFarm, setSubmittedFarm] = useState(null)
+    const [selectedFarm, setSelectedFarm] = useState(null)
 
     useEffect(() => {
         let isActive = true
@@ -84,6 +86,27 @@ function FarmAdminLand() {
     function closeForm() {
         resetForm()
         setView('list')
+    }
+
+    function openFarmLocation(farm) {
+        if (farm.status !== 'APPROVED' || !farm.farmId) return
+        setSelectedFarm(farm)
+        setErrorMessage('')
+        setView('location')
+    }
+
+    function closeFarmLocation() {
+        setSelectedFarm(null)
+        setView('list')
+    }
+
+    function markFarmLocationSaved() {
+        setFarms((currentFarms) => currentFarms.map((farm) => (
+            farm.registrationId === selectedFarm?.registrationId
+                ? { ...farm, hasGeolocation: true }
+                : farm
+        )))
+        setSelectedFarm((farm) => farm ? { ...farm, hasGeolocation: true } : farm)
     }
 
     function updateFormField(event) {
@@ -173,7 +196,7 @@ function FarmAdminLand() {
 
     async function submitFarmRegistration() {
         if (!validateStep(1) || !validateStep(2) || !validateStep(3)) {
-            setErrorMessage('Please complete the required farm information, location, and document details before submitting.')
+            setErrorMessage('Please complete the required farm information, address, and document details before submitting.')
             return
         }
 
@@ -238,30 +261,30 @@ function FarmAdminLand() {
 
                 <div className="farm-admin-land-table-wrap">
                     {isLoading ? <p className="farm-admin-loading">Loading farm registrations...</p> : hasFarms ? (
-                        <table className="farm-admin-land-table">
-                            <thead>
-                                <tr>
-                                    <th>Farm Name</th>
-                                    <th>Status</th>
-                                    <th>Farm Code</th>
-                                    <th>Submitted</th>
-                                    <th>Rejection Reason</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {farms.map((farm) => (
-                                    <tr key={farm.registrationId}>
-                                        <td>{farm.farmName}</td>
-                                        <td>
-                                            <span className={`status-badge status-${farm.status.toLowerCase()}`}>{farm.status}</span>
-                                        </td>
-                                        <td>{farm.farmCode || '—'}</td>
-                                        <td>{farm.createdAt ? new Date(farm.createdAt).toLocaleDateString() : '—'}</td>
-                                        <td>{farm.rejectionReason || '—'}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                        <div className="fa-card-grid">
+                            {farms.map((farm) => (
+                                <button
+                                    key={farm.registrationId}
+                                    type="button"
+                                    className={`fa-card${farm.status === 'APPROVED' && farm.farmId ? '' : ' is-disabled'}`}
+                                    onClick={() => openFarmLocation(farm)}
+                                    disabled={farm.status !== 'APPROVED' || !farm.farmId}
+                                >
+                                    <div className="fa-card-top">
+                                        <span className={`status-badge status-${farm.status.toLowerCase()}`}>{farm.status}</span>
+                                        <span className="fa-card-id">{farm.farmCode || 'No code yet'}</span>
+                                    </div>
+                                    <strong className="fa-card-title">{farm.farmName}</strong>
+                                    <dl className="fa-card-meta">
+                                        <dt>Submitted</dt><dd>{farm.createdAt ? new Date(farm.createdAt).toLocaleDateString() : '—'}</dd>
+                                        {farm.rejectionReason && <><dt>Reason</dt><dd>{farm.rejectionReason}</dd></>}
+                                        {farm.status === 'APPROVED' && (
+                                            <><dt>Map location</dt><dd>{farm.hasGeolocation ? 'Added' : 'Required — click to add'}</dd></>
+                                        )}
+                                    </dl>
+                                </button>
+                            ))}
+                        </div>
                     ) : (
                         <div className="farm-admin-empty-state">
                             <div className="farm-admin-empty-card">
@@ -342,7 +365,7 @@ function FarmAdminLand() {
 
                     {step === 2 && (
                         <div className="farm-admin-form-step">
-                            <h3>Farm Location</h3>
+                            <h3>Farm Address</h3>
                             <div className="farm-admin-form-grid">
                                 <label className="farm-admin-field">
                                     <span>Region <em>*</em></span>
@@ -424,7 +447,7 @@ function FarmAdminLand() {
                             </div>
 
                             <div className="farm-admin-review-section">
-                                <h4>Farm Location</h4>
+                                <h4>Farm Address</h4>
                                 <ul>
                                     <li><strong>Region:</strong> {formData.region || '—'}</li>
                                     <li><strong>Province:</strong> {formData.province || '—'}</li>
@@ -489,12 +512,36 @@ function FarmAdminLand() {
         )
     }
 
+    function renderLocationView() {
+        return (
+            <div className="farm-admin-land-panel">
+                <div className="farm-admin-land-header-row">
+                    <div>
+                        <p className="farm-admin-eyebrow">APPROVED FARM</p>
+                        <h2>{selectedFarm?.farmName}</h2>
+                        <p className="farm-admin-location-intro">
+                            {selectedFarm?.hasGeolocation
+                                ? 'Review or update this farm’s exact map location.'
+                                : 'This farm is approved. Add its exact map location to complete the setup.'}
+                        </p>
+                    </div>
+                    <button type="button" className="farm-admin-secondary-button" onClick={closeFarmLocation}>Back to farms</button>
+                </div>
+                <FarmLocationEditor farmId={selectedFarm?.farmId} onSaved={markFarmLocationSaved} />
+            </div>
+        )
+    }
+
     if (view === 'form') {
         return <div className="farm-admin-land"> {renderFormView()} </div>
     }
 
     if (view === 'success') {
         return <div className="farm-admin-land"> {renderSuccessView()} </div>
+    }
+
+    if (view === 'location') {
+        return <div className="farm-admin-land"> {renderLocationView()} </div>
     }
 
     return <div className="farm-admin-land"> {renderListView()} </div>

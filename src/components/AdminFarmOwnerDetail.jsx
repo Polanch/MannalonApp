@@ -105,9 +105,9 @@ function AdminFarmOwnerDetail({ registrationId }) {
             {toast && <div className="admin-toast admin-toast-success" role="status">{toast}</div>}
             <div className="admin-detail-heading">
                 <div>
-                    <Link className="admin-back-link" to="/admin/farm-owners">Back to Farm Owner List</Link>
+                    <Link className="admin-back-link" to="/admin/farm-owners">Back to Farm Admin List</Link>
                     <p className="admin-eyebrow">REGISTRATION #{registration.registrationId}</p>
-                    <h2>Farm Owner Details</h2>
+                    <h2>Farm Admin Details</h2>
                 </div>
                 <span className={`status-badge status-${String(registration.status).toLowerCase()}`}>{registration.status}</span>
             </div>

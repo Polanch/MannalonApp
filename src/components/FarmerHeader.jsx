@@ -1,57 +1,33 @@
-import { Link } from 'react-router-dom'
-import { resolveMediaUrl } from '../services/farmerApi.js'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import mannalonlogo from '../assets/images/MannalonLogo3.png'
-import search from '../assets/images/search.png'
-import mIcon1 from '../assets/images/m-icon1.png'
-import mIcon2 from '../assets/images/m-icon2.png'
-import mIcon3 from '../assets/images/m-icon3.png'
-import mIcon4 from '../assets/images/m-icon4.png'
-import placeholder from '../assets/images/placeholder.png'
-function FarmerHeader({ session, onLogout }) {
+import AppHeader from './AppHeader.jsx'
+
+const NAV_ITEMS = [
+    { to: '/farmer', label: 'Home', end: true },
+    { to: '/farmer/community', label: 'Community' },
+    { to: '/farmer/farmte', label: 'FarmTE' },
+    { to: '/farmer/market', label: 'Market' },
+]
+
+function FarmerHeader({ session }) {
+    const navigate = useNavigate()
+    const location = useLocation()
+
     return (
-        <div className="farmer-header">
-            <div className="logo-holder">
-                <img src={mannalonlogo} className="logo" alt="Mannalon Logo" />
-            </div>
-            <div className="search">
-                <input type="search" name="" id="" className="search-bar" placeholder="Search" />
-                <button className="search-button">
-                    <img src={search} className="search-icon" alt="Search" />
-                </button>
-            </div>
-            <div className="menu-holder">
-                <div className="profile-holder">
-                    <span className="pfp-holder">
-                        <img src={session?.profilePictureUrl ? resolveMediaUrl(session.profilePictureUrl) : placeholder} className="pfp" alt="Profile" />
-                    </span>
-                    <Link to="/farmer/profile">{session?.firstName || session?.fullName}</Link>
-                    <Link to="/farmer">Home</Link>
-                    <a href="http://">FarmTE</a>
-                    <a
-                        href="#"
-                        onClick={(event) => {
-                            event.preventDefault()
-                            onLogout?.()
-                        }}
-                    >
-                        Logout
-                    </a>
-                </div>
-                <button>
-                    <img src={mIcon1} className="menu-icon1" alt="Menu Icon" />
-                </button>
-                <button>
-                    <img src={mIcon2} className="menu-icon2" alt="Menu Icon" />
-                </button>
-                <button>
-                    <img src={mIcon3} className="menu-icon3" alt="Menu Icon" />
-                </button>
-                <button>
-                    <img src={mIcon4} className="menu-icon4" alt="Menu Icon" />
-                </button>
-            </div>
-        </div>
-    );
+        <AppHeader
+            logo={mannalonlogo}
+            profileName={session?.firstName || session?.fullName}
+            profilePictureUrl={session?.profilePictureUrl}
+            isProfileActive={location.pathname.startsWith('/farmer/profile')}
+            onProfileClick={() => navigate('/farmer/profile')}
+        >
+            {NAV_ITEMS.map(({ to, label, end }) => (
+                <NavLink key={to} to={to} end={end} className={({ isActive }) => `app-header-link${isActive ? ' is-active' : ''}`}>
+                    {label}
+                </NavLink>
+            ))}
+        </AppHeader>
+    )
 }
 
-export default FarmerHeader;
+export default FarmerHeader

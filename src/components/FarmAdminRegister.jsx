@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import MannalonLogo from '../assets/images/MannalonLogo.png'
 import emailicn from '../assets/images/email.png'
 
@@ -31,6 +31,82 @@ function FarmAdminRegister({ onLogin }){
         idBack: null,
         selfie: null,
     })
+    const [cameraStream, setCameraStream] = useState(null)
+    const [cameraError, setCameraError] = useState('')
+    const [selfiePreviewUrl, setSelfiePreviewUrl] = useState('')
+    const videoRef = useRef(null)
+    const streamRef = useRef(null)
+
+    useEffect(() => () => {
+        streamRef.current?.getTracks().forEach((track) => track.stop())
+    }, [])
+
+    useEffect(() => {
+        if (videoRef.current && cameraStream) {
+            videoRef.current.srcObject = cameraStream
+        }
+    }, [cameraStream])
+
+    useEffect(() => {
+        if (!formData.selfie) return undefined
+        const previewUrl = URL.createObjectURL(formData.selfie)
+        Promise.resolve().then(() => setSelfiePreviewUrl(previewUrl))
+        return () => {
+            URL.revokeObjectURL(previewUrl)
+            setSelfiePreviewUrl('')
+        }
+    }, [formData.selfie])
+
+    function stopCamera() {
+        streamRef.current?.getTracks().forEach((track) => track.stop())
+        streamRef.current = null
+        setCameraStream(null)
+    }
+
+    async function openCamera() {
+        setCameraError('')
+        if (!navigator.mediaDevices?.getUserMedia) {
+            setCameraError('Camera access is unavailable in this browser or page context.')
+            return
+        }
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
+            streamRef.current = stream
+            setCameraStream(stream)
+        } catch {
+            setCameraError('Camera permission was denied or no camera is available.')
+        }
+    }
+
+    function captureSelfie() {
+        const video = videoRef.current
+        if (!video?.videoWidth || !video.videoHeight) {
+            setCameraError('The camera is not ready yet. Please try again.')
+            return
+        }
+
+        const canvas = document.createElement('canvas')
+        canvas.width = video.videoWidth
+        canvas.height = video.videoHeight
+        const context = canvas.getContext('2d')
+        if (!context) {
+            setCameraError('Could not capture the picture. Please try again.')
+            return
+        }
+
+        context.drawImage(video, 0, 0)
+        canvas.toBlob((blob) => {
+            if (!blob) {
+                setCameraError('Could not capture the picture. Please try again.')
+                return
+            }
+
+            setFormData((currentData) => ({ ...currentData, selfie: new File([blob], 'farm-admin-selfie.jpg', { type: 'image/jpeg' }) }))
+            setCameraError('')
+            stopCamera()
+        }, 'image/jpeg', 0.9)
+    }
 
     useEffect(() => {
         if (!isReturningToLogin) {
@@ -131,6 +207,7 @@ function FarmAdminRegister({ onLogin }){
     }
 
     function goToPreviousPhase(){
+        stopCamera()
         setCurrentPhase((phase) => Math.max(1, phase - 1))
     }
 
@@ -164,6 +241,7 @@ function FarmAdminRegister({ onLogin }){
                 throw new Error(responseBody?.message || responseBody?.error || 'Account submission could not be completed.')
             }
 
+            stopCamera()
             setCurrentPhase(5)
         } catch (error) {
             setSubmissionError(error.message || 'Account submission could not be completed.')
@@ -265,7 +343,6 @@ function FarmAdminRegister({ onLogin }){
             <form className={`f-register-phase ${currentPhase === 4 ? 'active' : ''}`} onSubmit={(event) => { event.preventDefault(); submitRegistration() }}>
                 <h1>Farm-Admin Verification</h1>
                 <div className="register-phase-content document-phase-content">
-                    <p className="account-setup-note">This creates your Farm-Admin account for approval. After approval, log in and use the Land section to register your farm.</p>
                     <div className="document-id-field">
                         <label htmlFor="idType"><img src={emailicn} className="icn" />ID type</label>
                     </div>
@@ -278,7 +355,6 @@ function FarmAdminRegister({ onLogin }){
                     {[
                         ['idFront', 'Front of ID'],
                         ['idBack', 'Back of ID'],
-                        ['selfie', 'Selfie / Face verification'],
                     ].map(([name, label]) => (
                         <div className="file-upload-group" key={name}>
                             <input type="file" name={name} id={name} onClick={(event) => { event.currentTarget.value = '' }} onChange={updateField} accept="image/*" />
@@ -297,6 +373,24 @@ function FarmAdminRegister({ onLogin }){
                             </div>
                         </div>
                     ))}
+                    <div className="farm-admin-selfie-capture">
+                        <span className="file-name">Selfie / Face verification</span>
+                        {cameraStream && <video className="farm-admin-selfie-media" ref={videoRef} autoPlay playsInline muted />}
+                        {!cameraStream && selfiePreviewUrl && <img className="farm-admin-selfie-media" src={selfiePreviewUrl} alt="Captured selfie" />}
+                        <div className="file-upload-actions">
+                            {cameraStream ? (
+                                <>
+                                    <button type="button" className="file-upload-button" onClick={captureSelfie}>Capture</button>
+                                    <button type="button" className="remove-file-button" onClick={stopCamera}>Cancel</button>
+                                </>
+                            ) : formData.selfie ? (
+                                <button type="button" className="file-upload-button" onClick={() => { removeFile('selfie'); openCamera() }}>Retake Selfie</button>
+                            ) : (
+                                <button type="button" className="file-upload-button" onClick={openCamera}>Open Camera</button>
+                            )}
+                        </div>
+                        {cameraError && <p className="registration-error" role="alert">{cameraError}</p>}
+                    </div>
                 </div>
                 <div className="register-navigation">
                     <button type="button" onClick={goToPreviousPhase}>Previous</button>
@@ -307,11 +401,9 @@ function FarmAdminRegister({ onLogin }){
                 {submissionError && <p className="registration-error" role="alert">{submissionError}</p>}
             </form>
             <div className={`f-register-phase submission-phase ${currentPhase === 5 ? 'active' : ''}`}>
-                <h1>Farm-Admin Account Submitted</h1>
+                <h1>Application Submitted</h1>
                 <div className="submission-message">
-                    <p>Your Farm-Admin account has been submitted for approval.</p>
-                    <p>The admin team will review your application before you can log in.</p>
-                    <p>Once approved, log in and use the Land section to register your farm.</p>
+                    <p>We'll review your account. You can log in once it's approved.</p>
                 </div>
                 <button className="understand-button" type="button" onClick={handleUnderstand}>I Understand</button>
             </div>

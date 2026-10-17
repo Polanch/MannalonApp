@@ -10,7 +10,7 @@ import { createPost, fetchPosts, getApiErrorMessage } from '../../services/farme
 
 const PAGE_SIZE = 10
 
-function FarmerDashboardMiddleNavigation({ session, authorId, header }) {
+function FarmerDashboardMiddleNavigation({ session, authorId, header, hideComposer = false, emptyText = 'No posts yet. Be the first to post!' }) {
     const photoInputRef = useRef(null)
     const videoInputRef = useRef(null)
     const mediaPreviewUrlRef = useRef(null)
@@ -137,6 +137,7 @@ function FarmerDashboardMiddleNavigation({ session, authorId, header }) {
     return (
         <div className="farmer-dashboard-middle-navigation">
             {header}
+            {!hideComposer && (
             <div className="create-post-container">
                 <div className="post-mini-menu">
                     <div className="post-media">
@@ -203,6 +204,7 @@ function FarmerDashboardMiddleNavigation({ session, authorId, header }) {
                 </div>
                 {postError && <p className="post-error" role="alert">{postError}</p>}
             </div>
+            )}
             {posts.map((post) => (
                 <FarmerPost key={post.id} post={post} session={session} />
             ))}
@@ -215,7 +217,7 @@ function FarmerDashboardMiddleNavigation({ session, authorId, header }) {
             {isLoadingPosts && <p className="feed-status">Loading posts...</p>}
             {!hasMore && !feedError && (
                 <p className="feed-status">
-                    {posts.length === 0 ? 'No posts yet. Be the first to post!' : "You're all caught up."}
+                    {posts.length === 0 ? emptyText : "You're all caught up."}
                 </p>
             )}
             <div ref={sentinelRef} className="feed-sentinel" aria-hidden="true"></div>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import '../assets/styles/admin.css'
+import SmsNotificationLog from './SmsNotificationLog.jsx'
 
 const API_URL = 'http://localhost:8080/api/farm-admin/farmer-registrations'
 const API_ORIGIN = 'http://localhost:8080'
@@ -260,8 +261,16 @@ function FarmAdminFarmers() {
                             </section>
 
                             {registration.rejectionReason && (
-                                <p className="admin-alert admin-alert-error"><strong>Rejection reason:</strong> {registration.rejectionReason}</p>
+                                <p className="admin-alert admin-alert-error">
+                                    <strong>{registration.rejectedBy === 'ADMIN' ? 'Rejected by MAO:' : 'Rejection reason:'}</strong> {registration.rejectionReason}
+                                </p>
                             )}
+
+                            <SmsNotificationLog
+                                notifications={registration.notifications}
+                                title="Copy of SMS sent to Farmer"
+                                description="The MAO sent this text message to the Farmer's registered mobile number."
+                            />
 
                             <div className="admin-review-actions">
                                 <button type="button" className="admin-button admin-button-secondary" onClick={() => setSelectedRegistrationId(null)}>Close</button>
@@ -322,6 +331,7 @@ function FarmAdminFarmers() {
                             <span>Status</span>
                             <select value={status} onChange={(event) => setStatus(event.target.value)}>
                                 <option value="PENDING">Pending</option>
+                                <option value="PENDING_ADMIN">Forwarded to Admin (RSBSA)</option>
                                 <option value="APPROVED">Approved</option>
                                 <option value="REJECTED">Rejected</option>
                                 <option value="ALL">All statuses</option>
@@ -332,43 +342,33 @@ function FarmAdminFarmers() {
 
                 {error && <p className="admin-alert admin-alert-error" role="alert">{error}</p>}
                 {isLoading ? <p className="admin-loading">Loading Farmer registrations...</p> : (
-                    <div className="admin-table-wrap">
-                        <table className="admin-data-table farmer-review-table">
-                            <thead>
-                                <tr>
-                                    <th>Status</th>
-                                    <th>Registration ID</th>
-                                    <th>Farmer</th>
-                                    <th>Mobile number</th>
-                                    <th>Farm code</th>
-                                    <th>Submitted</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {visibleRegistrations.map((farmer) => (
-                                    <tr key={farmer.registrationId}>
-                                        <td><span className={statusClass(farmer.status)}>{farmer.status}</span></td>
-                                        <td>{farmer.registrationId}</td>
-                                        <td>
-                                            <button
-                                                type="button"
-                                                className="farmer-review-name-link"
-                                                onClick={() => setSelectedRegistrationId(farmer.registrationId)}
-                                            >
-                                                {getFarmerName(farmer)}
-                                            </button>
-                                        </td>
-                                        <td>{valueOrDash(farmer.mobileNumber)}</td>
-                                        <td>{valueOrDash(farmer.farmCode)}</td>
-                                        <td>{formatDate(farmer.submittedAt)}</td>
-                                    </tr>
-                                ))}
-                                {!visibleRegistrations.length && (
-                                    <tr><td className="admin-table-empty" colSpan="6">No Farmer registrations match the current filters.</td></tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
+                    visibleRegistrations.length ? (
+                        <div className="fa-card-grid">
+                            {visibleRegistrations.map((farmer) => (
+                                <button
+                                    key={farmer.registrationId}
+                                    type="button"
+                                    className="fa-card"
+                                    onClick={() => setSelectedRegistrationId(farmer.registrationId)}
+                                >
+                                    <div className="fa-card-top">
+                                        <span className={statusClass(farmer.status)}>{farmer.status}</span>
+                                        <span className="fa-card-id">#{farmer.registrationId}</span>
+                                    </div>
+                                    <strong className="fa-card-title">{getFarmerName(farmer)}</strong>
+                                    {farmer.status === 'REJECTED' && farmer.rejectedBy === 'ADMIN' && <small className="sms-list-note">by MAO · SMS sent</small>}
+                                    <dl className="fa-card-meta">
+                                        <dt>Mobile</dt><dd>{valueOrDash(farmer.mobileNumber)}</dd>
+                                        <dt>Farm code</dt><dd>{valueOrDash(farmer.farmCode)}</dd>
+                                        <dt>Submitted</dt><dd>{formatDate(farmer.submittedAt)}</dd>
+                                    </dl>
+                                    <span className="fa-card-action">Review →</span>
+                                </button>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="fa-card-empty">No Farmer registrations match the current filters.</p>
+                    )
                 )}
             </section>
         </main>

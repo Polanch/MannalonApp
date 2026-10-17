@@ -1,0 +1,207 @@
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    height: 60px;
+    flex: 0 0 60px;
+    box-sizing: border-box;
+    padding: 0 16px 0 20px;
+    background-color: #156b29;
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(10, 40, 18, 0.18);
+    font-family: inherit;
+}
+
+.app-header.is-fixed {
+    position: fixed;
+    left: 0;
+    right: 0;
+}
+
+.app-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.app-header-logo {
+    width: auto;
+    height: 40px;
+}
+
+.app-header-title {
+    font-family: "Oswald", sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+}
+
+.app-header-search {
+    display: flex;
+    align-items: center;
+    flex: 0 1 260px;
+    min-width: 120px;
+    height: 34px;
+    border-radius: 999px;
+    background: #fff;
+    overflow: hidden;
+}
+
+.app-header-search input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0 6px 0 14px;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 14px;
+    outline: none;
+}
+
+.app-header-search button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 100%;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.app-header-search button:hover {
+    background: #f1f3f1;
+}
+
+.app-header-search button img {
+    width: 18px;
+    height: 18px;
+}
+
+.app-header-nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1 0 auto;
+    gap: 2px;
+}
+
+.app-header-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border: 0;
+    border-radius: 6px;
+    background: none;
+    color: rgba(255, 255, 255, 0.85);
+    font: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.app-header-link:hover:not(:disabled),
+.app-header-link:focus-visible {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    outline: none;
+}
+
+.app-header-link.is-active,
+.app-header-link.active {
+    background: rgba(255, 255, 255, 0.22);
+    color: #fff;
+    font-weight: 700;
+}
+
+.app-header-link:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+.app-header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    padding-left: 10px;
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.app-header-profile {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 200px;
+    padding: 4px 12px 4px 4px;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    color: #fff;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.app-header-profile:hover,
+.app-header-profile:focus-visible,
+.app-header-profile.is-active {
+    background: rgba(255, 255, 255, 0.18);
+    outline: none;
+}
+
+.app-header-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    box-sizing: border-box;
+    background: #2f9e4b;
+    font-size: 12px;
+    font-weight: 700;
+    overflow: hidden;
+}
+
+.app-header-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.app-header-profile-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 1280px) {
+    .app-header-title,
+    .app-header-profile-name {
+        display: none;
+    }
+
+    .app-header-profile {
+        padding-right: 4px;
+    }
+}
+
+@media (max-width: 960px) {
+    .app-header-search {
+        display: none;
+    }
+}

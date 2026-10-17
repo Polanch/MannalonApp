@@ -5,13 +5,19 @@ import AdminSideBar from '../components/AdminSideBar.jsx'
 import Login from '../components/AdminLogin.jsx'
 import AdminFarmOwners from '../components/AdminFarmOwners.jsx'
 import AdminFarmOwnerDetail from '../components/AdminFarmOwnerDetail.jsx'
+import AdminFarmers from '../components/AdminFarmers.jsx'
+import AdminPrograms from '../components/AdminPrograms.jsx'
+import AdminMarket from '../components/AdminMarket.jsx'
+import AdminDashboard from '../components/AdminDashboard.jsx'
 import AdminFarmManagement from '../components/AdminFarmManagement.jsx'
 import AdminFarmDetail from '../components/AdminFarmDetail.jsx'
+import RentalMarketplace from '../components/RentalMarketplace.jsx'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 function Admin() {
     const [isAuthenticated, setIsAuthenticated] = useState(() => sessionStorage.getItem('adminAuthenticated') === 'true')
     const [isLogoutConfirmationOpen, setIsLogoutConfirmationOpen] = useState(false)
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
     const { registrationId } = useParams()
     const location = useLocation()
     const navigate = useNavigate()
@@ -37,6 +43,22 @@ function Admin() {
             return <AdminFarmOwners />
         }
 
+        if (location.pathname === '/admin/programs') {
+            return <AdminPrograms />
+        }
+
+        if (location.pathname === '/admin/market') {
+            return <AdminMarket />
+        }
+
+        if (location.pathname === '/admin/rentals') {
+            return <RentalMarketplace heading="MAO tool rental" adminMode />
+        }
+
+        if (location.pathname === '/admin/farmers') {
+            return <AdminFarmers />
+        }
+
         if (location.pathname === '/admin/farm-management') {
             return <AdminFarmManagement />
         }
@@ -46,16 +68,16 @@ function Admin() {
         }
 
         if (!registrationId) {
-            return <div className="admin-empty-state">Select a section from the sidebar.</div>
+            return <AdminDashboard />
         }
 
         return <AdminFarmOwnerDetail registrationId={registrationId} />
     }
 
     return isAuthenticated ? (
-        <div className="admin-app-shell">
+        <div className={`admin-app-shell${isSidebarCollapsed ? ' sidebar-collapsed' : ''}`}>
+            <AdminSideBar collapsed={isSidebarCollapsed} onToggle={() => setIsSidebarCollapsed((current) => !current)} />
             <AdminHeader onLogout={() => setIsLogoutConfirmationOpen(true)} />
-            <AdminSideBar />
             <main className="admin-main-content">
                 {renderAdminSection()}
             </main>

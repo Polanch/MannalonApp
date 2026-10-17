@@ -33,7 +33,7 @@ function AdminFarmOwners() {
                 const response = await fetch(`${API_URL}${query}`, {
                     credentials: 'include',
                 })
-                if (!response.ok) throw new Error('Unable to load farm-owner registrations.')
+                if (!response.ok) throw new Error('Unable to load Farm-Admin registrations.')
                 const data = await response.json()
                 if (isActive) setRegistrations(Array.isArray(data) ? data : [])
             } catch (requestError) {
@@ -88,8 +88,8 @@ function AdminFarmOwners() {
             <div className="admin-fo-header">
                 <div>
                     <p className="admin-eyebrow">USER MANAGEMENT</p>
-                    <h2>Farm Owner List</h2>
-                    <p className="admin-section-description">Review submitted farm-owner registrations and their verification status.</p>
+                    <h2>Farm Admin List</h2>
+                    <p className="admin-section-description">Review submitted Farm-Admin registrations and their verification status.</p>
                 </div>
                 <div className="admin-fo-controls">
                     <label>
@@ -123,7 +123,7 @@ function AdminFarmOwners() {
 
             {error && <p className="admin-alert admin-alert-error" role="alert">{error}</p>}
             {provisionMessage && <p className="admin-toast admin-toast-success" role="status">{provisionMessage}</p>}
-            {isLoading ? <p className="admin-loading">Loading farm-owner registrations...</p> : (
+            {isLoading ? <p className="admin-loading">Loading Farm-Admin registrations...</p> : (
                 <div className="admin-table-wrap">
                     <table className="admin-data-table">
                         <thead>
@@ -144,8 +144,8 @@ function AdminFarmOwners() {
                             {visibleRegistrations.map((registration) => (
                                 <tr key={registration.registrationId}>
                                     <td><span className={statusClass(registration.status)}>{registration.status}</span></td>
-                                    <td><Link className="admin-table-link" to={`/admin/${registration.registrationId}`}>{registration.registrationId}</Link></td>
-                                    <td>{registration.email || '-'}</td>
+                                    <td>{registration.registrationId}</td>
+                                    <td><Link className="admin-table-link" to={`/admin/${registration.registrationId}`}>{registration.email || 'View details'}</Link></td>
                                     <td>{registration.firstName || '-'}</td>
                                     <td>{registration.surname || '-'}</td>
                                     <td>{registration.middleInitial || '-'}</td>

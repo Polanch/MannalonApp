@@ -1686,8 +1686,114 @@ Orange: #FFA02E
     min-width: 180px;
 }
 
+.farm-map-section {
+    padding: 72px max(24px, calc((100% - 1120px) / 2));
+    background: #f2f7f3;
+}
+
+.farm-map-copy {
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.farm-map-copy h2 {
+    margin: 6px 0 10px;
+    color: #17351f;
+    font-size: clamp(28px, 4vw, 40px);
+}
+
+.farm-map-copy > p:last-child {
+    margin: 0;
+    color: #5a6e60;
+}
+
+.farm-map-eyebrow {
+    margin: 0;
+    color: #468432;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.public-farm-map {
+    width: 100%;
+    height: 520px;
+    border: 1px solid #cfddcf;
+    border-radius: 16px;
+    box-shadow: 0 16px 40px rgba(20, 66, 31, 0.12);
+}
+
+.public-farm-map.is-hidden {
+    display: none;
+}
+
+.farm-map-pin-wrapper {
+    background: transparent;
+    border: 0;
+}
+
+.farm-map-pin {
+    position: relative;
+    display: block;
+    width: 26px;
+    height: 26px;
+    border: 3px solid #fff;
+    border-radius: 50% 50% 50% 0;
+    background: #105621;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+    transform: rotate(-45deg);
+}
+
+.farm-map-pin::after {
+    content: "";
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    margin: 6px;
+    border-radius: 50%;
+    background: #fff;
+}
+
+.public-farm-marker-label {
+    width: max-content;
+    padding: 4px 8px;
+    border: 1px solid #d5e2d7;
+    border-radius: 6px;
+    background: #fff;
+    color: #17351f !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
+}
+
+.public-farm-marker-label::before {
+    display: none;
+}
+
+.farm-map-message {
+    margin: 16px 0 0;
+    padding: 18px;
+    border-radius: 8px;
+    background: #fff;
+    color: #526058;
+    text-align: center;
+}
+
+@media (max-width: 760px) {
+    .farm-map-section {
+        padding: 48px 16px;
+    }
+
+    .public-farm-map {
+        height: 420px;
+    }
+}
+
 @media (prefers-reduced-motion: reduce){
     .farmer-auth-track{
         transition: none;
     }
 }
+.farm-admin-selfie-capture { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.farm-admin-selfie-media { width: 100%; max-height: 220px; object-fit: cover; border-radius: 10px; background: #0f1f14; border: 1px solid #c9d8cd; }

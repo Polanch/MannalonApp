@@ -7,6 +7,7 @@ import rice from '../assets/images/rice.png';
 import LandingFooter from '../components/LandingFooter.jsx';
 import FarmAdminLogin from '../components/FarmAdminLogin.jsx';
 import FarmerLogin from '../components/FarmerLogin.jsx';
+import PublicFarmMap from '../components/PublicFarmMap.jsx';
 import { Navigate } from 'react-router-dom'
 import { getFarmerSession } from '../services/farmerApi.js'
 function LandingPage({ initialAdminPortalOpen = false, onAdminLoginSuccess, onAdminPortalClose }){
@@ -117,6 +118,7 @@ function LandingPage({ initialAdminPortalOpen = false, onAdminLoginSuccess, onAd
                     </div>
                 </div>
             </div>
+            <PublicFarmMap />
             <LandingFooter />
             {farmerAuthInitialView && (
                 <FarmerLogin

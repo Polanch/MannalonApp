@@ -657,3 +657,723 @@
 .farm-admin-announce-submit:disabled { opacity: 0.5; cursor: not-allowed; }
 .farm-admin-announce-error { margin: 0; color: #B91C1C; font-size: 0.8rem; }
 .farm-admin-announce-success { margin: 0; color: #166534; font-size: 0.8rem; }
+
+/* Header profile shortcut */
+.farm-admin-menu .farm-admin-nav-profile {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 200px;
+    padding: 3px 10px 3px 3px;
+    border-radius: 999px;
+    color: #fff;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.farm-admin-menu .farm-admin-nav-profile:hover,
+.farm-admin-menu .farm-admin-nav-profile:focus-visible,
+.farm-admin-menu .farm-admin-nav-profile.is-active {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.farm-admin-nav-profile img,
+.farm-admin-nav-profile > span:first-child {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: grid;
+    place-items: center;
+    background: #e3f1e6;
+    color: #105621;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.farm-admin-nav-profile-name {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* Farm-Admin profile page */
+.fa-profile {
+    width: min(960px, 100%);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.fa-profile-card {
+    background: #fff;
+    border: 1px solid #dfe8e1;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.fa-profile-cover {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    background: linear-gradient(135deg, #105621, #4e9a5e) center / cover no-repeat;
+}
+
+.fa-profile-image-hint {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.fa-profile-cover:hover .fa-profile-image-hint,
+.fa-profile-cover:focus-visible .fa-profile-image-hint,
+.fa-profile-avatar:hover .fa-profile-image-hint,
+.fa-profile-avatar:focus-visible .fa-profile-image-hint {
+    opacity: 1;
+}
+
+.fa-profile-identity {
+    display: flex;
+    align-items: flex-end;
+    gap: 18px;
+    padding: 0 24px 20px;
+}
+
+.fa-profile-avatar {
+    position: relative;
+    width: 128px;
+    height: 128px;
+    flex: 0 0 128px;
+    margin-top: -64px;
+    padding: 0;
+    border: 4px solid #fff;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    background: #e3f1e6;
+    color: #105621;
+    font-size: 36px;
+    font-weight: 800;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+.fa-profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.fa-profile-avatar .fa-profile-image-hint {
+    inset: auto 0 0 0;
+    border-radius: 0;
+    text-align: center;
+}
+
+.fa-profile-name {
+    flex: 1;
+    min-width: 0;
+}
+
+.fa-profile-name h1 {
+    margin: 2px 0;
+    color: #17311e;
+    font-size: 26px;
+}
+
+.fa-profile-muted {
+    margin: 0;
+    color: #6b7a70;
+}
+
+.fa-profile-columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.fa-profile-section,
+.fa-profile-form {
+    padding: 20px 24px;
+}
+
+.fa-profile-wide {
+    grid-column: 1 / -1;
+}
+
+.fa-profile-section h2,
+.fa-profile-form h2 {
+    margin: 0 0 12px;
+    color: #17311e;
+    font-size: 18px;
+}
+
+.fa-profile-section p {
+    margin: 0;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.fa-profile-list {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 10px 16px;
+    margin: 0;
+}
+
+.fa-profile-list dt {
+    color: #6b7a70;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.fa-profile-list dd {
+    margin: 0;
+    color: #17311e;
+}
+
+.fa-profile-code {
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: #e3f1e6;
+    color: #105621;
+    font-family: monospace;
+    font-weight: 700;
+}
+
+.fa-profile-form h3 {
+    margin: 18px 0 10px;
+    color: #105621;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.fa-profile-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 16px;
+}
+
+.fa-profile-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: #3d4c42;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.fa-profile-field input,
+.fa-profile-field textarea {
+    flex: 0 0 auto;
+    min-height: 40px;
+    padding: 9px 12px;
+    border: 1px solid #cdd9d0;
+    border-radius: 6px;
+    font: inherit;
+    font-weight: 400;
+    color: #17311e;
+    background: #fff;
+}
+
+.fa-profile-field textarea {
+    resize: vertical;
+}
+
+.fa-profile-field input:focus,
+.fa-profile-field textarea:focus {
+    outline: 2px solid rgba(16, 86, 33, 0.25);
+    border-color: #105621;
+}
+
+.fa-profile-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.farm-location-editor {
+    padding: 20px 24px;
+}
+
+.farm-location-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.farm-location-heading h2 {
+    margin: 0 0 6px;
+    color: #17311e;
+    font-size: 18px;
+}
+
+.farm-location-heading p {
+    margin: 0;
+    color: #6b7a70;
+}
+
+.farm-location-search {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 10px;
+    margin: 18px 0 12px;
+}
+
+.farm-location-map {
+    width: 100%;
+    height: 420px;
+    border: 1px solid #d4dfd5;
+    border-radius: 8px;
+}
+
+.farm-location-map.is-hidden {
+    display: none;
+}
+
+.farm-location-details {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin: 14px 0 0;
+}
+
+.farm-location-details div {
+    min-width: 0;
+    padding: 10px 12px;
+    border-radius: 6px;
+    background: #f2f7f3;
+}
+
+.farm-location-details dt {
+    color: #6b7a70;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.farm-location-details dd {
+    overflow: hidden;
+    margin: 4px 0 0;
+    color: #17311e;
+    font-family: monospace;
+    font-size: 12px;
+    text-overflow: ellipsis;
+}
+
+.farm-location-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 14px;
+}
+
+.farm-map-attribution-note {
+    margin: 10px 0 0;
+    color: #6b7a70;
+    font-size: 12px;
+}
+
+.farm-map-pin-wrapper {
+    background: transparent;
+    border: 0;
+}
+
+.farm-map-pin {
+    position: relative;
+    display: block;
+    width: 26px;
+    height: 26px;
+    border: 3px solid #fff;
+    border-radius: 50% 50% 50% 0;
+    background: #105621;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+    transform: rotate(-45deg);
+}
+
+.farm-map-pin::after {
+    content: "";
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    margin: 6px;
+    border-radius: 50%;
+    background: #fff;
+}
+
+.fa-profile .admin-alert {
+    margin: 12px 0 0;
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.fa-profile > .admin-alert {
+    margin: 0;
+}
+
+.fa-profile .admin-alert-error {
+    border: 1px solid #efb8b2;
+    background: #fff1ef;
+    color: #8c2a22;
+}
+
+.fa-profile .admin-alert-success {
+    border: 1px solid #b8dfc1;
+    background: #effaf1;
+    color: #1d6b31;
+}
+
+@media (max-width: 720px) {
+    .fa-profile-identity {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .fa-profile-columns,
+    .fa-profile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .farm-location-heading {
+        flex-direction: column;
+    }
+
+    .farm-location-search,
+    .farm-location-details {
+        grid-template-columns: 1fr;
+    }
+
+    .farm-admin-nav-profile-name {
+        display: none;
+    }
+}
+
+/* Shared Farm-Admin shell: left nav | page | right nav (same as the feed). */
+.farm-admin-shell-main {
+    min-width: 0;
+    align-self: stretch;
+}
+
+.farm-admin-shell-main:not(.is-feed) {
+    padding: 16px 16px 40px;
+    box-sizing: border-box;
+}
+
+.farm-admin-shell-main .farm-admin-land,
+.farm-admin-shell-main .farm-admin-roles {
+    min-height: 0;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+}
+
+.farm-admin-shell-main .farm-admin-land-panel,
+.farm-admin-shell-main .admin-detail-page {
+    max-width: none;
+}
+
+.farm-admin-shell-main .farm-admin-roles-grid {
+    grid-template-columns: 1fr;
+}
+
+.fa-profile-posts {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: min(680px, 100%);
+    margin: 8px auto 0;
+}
+
+.fa-profile-posts > h2 {
+    margin: 0;
+    padding: 0 16px;
+    color: #17351f;
+    font-size: 20px;
+}
+
+/* Profile inside the shell's middle column */
+.farm-admin-shell-main .fa-profile {
+    width: 100%;
+}
+
+.farm-admin-shell-main .fa-profile-columns {
+    grid-template-columns: 1fr;
+}
+
+.farm-admin-shell-main .fa-profile-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.farm-admin-shell-main .fa-profile-posts {
+    width: 100%;
+    margin-top: 0;
+}
+
+.farm-admin-shell-main .fa-profile-posts > h2 {
+    padding: 0;
+}
+
+.farm-admin-shell-main .fa-profile-posts .farmer-dashboard-middle-navigation {
+    padding: 0;
+}
+
+.farm-admin-shell-main .fa-profile-identity {
+    flex-wrap: wrap;
+}
+
+.farm-admin-shell-main .fa-profile-name {
+    flex: 1;
+    min-width: 160px;
+}
+
+/* Card grid for list pages inside the Farm-Admin shell */
+.fa-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+}
+
+.fa-card {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    min-width: 0;
+    padding: 16px;
+    border: 1px solid #dfe7e1;
+    border-radius: 12px;
+    background: #fff;
+    color: #243229;
+    font: inherit;
+    text-align: left;
+    box-shadow: 0 2px 8px rgba(23, 53, 31, 0.06);
+}
+
+button.fa-card {
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+button.fa-card:hover,
+button.fa-card:focus-visible {
+    transform: translateY(-2px);
+    border-color: #9fc7aa;
+    box-shadow: 0 8px 18px rgba(23, 53, 31, 0.12);
+    outline: none;
+}
+
+button.fa-card.is-disabled {
+    cursor: default;
+    opacity: 0.78;
+}
+
+button.fa-card.is-disabled:hover,
+button.fa-card.is-disabled:focus-visible {
+    transform: none;
+    border-color: #dfe7e1;
+    box-shadow: 0 2px 8px rgba(23, 53, 31, 0.06);
+}
+
+.farm-admin-location-intro {
+    max-width: 640px;
+    margin: 6px 0 0;
+    color: #627068;
+    line-height: 1.5;
+}
+
+.fa-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.fa-card-top > span:first-child {
+    max-width: 65%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fa-card-id {
+    overflow: hidden;
+    color: #7a877e;
+    font-size: 12px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fa-card-title {
+    overflow-wrap: anywhere;
+    color: #17351f;
+    font-size: 16px;
+    line-height: 1.3;
+}
+
+.fa-card-sub {
+    color: #657269;
+    font-size: 12px;
+}
+
+.fa-card-meta {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 4px 10px;
+    margin: 4px 0 0;
+    font-size: 13px;
+}
+
+.fa-card-meta dt {
+    color: #7a877e;
+}
+
+.fa-card-meta dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+    color: #243229;
+    font-weight: 600;
+}
+
+.fa-card-action {
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px solid #eef2ef;
+    color: #105621;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.fa-card-empty {
+    margin: 0;
+    padding: 32px 16px;
+    border: 1px dashed #cbd6ce;
+    border-radius: 12px;
+    background: #fff;
+    color: #657269;
+    text-align: center;
+}
+
+.fa-card .status-badge {
+    min-height: 22px;
+    padding: 3px 9px;
+    font-size: 10px;
+}
+
+.status-submitted {
+    background: #e3eefc;
+    color: #1f4f8f;
+}
+
+.status-returned {
+    background: #fde4e1;
+    color: #a02e25;
+}
+
+/* Stack page headings and filters in the narrow middle column */
+.farm-admin-shell-main .admin-fo-header,
+.farm-admin-shell-main .admin-fo-heading {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+}
+
+.farm-admin-shell-main .admin-fo-header h2 {
+    font-size: 26px;
+}
+
+.farm-admin-shell-main .admin-fo-controls {
+    flex-wrap: wrap;
+}
+
+.farm-admin-shell-main .admin-fo-controls label {
+    flex: 1 1 180px;
+}
+
+.farm-admin-shell-main .admin-fo-controls input,
+.farm-admin-shell-main .admin-fo-controls select {
+    width: 100%;
+    min-width: 0;
+}
+
+.farm-admin-shell-main .farm-admin-land-table-wrap {
+    overflow: visible;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.status-pending_admin {
+    background: #e3eefc;
+    color: #1f4f8f;
+}
+
+.admin-fo-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.admin-fo-heading h1 {
+    margin: 0;
+    color: #17351f;
+    font-size: 26px;
+}
+
+.admin-fo-heading select {
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #cbd6ce;
+    border-radius: 6px;
+    background: #fff;
+    color: #243229;
+}
+
+.farm-admin-shell-main > .farmer-dashboard-middle-navigation {
+    padding: 0;
+}
+
+.farm-admin-shell-main .market-filters {
+    grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr));
+}
+
+.farm-admin-shell-main .market-filters select {
+    width: 100%;
+    min-width: 0;
+}
+
+.farm-admin-shell-main .market-headline {
+    grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr));
+}
+
+.farm-admin-shell-main .market-area-price {
+    color: #105621;
+    font-size: 22px;
+    overflow-wrap: anywhere;
+}
+
+.farm-admin-shell-main .market .fa-card-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+}
+
+.farm-admin-shell-main .market .farmte-block-head {
+    flex-wrap: wrap;
+}

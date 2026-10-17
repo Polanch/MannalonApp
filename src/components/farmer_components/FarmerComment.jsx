@@ -2,6 +2,7 @@ import { useState } from 'react'
 import placeholderImage from '../../assets/images/placeholder.png'
 import upIcon from '../../assets/images/m-icon8.png'
 import downIcon from '../../assets/images/m-icon9.png'
+import { useSocial } from '../../services/socialContext.js'
 import {
     createComment,
     formatRelativeTime,
@@ -10,7 +11,7 @@ import {
     setCommentReaction,
 } from '../../services/farmerApi.js'
 
-function FarmerComment({ comment, postId, session, onReplyAdded, onThreadReply, isReply = false }) {
+function FarmerComment({ comment, postId, session, onReplyAdded, onThreadReply, isReply = false, resource = 'posts' }) {
     const [reaction, setReaction] = useState({
         upvotes: comment.upvotes ?? 0,
         downvotes: comment.downvotes ?? 0,
@@ -26,6 +27,7 @@ function FarmerComment({ comment, postId, session, onReplyAdded, onThreadReply, 
 
     const score = reaction.upvotes - reaction.downvotes
     const avatar = comment.authorProfilePictureUrl ? resolveMediaUrl(comment.authorProfilePictureUrl) : placeholderImage
+    const { openProfile } = useSocial()
 
     async function handleReaction(type) {
         if (isReacting) {
@@ -45,6 +47,7 @@ function FarmerComment({ comment, postId, session, onReplyAdded, onThreadReply, 
         try {
             const saved = await setCommentReaction({
                 postId,
+                resource,
                 commentId: comment.id,
                 userId: session.userId,
                 reaction: next ?? 'NONE',
@@ -73,6 +76,7 @@ function FarmerComment({ comment, postId, session, onReplyAdded, onThreadReply, 
         try {
             const saved = await createComment({
                 postId,
+                resource,
                 userId: session.userId,
                 content,
                 parentCommentId: isReply ? comment.parentCommentId : comment.id,
@@ -96,11 +100,13 @@ function FarmerComment({ comment, postId, session, onReplyAdded, onThreadReply, 
     return (
         <li className="post-comment-item">
             <div className="post-comment">
-                <img src={avatar} alt="" />
+                <img src={avatar} alt="" className="social-clickable" onClick={() => openProfile(comment.authorUserId)} />
                 <div className="post-comment-main">
                     <div className="post-comment-body">
                         <p className="post-comment-meta">
-                            <strong>{comment.authorName}</strong>
+                            <strong className="social-clickable social-name" role="link" tabIndex={0}
+                                onClick={() => openProfile(comment.authorUserId)}
+                                onKeyDown={(event) => { if (event.key === 'Enter') openProfile(comment.authorUserId) }}>{comment.authorName}</strong>
                             <span>{formatRelativeTime(comment.createdAt)}</span>
                         </p>
                         <p className="post-comment-text">{comment.content}</p>
@@ -165,6 +171,7 @@ function FarmerComment({ comment, postId, session, onReplyAdded, onThreadReply, 
                                     key={reply.id}
                                     comment={reply}
                                     postId={postId}
+                                    resource={resource}
                                     session={session}
                                     onReplyAdded={onReplyAdded}
                                     onThreadReply={(saved) => setReplies((current) => [...current, saved])}

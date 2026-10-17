@@ -3,6 +3,7 @@ import placeholderImage from '../../assets/images/placeholder.png';
 import upIcon from '../../assets/images/m-icon8.png';
 import downIcon from '../../assets/images/m-icon9.png';
 import FarmerComment from './FarmerComment.jsx';
+import { useSocial } from '../../services/socialContext.js';
 import {
     createComment,
     fetchComments,
@@ -13,6 +14,7 @@ import {
 } from '../../services/farmerApi.js';
 
 function FarmerPost({ post, session }) {
+    const { openProfile } = useSocial();
     const [reaction, setReaction] = useState({
         upvotes: post.upvotes ?? 0,
         downvotes: post.downvotes ?? 0,
@@ -105,11 +107,15 @@ function FarmerPost({ post, session }) {
     return (
         <div className="farmer-post-box">
             <div className="post-header">
-                <div className="farmer-pfp">
+                <div className="farmer-pfp social-clickable" role="link" tabIndex={0} title={`View ${post.authorName}'s profile`}
+                    onClick={() => openProfile(post.authorUserId)}
+                    onKeyDown={(event) => { if (event.key === 'Enter') openProfile(post.authorUserId) }}>
                     <img src={post.authorProfilePictureUrl ? resolveMediaUrl(post.authorProfilePictureUrl) : placeholderImage} alt="Farmer Profile" />
                 </div>
                 <div className="farmer-username">
-                    <p>{post.authorName}</p>
+                    <p className="social-clickable social-name" role="link" tabIndex={0}
+                        onClick={() => openProfile(post.authorUserId)}
+                        onKeyDown={(event) => { if (event.key === 'Enter') openProfile(post.authorUserId) }}>{post.authorName}</p>
                     {post.authorFarmName && <p className="post-author-farm">{post.authorFarmName}</p>}
                 </div>
                 <div className="post-date">
