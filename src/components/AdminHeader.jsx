@@ -14,7 +14,7 @@ function AdminHeader({ onLogout }) {
                 <div className="admin-header-user">
                     <span className="admin-header-avatar" aria-hidden="true">A</span>
                     <div className="admin-header-user-text">
-                        <strong>Administrator</strong>
+                        <strong>{sessionStorage.getItem('adminName') || 'Administrator'}</strong>
                         <span>System Admin</span>
                     </div>
                     <button type="button" onClick={onLogout}>Log out</button>

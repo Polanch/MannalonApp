@@ -14,7 +14,7 @@ function LandingFooter() {
                 <div className="landing-footer-legal">
                     <h3>Legal</h3>
                     <nav aria-label="Legal links">
-                        <a href="#privacy-policy">Privacy Policy</a>
+                        <a href="/privacy-policy">Privacy Policy</a>
                         <a href="#terms-of-service">Terms of Service</a>
                         <a href="#cookie-policy">Cookie Policy</a>
                     </nav>

@@ -368,6 +368,13 @@ function FarmerRegister({ onCancel, onSubmitRegistration }) {
                     )}
                 </div>
 
+                {step === 5 && (
+                    <p className="farmer-register-note">
+                        Please read the <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a> before registering.
+                        Optional AI chatbot questions and replies are sent to OpenAI and recorded for admin review
+                        and possible future training-dataset preparation. A separate notice is shown in the chatbot.
+                    </p>
+                )}
                 <div className="farmer-register-navigation">
                     {step > 1 ? (
                         <button type="button" className="farmer-register-secondary" onClick={handlePrevious}>Previous</button>

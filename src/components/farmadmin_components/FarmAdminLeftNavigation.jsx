@@ -2,6 +2,10 @@ import placeholderImage from '../../assets/images/placeholder.png'
 
 const SECTIONS = [
     {
+        title: 'FarmTools',
+        items: [{ label: 'Library', view: 'library' }],
+    },
+    {
         title: 'Farm Management',
         items: [
             { label: 'Farmers', view: 'farmers' },

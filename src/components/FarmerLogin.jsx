@@ -7,6 +7,7 @@ import rice2 from '../assets/images/rice2.png';
 import rice3 from '../assets/images/rice3.png';
 import FarmerRegister from './FarmerRegister.jsx';
 import { buildFarmerSession, saveFarmerSession } from '../services/farmerApi.js';
+import { clearLocalAccount, routeBlockedLogin } from '../services/accountAccess.js';
 
 function getFarmerStatusMessage(status) {
     const messages = {
@@ -84,6 +85,7 @@ function FarmerLogin({ onClose, initialView = 'login' }) {
             const farmerStatus = status || accountStatus;
 
             if (success && role?.toLowerCase() === 'farmer' && (!farmerStatus || ['ACTIVE', 'APPROVED'].includes(farmerStatus.toUpperCase()))) {
+                clearLocalAccount();
                 saveFarmerSession(buildFarmerSession(response.data, mobileNumber));
                 navigate('/farmer');
                 return;
@@ -91,6 +93,7 @@ function FarmerLogin({ onClose, initialView = 'login' }) {
 
             setLoginError(getFarmerStatusMessage(farmerStatus) || 'This account is not an active Farmer account.');
         } catch (error) {
+            if (routeBlockedLogin(error, navigate)) return;
             const responseData = error.response?.data;
             const farmerStatus = responseData?.status || responseData?.accountStatus;
             setLoginError(

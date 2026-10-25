@@ -7,11 +7,11 @@ const menuSections = [
     {
         title: 'FarmTools',
         items: [
-            { label: 'Chatbot' },
+            { label: 'Chatbot', path: '/farmer/chatbot' },
             { label: 'Saved' },
             { label: 'Weather', path: '/farmer/weather' },
             { label: 'Calculator' },
-            { label: 'Library' },
+            { label: 'Library', path: '/farmer/library' },
             { label: 'Maps', path: '/farmer/maps' },
             { label: 'Rental', path: '/farmer/rentals' },
         ],
@@ -30,7 +30,7 @@ const menuSections = [
             'Privacy Policy',
             'User Agreement',
             'Accessibility',
-        ].map((label) => ({ label })),
+        ].map((label) => ({ label, path: label === 'Privacy Policy' ? '/privacy-policy' : undefined })),
     },
 ];
 

@@ -1,0 +1,90 @@
+.user-management {
+    --um-green: #276047;
+    color: #243c30;
+    max-width: 1380px;
+    margin: 0 auto;
+    padding: 24px;
+}
+.user-management *, .account-appeal-page *, .um-dialog * { box-sizing: border-box; }
+.user-management h1, .account-appeal-card h1 { margin: 4px 0 8px; font-size: clamp(24px, 3vw, 32px); }
+.user-management h2, .account-appeal-card h2, .um-dialog h2 { margin: 0 0 12px; font-size: 20px; }
+.um-eyebrow { margin: 0; color: #537260; font-size: 11px; letter-spacing: .13em; font-weight: 700; }
+.um-muted, .user-management small, .account-appeal-card small { color: #62736a; font-size: 13px; }
+.um-heading, .um-actions, .um-danger-zone { display: flex; gap: 12px; align-items: center; justify-content: space-between; }
+.um-heading { margin-bottom: 22px; }
+.um-actions { justify-content: flex-start; flex-wrap: wrap; }
+.user-management button, .account-appeal-card button, .um-dialog button {
+    border: 1px solid #cedbd2; border-radius: 9px; padding: 10px 16px;
+    background: white; color: #294e39; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.user-management button:hover, .account-appeal-card button:hover, .um-dialog button:hover { background: #edf5ee; }
+.user-management button:disabled, .account-appeal-card button:disabled, .um-dialog button:disabled { opacity: .5; cursor: not-allowed; }
+.user-management button[type="submit"], .account-appeal-card button[type="submit"], .um-dialog button[type="submit"] {
+    color: white; background: #276047; border-color: #276047;
+}
+.user-management :focus-visible, .account-appeal-page :focus-visible, .um-dialog :focus-visible { outline: 3px solid #8fbe9b; outline-offset: 3px; }
+.um-tabs { display: flex; gap: 6px; padding: 5px; background: #eaf0eb; border-radius: 12px; width: fit-content; max-width: 100%; margin-bottom: 24px; }
+.um-tabs button { border: 0; background: transparent; min-width: 0; flex: 1; }
+.um-tabs button[aria-pressed="true"] { background: white; box-shadow: 0 2px 5px #213f3014; }
+.um-filters { display: flex; align-items: end; flex-wrap: wrap; gap: 12px; margin: 18px 0; }
+.um-filters label:first-child { flex: 1; min-width: 180px; }
+.user-management label, .um-dialog label, .account-appeal-card label { display: flex; flex-direction: column; gap: 7px; font-size: 13px; font-weight: 600; }
+.user-management input, .user-management select, .user-management textarea,
+.um-dialog input, .um-dialog textarea, .account-appeal-card textarea {
+    width: 100%; min-width: 0; padding: 11px 12px; border: 1px solid #cddbd1;
+    border-radius: 8px; font: inherit; font-weight: 400; background: white; color: #243c30;
+}
+.user-management input[readonly] { background: #f0f3f1; color: #63766a; }
+.user-management textarea, .um-dialog textarea, .account-appeal-card textarea { resize: vertical; }
+.um-panel { padding: 22px; background: white; border: 1px solid #dce7df; border-radius: 14px; margin: 20px 0; }
+.um-form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-bottom: 20px; }
+.user-management fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.um-table-scroll { overflow-x: auto; border: 1px solid #dce7df; border-radius: 12px; background: white; }
+.user-management table { border-collapse: collapse; width: 100%; min-width: 650px; text-align: left; font-size: 13px; }
+.user-management th { background: #f2f6f2; color: #53685a; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+.user-management td, .user-management th { padding: 17px 18px; border-bottom: 1px solid #e7ede8; vertical-align: top; }
+.user-management tbody tr:last-child td { border-bottom: 0; }
+.user-management td:first-child { min-width: 180px; }
+.user-management td p { max-width: 460px; margin: 0 0 8px; overflow-wrap: anywhere; }
+.user-management td small { display: block; margin-top: 5px; }
+.user-management td .um-actions { gap: 6px; }
+.user-management td button { padding: 7px 10px; white-space: nowrap; }
+.user-management details { margin-top: 10px; }
+.user-management summary { cursor: pointer; color: #537260; margin-bottom: 8px; }
+.um-badge { display: inline-block; padding: 5px 9px; background: #edf1ef; color: #53665a; border-radius: 20px; font-size: 10px; font-weight: 700; }
+.um-badge-active, .um-badge-approved { color: #236142; background: #e5f4e9; }
+.um-badge-blocked, .um-badge-rejected { color: #97453b; background: #fbece8; }
+.um-badge-pending { color: #8b661c; background: #fff5d9; }
+.um-pagination { justify-content: center; margin-top: 20px; font-size: 13px; }
+.um-danger-zone { padding: 24px; margin-top: 42px; border: 1px solid #ead4cd; border-radius: 12px; background: #fffaf8; }
+.um-danger-zone p { margin-bottom: 0; color: #7b665e; font-size: 13px; }
+.um-danger-zone button { color: #9b4036; border-color: #dfb8b0; white-space: nowrap; }
+.um-error { padding: 12px 16px; color: #98382e; background: #fff0ec; border: 1px solid #f2d4cc; border-radius: 9px; font-size: 13px; overflow-wrap: anywhere; }
+.um-dialog { width: min(480px, calc(100vw - 32px)); padding: 28px; border: 0; border-radius: 16px; color: #243c30; box-shadow: 0 22px 80px #162f3540; }
+.um-dialog::backdrop { background: #152d2966; }
+.um-dialog .um-actions { margin-top: 22px; }
+.um-dialog p { line-height: 1.5; font-size: 14px; }
+.um-toast { position: fixed; bottom: max(24px, env(safe-area-inset-bottom)); right: 24px; z-index: 10000; display: flex; align-items: center; gap: 24px; max-width: calc(100vw - 32px); padding: 14px 18px; border-radius: 12px; background: #24583e; color: white; box-shadow: 0 8px 30px #173a3533; }
+.um-toast p { margin: 0; font-size: 14px; }
+.um-toast button { background: transparent; color: white; border: 0; cursor: pointer; font-size: 22px; padding: 0 4px; }
+.um-preserve { white-space: pre-wrap; overflow-wrap: anywhere; }
+.um-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.account-appeal-page { min-height: 100vh; background: #f0f5ef; padding: 64px 20px; display: grid; place-items: start center; color: #243c30; }
+.account-appeal-card { width: min(580px, 100%); background: white; padding: 36px; border: 1px solid #dce7df; border-radius: 18px; box-shadow: 0 12px 50px #2142320a; }
+.account-appeal-card > p { line-height: 1.6; }
+.account-appeal-card form { display: grid; gap: 12px; }
+.account-appeal-card .um-actions { margin-top: 24px; }
+.account-appeal-card a { color: #276047; font-size: 14px; }
+.um-block-reason { background: #fff5e9; padding: 18px; border-radius: 10px; margin: 24px 0; font-size: 14px; }
+.um-block-reason p { margin: 8px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.account-session-error { position: fixed; top: 8px; left: 50%; transform: translateX(-50%); background: #fff4df; border: 1px solid #dfcda5; padding: 12px 20px; border-radius: 10px; z-index: 10001; max-width: calc(100vw - 32px); font-size: 13px; }
+@media (max-width: 760px) {
+    .admin-main-content.admin-users-content { padding: 20px 12px 40px; }
+    .user-management { padding: 16px 8px; }
+    .um-form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .um-heading, .um-danger-zone { align-items: flex-start; flex-direction: column; }
+    .um-filters label { flex: 1; }
+    .um-toast { right: 16px; bottom: max(16px, env(safe-area-inset-bottom)); }
+    .account-appeal-card { padding: 24px; }
+}
+@media (max-width: 480px) { .um-form-grid { grid-template-columns: 1fr; } }

@@ -1377,3 +1377,105 @@ button.fa-card.is-disabled:focus-visible {
 .farm-admin-shell-main .market .farmte-block-head {
     flex-wrap: wrap;
 }
+
+.farmte-review-modal {
+    width: min(960px, calc(100vw - 28px));
+    max-height: calc(100vh - 28px);
+    overflow-y: auto;
+    padding: 20px 22px;
+}
+
+.farmte-review-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.farmte-review-head h2 {
+    margin: 0;
+    font-size: 34px;
+    line-height: 1.2;
+    color: #17351f;
+}
+
+.farmte-review-code {
+    margin: 4px 0 0;
+    color: #6a786f;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.farmte-review-meta {
+    margin: 0 0 14px;
+    color: #4d5e54;
+    font-weight: 600;
+}
+
+.farmte-review-section {
+    margin-top: 14px;
+}
+
+.farmte-review-section h3 {
+    margin: 0 0 8px;
+    color: #17351f;
+}
+
+.farmte-review-note {
+    margin: 0 0 8px;
+    color: #657269;
+    font-size: 12px;
+}
+
+.farmte-table-wrap {
+    overflow-x: auto;
+    border: 1px solid #dce5df;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.farmte-review-table {
+    min-width: 680px;
+    table-layout: fixed;
+}
+
+.farmte-review-table-wide {
+    min-width: 880px;
+}
+
+.farmte-review-table td,
+.farmte-review-table th {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.farmte-review-notes {
+    min-height: 96px;
+}
+
+.farmte-review-actions {
+    margin-top: 14px;
+}
+
+@media (max-width: 900px) {
+    .farmte-review-modal {
+        width: calc(100vw - 20px);
+        max-height: calc(100vh - 20px);
+        padding: 16px;
+    }
+
+    .farmte-review-head {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .farmte-review-head h2 {
+        font-size: 26px;
+    }
+
+    .farmte-review-actions {
+        flex-wrap: wrap;
+    }
+}
+

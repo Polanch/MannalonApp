@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
+import { clearLocalAccount, routeBlockedLogin } from '../services/accountAccess.js'
 import minihero1 from '../assets/images/mini-hero1.png'
 import location from '../assets/images/placeholder.gif'
 import hero1 from '../assets/images/hero1.png'
 import logo from '../assets/images/MannalonLogo.png'
 
 function Login({ onLogin }){
+    const navigate = useNavigate()
     const [userId, setUserId] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
@@ -24,12 +27,15 @@ function Login({ onLogin }){
             )
             const { success, role } = response.data
 
-            if (success && role === 'MAO-Admin') {
+            if (success && ['MAO-Admin', 'Admin'].includes(role)) {
+                clearLocalAccount()
+                sessionStorage.setItem('adminName', response.data.fullName || userId)
                 onLogin()
             } else {
                 setError('Invalid administrator credentials.')
             }
         } catch (error) {
+            if (routeBlockedLogin(error, navigate)) return
             setError(
                 error.response?.data?.message ||
                 'Unable to log in. Check your credentials or try again later.'

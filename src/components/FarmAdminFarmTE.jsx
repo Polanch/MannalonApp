@@ -7,7 +7,7 @@ const FILTERS = [
     { value: 'SUBMITTED', label: 'Awaiting review' },
     { value: 'REVIEWED', label: 'Reviewed' },
     { value: 'RETURNED', label: 'Returned' },
-    { value: '', label: 'All' },
+    { value: '', label: 'All reports' },
 ]
 
 async function readError(response, fallback) {
@@ -87,7 +87,7 @@ function FarmAdminFarmTE() {
 
     async function review(nextStatus) {
         if (nextStatus === 'RETURNED' && !notes.trim()) {
-            setError('Please add review notes explaining what the farmer should fix.')
+            setError('Please add review notes before returning this report.')
             return
         }
 
@@ -139,7 +139,7 @@ function FarmAdminFarmTE() {
                                     <dt>Hours</dt><dd>{report.totalHours}</dd>
                                     <dt>Expenses</dt><dd>{formatMoney(report.totalExpenses)}</dd>
                                 </dl>
-                                <span className="fa-card-action">View report →</span>
+                                <span className="fa-card-action">View report ?</span>
                             </button>
                         ))}
                     </div>
@@ -149,59 +149,94 @@ function FarmAdminFarmTE() {
             </section>
             {detail && (
                 <div className="admin-modal-backdrop" role="presentation">
-                    <section className="admin-modal" role="dialog" aria-modal="true" aria-label="FarmTE report">
-                        <h2>{detail.farmerName} ({detail.farmCode})</h2>
-                        <p>{detail.reportingPeriodStart} to {detail.reportingPeriodEnd} | {detail.totalHours} hours | {formatMoney(detail.totalExpenses)}</p>
-                        <h3>Harvest &amp; sales</h3>
-                        <p className="market-muted">Check these figures before approving. Approved data feeds the MAO market price board and leaderboard.</p>
-                        <table className="admin-data-table">
-                            <thead><tr><th>Season</th><th>Harvest</th><th>Yield</th><th>Sold</th><th>Avg price</th><th>Sales</th><th>Cost / kg</th><th>Net income</th></tr></thead>
-                            <tbody>
-                                {(detail.seasonSummaries || []).map((summary) => (
-                                    <tr key={summary.seasonId}>
-                                        <td>#{summary.seasonId}</td>
-                                        <td>{formatKg(summary.totalHarvestKg)}</td>
-                                        <td>{formatTonsPerHa(summary.yieldTonsPerHa)}</td>
-                                        <td>{formatKg(summary.totalSoldKg)}</td>
-                                        <td>{summary.averagePricePerKg ? `${formatPeso(summary.averagePricePerKg)}/kg` : '-'}</td>
-                                        <td>{formatPeso(summary.totalSales)}</td>
-                                        <td>{summary.costPerKg ? `${formatPeso(summary.costPerKg)}/kg` : '-'}</td>
-                                        <td>{formatPeso(summary.netIncome)}</td>
-                                    </tr>
-                                ))}
-                                {!(detail.seasonSummaries || []).length && <tr><td colSpan="8">No harvest or sales recorded.</td></tr>}
-                            </tbody>
-                        </table>
-                        <h3>Time entries</h3>
-                        <table className="admin-data-table">
-                            <thead><tr><th>Date</th><th>Activity</th><th>Hours</th><th>Notes</th></tr></thead>
-                            <tbody>
-                                {(detail.timeEntries || []).map((entry) => (
-                                    <tr key={entry.id}><td>{entry.date}</td><td>{entry.activity}</td><td>{entry.hours}</td><td>{entry.notes || '-'}</td></tr>
-                                ))}
-                                {!(detail.timeEntries || []).length && <tr><td colSpan="4">None.</td></tr>}
-                            </tbody>
-                        </table>
-                        <h3>Expense entries</h3>
-                        <table className="admin-data-table">
-                            <thead><tr><th>Date</th><th>Category</th><th>Amount</th><th>Notes</th></tr></thead>
-                            <tbody>
-                                {(detail.expenseEntries || []).map((entry) => (
-                                    <tr key={entry.id}><td>{entry.date}</td><td>{entry.category}</td><td>{formatMoney(entry.amount)}</td><td>{entry.notes || '-'}</td></tr>
-                                ))}
-                                {!(detail.expenseEntries || []).length && <tr><td colSpan="4">None.</td></tr>}
-                            </tbody>
-                        </table>
-                        <label>
-                            <span>Review notes {isFinal ? '' : '(required when returning)'}</span>
-                            <textarea rows="3" value={notes} readOnly={isFinal} onChange={(event) => setNotes(event.target.value)} />
+                    <section className="admin-modal farmte-review-modal" role="dialog" aria-modal="true" aria-label="FarmTE report details">
+                        <header className="farmte-review-head">
+                            <div>
+                                <h2>{detail.farmerName}</h2>
+                                <p className="farmte-review-code">{detail.farmCode}</p>
+                            </div>
+                            <span className={`status-badge status-${String(detail.status || '').toLowerCase()}`}>{detail.status}</span>
+                        </header>
+
+                        <p className="farmte-review-meta">{detail.reportingPeriodStart} to {detail.reportingPeriodEnd} · {detail.totalHours} hours · {formatMoney(detail.totalExpenses)}</p>
+
+                        <section className="farmte-review-section">
+                            <h3>Harvest &amp; sales</h3>
+                            <p className="farmte-review-note">Review before approving. Approved values feed market insights.</p>
+                            <div className="farmte-table-wrap">
+                                <table className="admin-data-table farmte-review-table farmte-review-table-wide">
+                                    <thead><tr><th>Season</th><th>Harvest</th><th>Yield</th><th>Sold</th><th>Avg price</th><th>Sales</th><th>Cost / kg</th><th>Net income</th></tr></thead>
+                                    <tbody>
+                                        {(detail.seasonSummaries || []).map((summary) => (
+                                            <tr key={summary.seasonId}>
+                                                <td>#{summary.seasonId}</td>
+                                                <td>{formatKg(summary.totalHarvestKg)}</td>
+                                                <td>{formatTonsPerHa(summary.yieldTonsPerHa)}</td>
+                                                <td>{formatKg(summary.totalSoldKg)}</td>
+                                                <td>{summary.averagePricePerKg ? `${formatPeso(summary.averagePricePerKg)}/kg` : '-'}</td>
+                                                <td>{formatPeso(summary.totalSales)}</td>
+                                                <td>{summary.costPerKg ? `${formatPeso(summary.costPerKg)}/kg` : '-'}</td>
+                                                <td>{formatPeso(summary.netIncome)}</td>
+                                            </tr>
+                                        ))}
+                                        {!(detail.seasonSummaries || []).length && <tr><td colSpan="8">No harvest or sales recorded.</td></tr>}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        <section className="farmte-review-section">
+                            <h3>Time entries</h3>
+                            <div className="farmte-table-wrap">
+                                <table className="admin-data-table farmte-review-table">
+                                    <thead><tr><th>Date</th><th>Activity</th><th>Hours</th><th>Notes</th></tr></thead>
+                                    <tbody>
+                                        {(detail.timeEntries || []).map((entry) => (
+                                            <tr key={entry.id}><td>{entry.date}</td><td>{entry.activity}</td><td>{entry.hours}</td><td>{entry.notes || '-'}</td></tr>
+                                        ))}
+                                        {!(detail.timeEntries || []).length && <tr><td colSpan="4">None.</td></tr>}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        <section className="farmte-review-section">
+                            <h3>Expense entries</h3>
+                            <div className="farmte-table-wrap">
+                                <table className="admin-data-table farmte-review-table">
+                                    <thead><tr><th>Date</th><th>Category</th><th>Amount</th><th>Notes</th></tr></thead>
+                                    <tbody>
+                                        {(detail.expenseEntries || []).map((entry) => (
+                                            <tr key={entry.id}><td>{entry.date}</td><td>{entry.category}</td><td>{formatMoney(entry.amount)}</td><td>{entry.notes || '-'}</td></tr>
+                                        ))}
+                                        {!(detail.expenseEntries || []).length && <tr><td colSpan="4">None.</td></tr>}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        <label className="admin-modal-label" htmlFor="farmte-review-notes">
+                            Review notes {isFinal ? '' : '(required to return)'}
                         </label>
-                        <div className="admin-modal-actions">
-                            <button type="button" onClick={closeDetail}>Close</button>
+                        <textarea
+                            id="farmte-review-notes"
+                            className="admin-modal-input farmte-review-notes"
+                            rows="4"
+                            value={notes}
+                            readOnly={isFinal}
+                            onChange={(event) => setNotes(event.target.value)}
+                        />
+
+                        <div className="admin-modal-actions farmte-review-actions">
+                            <button type="button" className="admin-button admin-button-secondary" onClick={closeDetail}>Close</button>
                             {!isFinal && (
                                 <>
-                                    <button type="button" disabled={isSaving} onClick={() => review('RETURNED')}>Return to farmer</button>
-                                    <button type="button" disabled={isSaving} onClick={() => review('REVIEWED')}>Mark reviewed</button>
+                                    <button type="button" className="admin-button admin-button-danger" disabled={isSaving} onClick={() => review('RETURNED')}>
+                                        {isSaving ? 'Saving...' : 'Return to farmer'}
+                                    </button>
+                                    <button type="button" className="admin-button admin-button-primary" disabled={isSaving} onClick={() => review('REVIEWED')}>
+                                        {isSaving ? 'Saving...' : 'Mark reviewed'}
+                                    </button>
                                 </>
                             )}
                         </div>
@@ -213,3 +248,4 @@ function FarmAdminFarmTE() {
 }
 
 export default FarmAdminFarmTE
+

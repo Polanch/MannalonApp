@@ -7,6 +7,8 @@ import FarmerMarket from './farmer_components/FarmerMarket.jsx'
 import WeatherDashboard from './WeatherDashboard.jsx'
 import PublicFarmMap from './PublicFarmMap.jsx'
 import RentalMarketplace from './RentalMarketplace.jsx'
+import FarmerChatbot from './farmer_components/FarmerChatbot.jsx'
+import BookLibrary from './BookLibrary.jsx'
 
 function FarmerDashboard({ session, view = 'home' }) {
     return (
@@ -18,6 +20,8 @@ function FarmerDashboard({ session, view = 'home' }) {
                 : view === 'weather' ? <WeatherDashboard session={session}/>
                 : view === 'maps' ? <PublicFarmMap/>
                 : view === 'rentals' ? <RentalMarketplace/>
+                : view === 'chatbot' ? <FarmerChatbot/>
+                : view === 'library' ? <BookLibrary/>
                 : <FarmerDashboardMiddleNavigation session={session}/>}
             <FarmerDashboardRightNavigation session={session}/>
         </div>

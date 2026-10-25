@@ -9,6 +9,7 @@ import emailicn from '../assets/images/email.png'
 import keyicn from '../assets/images/key.png'
 import close from '../assets/images/close.png'
 import FarmAdminRegister from './FarmAdminRegister.jsx'
+import { clearLocalAccount, routeBlockedLogin } from '../services/accountAccess.js'
 
 function FarmAdminLogin({ onClose, onLoginSuccess }){
     const navigate = useNavigate()
@@ -47,6 +48,7 @@ function FarmAdminLogin({ onClose, onLoginSuccess }){
             const { success, role } = response.data
 
             if (success && role === 'Farm-Admin') {
+                clearLocalAccount()
                 sessionStorage.setItem('farmAdminAuthenticated', 'true')
                 sessionStorage.setItem('farmAdminUserId', userId)
                 sessionStorage.setItem('farmAdminName', response.data.fullName || userId)
@@ -60,6 +62,7 @@ function FarmAdminLogin({ onClose, onLoginSuccess }){
 
             setError('Invalid Farm-Admin credentials.')
         } catch (loginError) {
+            if (routeBlockedLogin(loginError, navigate)) return
             setError(
                 loginError.response?.data?.message ||
                 'Unable to log in. Check your credentials or try again later.'

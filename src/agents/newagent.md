@@ -1,17 +1,19 @@
-Add a new Farmer Tool "Rental"
+as an Admin, I want a tool for User Management.
 
-As a Farmer and FarmAmin, I should be able to add an item for rental, with price, pickup place and picture.
+I can view all approved farmers and farmadmins.
+-I can edit their information
+-I have the option to temporarily block a user's access
+-if a blocked user attempts to login, a page Appeal.jsx will be loaded.
+-I can delete but I can't add new users directly. All account creation should follow the process, no shortcuts, Admin included.
 
-After the meetup, and they paid in cash, I can approve through the system that my tool has been granted to this farmer.
+There should be a separate tab under the User management feature where I can Add new Admin accounts. SImple info needed:
+1. Full name for the user_name 
+2. user_password (to be set by the current admin)
+3. user_role : MAO-Admin
+4. user_id is the employee ID (to be set by the current admin)
+5. set immediately as active
 
-I should be able to navigate and see all the rented farm tools I gave. the time limit.
+Do not remove the default admin account we currently use. As the developer this is my personal development acc for now.
 
-There should be a notification for the farmer who rented my tool and they should give it back.
-
-As a farmer who rented other's tool, I should also be abale to navigate the tools I rented myself.
-
-Do everything in a clicble grid view, so that when you click on the rented tool, a detail info about it will be shown.
-
-As an admin, I should also be able to put out a tool for the farmers to rent as well. As for the owner of the tool, name it as "MAO Property"
-
-There should be select category button.
+On the bottom of this account management for admins, there should be a "Deactivate Account".
+This way, this test account for Admin can be removed.
