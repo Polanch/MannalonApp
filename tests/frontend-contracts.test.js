@@ -12,6 +12,7 @@ let ticketApi
 let TicketCreateForm
 let RentalReportSummary
 let AdminTicketOverview
+let branchesApi
 
 before(async () => {
     server = await createServer({
@@ -26,6 +27,7 @@ before(async () => {
     TicketCreateForm = forms.TicketCreateForm
     RentalReportSummary = forms.RentalReportSummary
     AdminTicketOverview = (await server.ssrLoadModule('/src/components/AdminTicketOverview.jsx')).default
+    branchesApi = await server.ssrLoadModule('/src/services/farmBranchesApi.js')
 })
 
 after(async () => {
@@ -33,6 +35,65 @@ after(async () => {
 })
 
 const sourceUrl = 'https://knowledgebank.irri.org/water'
+test('branch owner lookup is session-scoped to the chosen main farm', async (context) => {
+    const owners = [{ globalId: 101, fullName: 'Synthetic Farmer' }]
+    context.mock.method(globalThis, 'fetch', async (url, options) => {
+        assert.equal(new URL(url).pathname, '/api/farm-admin/farms/4/branch-owners')
+        assert.equal(options.credentials, 'include')
+        return Response.json(owners)
+    })
+    assert.deepEqual(await branchesApi.fetchBranchOwners(4), owners)
+})
+
+test('branch submission preserves documents and selected ownership without creating a new farm code', async (context) => {
+    const parent = { farmId: 4, farmCode: 'FARM-0004', status: 'APPROVED' }
+    const response = {
+        registrationId: 9, parentFarmId: 4, ownerGlobalId: 101, farmCode: 'FARM-0004', status: 'PENDING',
+    }
+    const form = new FormData()
+    form.append('farmName', 'Second parcel')
+    form.append('areaHectares', '2.5')
+    form.append('documents[0].documentType', 'Tax Declaration')
+    form.append('documents[0].file', new File(['evidence'], 'evidence.txt'))
+    context.mock.method(globalThis, 'fetch', async (url, options) => {
+        assert.equal(new URL(url).pathname, '/api/farm-admin/farms/4/branch-registrations')
+        assert.equal(options.method, 'POST')
+        assert.equal(options.credentials, 'include')
+        assert.ok(options.body instanceof FormData)
+        assert.equal(options.body.get('farmName'), 'Second parcel')
+        assert.equal(options.body.get('ownerGlobalId'), '101')
+        assert.equal(options.body.get('documents[0].file').name, 'evidence.txt')
+        assert.equal(options.body.has('farmCode'), false)
+        assert.equal(options.body.has('actorGlobalId'), false)
+        return Response.json(response, { status: 201 })
+    })
+    assert.deepEqual(await branchesApi.submitBranchRegistration(parent, 101, form), response)
+    assert.equal(form.has('ownerGlobalId'), false)
+})
+
+test('branches reject unapproved parents, nested branches, and invalid owners before posting', async (context) => {
+    const fetch = context.mock.method(globalThis, 'fetch', async () => { throw new Error('Must not submit') })
+    const parent = { farmId: 4, farmCode: 'FARM-0004', status: 'APPROVED' }
+    for (const invalid of [{ ...parent, status: 'PENDING' }, { ...parent, parentFarmId: 2 }, { ...parent, farmCode: null }]) {
+        await assert.rejects(branchesApi.submitBranchRegistration(invalid, 101, new FormData()), /approved main farm/)
+    }
+    await assert.rejects(branchesApi.submitBranchRegistration(parent, 0, new FormData()), /eligible Farmer/)
+    assert.equal(fetch.mock.callCount(), 0)
+})
+
+test('branch APIs surface missing backend support and reject wrong-code or wrong-owner confirmations', async (context) => {
+    context.mock.method(globalThis, 'fetch', async () => new Response('', { status: 404 }))
+    await assert.rejects(branchesApi.fetchBranchOwners(4), /not available on the backend/)
+    const parent = { farmId: 4, farmCode: 'FARM-0004', status: 'APPROVED' }
+    const valid = { registrationId: 9, parentFarmId: 4, ownerGlobalId: 101, farmCode: 'FARM-0004', status: 'PENDING' }
+    for (const invalid of [{ ...valid, farmCode: 'NEW-CODE' }, { ...valid, ownerGlobalId: 102 }, { ...valid, parentFarmId: 5 }, { ...valid, status: 'APPROVED' }]) {
+        globalThis.fetch.mock.mockImplementation(async () => Response.json(invalid))
+        await assert.rejects(branchesApi.submitBranchRegistration(parent, 101, new FormData()), /did not confirm a pending branch/)
+    }
+    globalThis.fetch.mock.mockImplementation(async () => Response.json([{ fullName: 'Missing ID' }]))
+    await assert.rejects(branchesApi.fetchBranchOwners(4), /invalid list/)
+})
+
 test('Admin dashboard counts all four ongoing statuses and excludes closed tickets', () => {
     const counts = { OPEN: 4, ASSIGNED: 3, IN_PROGRESS: 2, ON_HOLD: 1, RESOLVED: 20, CANCELLED: 7 }
     const html = renderToStaticMarkup(createElement(AdminTicketOverview, {

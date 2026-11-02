@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import '../assets/styles/farmer.css'
 import FarmerDashboardMiddleNavigation from './farmer_components/FarmerDashboardMiddleNavigation.jsx'
 import { getFarmAdminSession } from '../services/farmAdminApi.js'
+import Toast from './Toast.jsx'
 
 const API_ORIGIN = 'http://localhost:8080'
 const PROFILE_URL = `${API_ORIGIN}/api/farm-admin/profile`
@@ -218,7 +219,7 @@ function FarmAdminProfile({ onProfileUpdated }) {
                 </div>
 
                 {loadError && <p className="admin-alert admin-alert-error" role="alert">{loadError}</p>}
-                {notice && <p className="admin-alert admin-alert-success" role="status">{notice}</p>}
+                <Toast message={notice} onDismiss={() => setNotice('')} />
 
                 {isEditing ? (
                     <form className="fa-profile-card fa-profile-form" onSubmit={saveDetails}>

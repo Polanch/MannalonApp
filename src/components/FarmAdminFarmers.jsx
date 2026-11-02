@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import '../assets/styles/admin.css'
 import SmsNotificationLog from './SmsNotificationLog.jsx'
+import Toast from './Toast.jsx'
 
 const API_URL = 'http://localhost:8080/api/farm-admin/farmer-registrations'
 const API_ORIGIN = 'http://localhost:8080'
@@ -203,7 +204,7 @@ function FarmAdminFarmers() {
         return (
             <main className="farm-admin-land">
                 <section className="admin-detail-page">
-                    {toast && <div className="admin-toast admin-toast-success" role="status">{toast}</div>}
+                    <Toast message={toast} onDismiss={() => setToast('')} />
                     <div className="admin-detail-heading">
                         <div>
                             <button type="button" className="admin-back-link farmer-review-back" onClick={() => setSelectedRegistrationId(null)}>Back to Farmers</button>
@@ -315,7 +316,7 @@ function FarmAdminFarmers() {
     return (
         <main className="farm-admin-land">
             <section className="admin-fo-page">
-                {toast && <div className="admin-toast admin-toast-success" role="status">{toast}</div>}
+                <Toast message={toast} onDismiss={() => setToast('')} />
                 <div className="admin-fo-header">
                     <div>
                         <p className="admin-eyebrow">FARMER MANAGEMENT</p>

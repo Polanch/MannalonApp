@@ -5,6 +5,7 @@ import {
     formatTicketDate, ticketDateFilter, ticketLabel, TICKET_STATUSES,
 } from '../services/ticketingApi.js'
 import TicketDetail from './TicketDetail.jsx'
+import Toast from './Toast.jsx'
 import { RentalReportSummary, TicketCreateForm } from './TicketingForms.jsx'
 import '../assets/styles/ticketing.css'
 
@@ -110,7 +111,7 @@ export default function TicketingPage({ initialTicketId = null }) {
             <p className="ticket-live"><span />Auto-refresh every 15 seconds while this page is open. Displayed times are local; date filters are UTC.</p>
             {support.error && <p className="ticket-error" role="alert">{support.error} <button type="button" onClick={support.refresh}>Retry access</button></p>}
             {support.loading && <p role="status">Loading ticketing access...</p>}
-            {notice && <p className="ticket-success" role="status">{notice}<button type="button" aria-label="Dismiss notification" onClick={() => setNotice('')}>Dismiss</button></p>}
+            <Toast message={notice} onDismiss={() => setNotice('')} />
             {support.data && !support.error && (selectedId ? (
                 <TicketDetail key={selectedId} id={selectedId} session={support.data.session} assignees={support.data.assignees} adminMode={adminMode}
                     onClose={() => setSelectedId(null)} onChanged={changed} />

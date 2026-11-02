@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { getApiErrorMessage, formatRelativeTime, resolveMediaUrl } from '../../services/farmerApi.js'
 import { createAnnouncement } from '../../services/farmAdminApi.js'
+import Toast from '../Toast.jsx'
 
 function FarmAdminRightNavigation({ session, announcements, isLoading, listError, onAnnouncementCreated, onDeleteAnnouncement }) {
     const imageInputRef = useRef(null)
@@ -20,13 +21,6 @@ function FarmAdminRightNavigation({ session, announcements, isLoading, listError
         }
     }, [image])
 
-    useEffect(() => {
-        if (!success) {
-            return undefined
-        }
-        const timer = setTimeout(() => setSuccess(''), 3000)
-        return () => clearTimeout(timer)
-    }, [success])
 
     function handleImageSelect(event) {
         const file = event.target.files?.[0]
@@ -99,7 +93,7 @@ function FarmAdminRightNavigation({ session, announcements, isLoading, listError
                             </button>
                         )}
                         {error && <p className="farm-admin-announce-error" role="alert">{error}</p>}
-                        {success && <p className="farm-admin-announce-success" role="status">{success}</p>}
+                        <Toast message={success} onDismiss={() => setSuccess('')} duration={3000} />
                         <button type="submit" className="farm-admin-announce-submit" disabled={!canSend}>
                             {isSending ? 'Publishing...' : 'Announce'}
                         </button>

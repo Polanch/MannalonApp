@@ -18,6 +18,7 @@ import {
 } from '../../services/farmerApi.js'
 import { formatKg, formatPeso, formatTonsPerHa, seasonLabel } from '../../services/marketApi.js'
 import FarmTEProduction from './FarmTEProduction.jsx'
+import Toast from '../Toast.jsx'
 
 const TABS = ['Production', 'Time', 'Expense', 'Benefit', 'Reports']
 const EXPENSE_CATEGORIES = ['Seeds', 'Fertilizer', 'Pesticide', 'Labor', 'Equipment', 'Fuel', 'Other']
@@ -326,7 +327,7 @@ function ReportsTab({ userId, seasons }) {
                 <button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Submitting...' : 'Submit report'}</button>
             </form>
             <p className="farmte-total">Your time, expense, harvest and sales records in this period are sent to your Farm-Admin for review. Approved reports count toward the market price board.</p>
-            {notice && <p className="program-notice" role="status">{notice}</p>}
+            <Toast message={notice} onDismiss={() => setNotice('')} />
             {error && <p className="program-error" role="alert">{error}</p>}
             <table className="farmte-table">
                 <thead><tr><th>Period</th><th>Submitted</th><th>Hours</th><th>Expenses</th><th>Status</th><th>Farm-Admin notes</th></tr></thead>

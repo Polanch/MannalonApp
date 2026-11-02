@@ -50,6 +50,8 @@ function AdminFarmManagement() {
             registration.registrationId,
             registration.farmName,
             registration.farmCode,
+            registration.parentFarmName,
+            registration.ownerFullName,
         ].some((value) => String(value || '').toLowerCase().includes(searchText))
     })
 
@@ -59,7 +61,7 @@ function AdminFarmManagement() {
                 <div>
                     <p className="admin-eyebrow">FARM MANAGEMENT</p>
                     <h2>Farm Registration List</h2>
-                    <p className="admin-section-description">Review Farm-Admin farm registrations and their approval status.</p>
+                    <p className="admin-section-description">Review main farms and Farmer-owned branches. Approved branches retain their main farm code.</p>
                 </div>
                 <div className="admin-fo-controls">
                     <label>
@@ -92,6 +94,7 @@ function AdminFarmManagement() {
                                 <th>Status</th>
                                 <th>Registration ID</th>
                                 <th>Farm name</th>
+                                <th>Farm linkage / owner</th>
                                 <th>Farm code</th>
                                 <th>Submitted</th>
                                 <th>Rejection reason</th>
@@ -103,13 +106,17 @@ function AdminFarmManagement() {
                                     <td><span className={statusClass(registration.status)}>{registration.status}</span></td>
                                     <td>{registration.registrationId}</td>
                                     <td><Link className="admin-table-link" to={`/admin/farm-management/${registration.registrationId}`}>{registration.farmName || '-'}</Link></td>
+                                    <td>{registration.parentFarmId != null ? <>
+                                        <strong>Branch of {registration.parentFarmName || `Farm #${registration.parentFarmId}`}</strong>
+                                        <div>{registration.ownerFullName || `Farmer #${registration.ownerGlobalId}`}</div>
+                                    </> : 'Main farm'}</td>
                                     <td>{registration.farmCode || '-'}</td>
                                     <td>{formatDate(registration.createdAt)}</td>
                                     <td>{registration.rejectionReason || '-'}</td>
                                 </tr>
                             ))}
                             {!visibleRegistrations.length && (
-                                <tr><td className="admin-table-empty" colSpan="6">No farm registrations match the current filters.</td></tr>
+                                <tr><td className="admin-table-empty" colSpan="7">No farm registrations match the current filters.</td></tr>
                             )}
                         </tbody>
                     </table>

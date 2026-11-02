@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import '../assets/styles/admin.css'
+import Toast from './Toast.jsx'
 
 const API_URL = 'http://localhost:8080/api/admin/programs'
 const API_ORIGIN = 'http://localhost:8080'
@@ -199,11 +200,6 @@ function AdminPrograms() {
         return () => { isActive = false }
     }, [selectedProgramId, selectedApplicationId, refreshKey])
 
-    useEffect(() => {
-        if (!toast) return undefined
-        const timeoutId = setTimeout(() => setToast(''), 4000)
-        return () => clearTimeout(timeoutId)
-    }, [toast])
 
     useEffect(() => {
         if (!coverFile) return undefined
@@ -341,7 +337,7 @@ function AdminPrograms() {
         }
     }
 
-    const toastNode = toast && <div className="admin-toast admin-toast-success" role="status">{toast}</div>
+    const toastNode = <Toast message={toast} onDismiss={() => setToast('')} duration={4000} />
 
     if (selectedProgramId && selectedApplicationId) {
         const canReview = application?.status === 'PENDING'

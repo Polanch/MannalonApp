@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import '../assets/styles/admin.css'
 import SmsNotificationLog from './SmsNotificationLog.jsx'
+import Toast from './Toast.jsx'
 import { REJECTION_QUICK_MESSAGES, SMS_MESSAGE_MAX, buildRejectionSms, smsSegments } from '../services/smsTemplates.js'
 
 const API_URL = 'http://localhost:8080/api/admin/farmer-registrations'
@@ -320,18 +321,13 @@ function AdminFarmers() {
         }
     }
 
-    useEffect(() => {
-        if (!toast) return undefined
-        const timeoutId = setTimeout(() => setToast(''), 4000)
-        return () => clearTimeout(timeoutId)
-    }, [toast])
 
     if (selectedRegistrationId) {
         const canReview = registration?.status === 'PENDING_ADMIN'
 
         return (
             <section className="admin-detail-page">
-                {toast && <div className="admin-toast admin-toast-success" role="status">{toast}</div>}
+                <Toast message={toast} onDismiss={() => setToast('')} duration={4000} />
                 <div className="admin-detail-heading">
                     <div>
                         <button type="button" className="admin-back-link farmer-review-back" onClick={() => setSelectedRegistrationId(null)}>Back to Farmers</button>
@@ -511,7 +507,7 @@ function AdminFarmers() {
 
     return (
         <section className="admin-fo-page">
-            {toast && <div className="admin-toast admin-toast-success" role="status">{toast}</div>}
+            <Toast message={toast} onDismiss={() => setToast('')} duration={4000} />
             <div className="admin-fo-header">
                 <div>
                     <p className="admin-eyebrow">FARMER MANAGEMENT</p>

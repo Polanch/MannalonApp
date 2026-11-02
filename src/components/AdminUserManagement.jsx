@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { accountError, changeUserStatus, createAdminAccount, deactivateCurrentAdmin, fetchAccountAppeals, fetchCurrentAdmin, fetchManagedUsers, reviewAccountAppeal } from '../services/userManagementApi.js'
 import { clearLocalAccount } from '../services/accountAccess.js'
 import UserInfoEditor from './UserInfoEditor.jsx'
+import Toast from './Toast.jsx'
 import '../assets/styles/user-management.css'
 
 function AdminUserManagement() {
@@ -44,11 +45,6 @@ function AdminUserManagement() {
         return () => controller.abort()
     }, [tab, query])
 
-    useEffect(() => {
-        if (!toast) return undefined
-        const timer = setTimeout(() => setToast(null), 5000)
-        return () => clearTimeout(timer)
-    }, [toast])
 
     useEffect(() => {
         if (editing || showCreate) editorRef.current?.focus()
@@ -210,8 +206,7 @@ function AdminUserManagement() {
                         <button type="button" disabled={busy} onClick={() => setAction(null)}>Cancel</button></div>
                 </form>
             </dialog>, document.body)}
-            {toast && createPortal(<div className="um-toast"><p role="status">{toast.message}</p>
-                <button type="button" aria-label="Dismiss notification" onClick={() => setToast(null)}>×</button></div>, document.body)}
+            <Toast message={toast?.message} onDismiss={() => setToast(null)} />
         </section>
     )
 }

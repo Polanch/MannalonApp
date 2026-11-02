@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import Toast from './Toast.jsx'
 
 const API_URL = 'http://localhost:8080/api/farm-admin'
 const EMPTY_FORM = { name: '', description: '' }
@@ -70,13 +71,6 @@ function FarmAdminRoles() {
         return () => { isActive = false }
     }, [refreshKey])
 
-    useEffect(() => {
-        if (!toast) {
-            return undefined
-        }
-        const timer = setTimeout(() => setToast(''), 3000)
-        return () => clearTimeout(timer)
-    }, [toast])
 
     function resetForm() {
         setForm(EMPTY_FORM)
@@ -174,7 +168,7 @@ function FarmAdminRoles() {
             </header>
 
             {error && <p className="farm-admin-roles-error" role="alert">{error}</p>}
-            {toast && <p className="farm-admin-roles-toast" role="status">{toast}</p>}
+            <Toast message={toast} onDismiss={() => setToast('')} duration={3000} />
 
             <div className="farm-admin-roles-grid">
                 <section className="farm-admin-roles-panel">

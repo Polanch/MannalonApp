@@ -1,5 +1,98 @@
 # React + Vite
 
+## Toast notifications
+
+All toast notifications use the shared `Toast` component and the `toast-root`
+portal in `index.html`. They stack at the bottom right with a consistent design,
+an accessible status message, automatic dismissal, and a close button. The layout
+respects mobile safe areas and reduced-motion preferences. Keep validation errors
+and confirmation dialogs in their existing context rather than converting them
+to transient toasts.
+
+## Branch farms under one farm code
+
+Farm-Admins open **Land**, then **Add branch** on an approved main farm. The
+existing registration wizard collects the branch's own name, area, address,
+tenure, and supporting documents. Select an existing Farmer account linked to
+that main farm. The main farm/code are read-only context; no new code is requested.
+Branches require **Admin approval** through the existing Farm Management review.
+Pending/rejected branches cannot be geotagged. After approval, **Add map location**
+uses the branch's own `farmId`, not its parent's, so pins remain independent.
+Main-farm registration continues using its original endpoint and workflow.
+
+### Backend contract and deployment
+
+The separate backend implements the contract below. Deploy that backend and
+restart it so Flyway applies `V29__farm_branches_under_main_farms.sql` before
+using branches. The migration adds parent/owner references and permits null
+stored codes for branch rows; response DTOs expose the inherited main-farm code.
+The frontend already uses these endpoints and needs no contract changes.
+Older deployments without branch support produce an explicit error rather than
+receiving branch fields through the standalone registration endpoint.
+
+1. `GET /api/farm-admin/farms/{parentFarmId}/branch-owners` returns
+   `[{ "globalId": 101, "fullName": "Farmer Name" }]`. Return only approved,
+   active Farmer accounts already linked to this main farm. Require the current
+   session to be a Farm-Admin authorized for the approved parent. Empty arrays
+   mean no eligible owners, not an API failure.
+2. `POST /api/farm-admin/farms/{parentFarmId}/branch-registrations` accepts
+   multipart fields from the existing farm registration request:
+   `farmName`, `areaHectares`, `farmType`, `irrigationType`, `ownershipType`,
+   `region`, `province`, `municipalityCity`, `barangay`, `sitio`,
+   `documents[i].documentType`, `documents[i].documentNumber`,
+   `documents[i].file`, plus numeric `ownerGlobalId` (the subject Farmer,
+   never the authenticated actor). Revalidate owner eligibility on submission
+   and approval. Return HTTP 201 and:
+   ```json
+   {
+     "registrationId": 9,
+     "farmName": "Branch parcel",
+     "status": "PENDING",
+     "farmCode": "EXISTING-MAIN-CODE",
+     "parentFarmId": 4,
+     "parentFarmName": "Main farm",
+     "ownerGlobalId": 101,
+     "ownerFullName": "Farmer Name",
+     "submittedAt": "2026-11-02T08:00:00",
+     "farmId": null,
+     "hasGeolocation": false
+   }
+   ```
+3. Extend existing Farm-Admin `/farms`, Admin registration list/detail, and
+   review responses with `parentFarmId`, `parentFarmName`, `ownerGlobalId`,
+   `ownerFullName`; main farms return null branch fields. Include pending and
+   rejected branches in the Farm-Admin list. After approval, return the branch's
+   distinct `farmId` and the unchanged inherited `farmCode`.
+4. Reuse existing Admin registration approve/reject endpoints. Branch approval
+   must NOT execute main-farm code generation or create/move a Farmer account.
+   Maintain the Farmer's existing membership and main farm code, including when
+   the same Farmer owns multiple branches. Do not equate branch ownership with
+   Farm-Admin account ownership. Reject nested branches and unauthorized parent
+   or owner substitutions. Branch registration is pending until Admin approval.
+5. Model parcels/branches separately from the unique main-farm membership code
+   as needed; use additive Flyway migrations, not duplicate unique farm codes or
+   edits to already-applied migrations. Preserve existing farms/memberships.
+6. Existing `GET/PUT /api/farm-admin/farms/{farmId}/location` must support the
+   approved branch ID with session/parent management checks. Never overwrite the
+   parent's location. `/api/farm-locations` includes approved geotagged branches
+   with distinct IDs and optional `parentFarmId`, `parentFarmName`, `farmCode`;
+   pending/rejected branches remain private. Public map responses should not
+   expose Farmer account details.
+7. Ensure Farmer farm/profile read models can include that account's approved
+   owned branches without changing its login, membership code, or the scope of
+   unrelated social/FarmTE data.
+8. Test real persistence for one Farmer owning multiple branches, unchanged
+   parent code/membership, Admin-only approval, scoped owner selection,
+   unauthorized requests, failed document transactions, branch rejection, and
+   independent branch/main map locations. Return explicit 400/403/404/409 errors.
+
+Frontend contract tests cover branch submission and response validation. Backend
+Copilot reports 12 passing database integration tests in
+`BranchFarmRegistrationIntegrationTest`. Live browser verification against the
+deployed backend is still required; prior frontend browser checks used synthetic
+fixtures. The backend Farmer read model includes approved owned branches as
+`ownedBranches`; this does not change the Farmer's existing membership.
+
 ## Ticketing and rental reports
 
 - The **Admin Dashboard** shows all-time counts for all six ticket statuses and

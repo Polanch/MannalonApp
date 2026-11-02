@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { API_ORIGIN, getApiErrorMessage } from '../services/farmerApi.js'
+import Toast from './Toast.jsx'
 
 const DEFAULT_CENTER = [18.356, 121.64]
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org'
@@ -292,7 +293,7 @@ function FarmLocationEditor({ farmId, onSaved }) {
                 </dl>
             )}
             {formError && <p className="admin-alert admin-alert-error" role="alert">{formError}</p>}
-            {notice && <p className="admin-alert admin-alert-success" role="status">{notice}</p>}
+            <Toast message={notice} onDismiss={() => setNotice('')} />
             <p className="farm-map-attribution-note">
                 Map data and address search © OpenStreetMap contributors.
             </p>

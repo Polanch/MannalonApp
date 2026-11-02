@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import Toast from './Toast.jsx'
 
 const API_URL = 'http://localhost:8080/api/admin/farm-admin-applications'
 const UPLOAD_URL = 'http://localhost:8080/uploads/farm-admin'
@@ -78,7 +79,6 @@ function AdminFarmOwnerDetail({ registrationId }) {
             setToast(action === 'approve'
                 ? 'Registration approved successfully.'
                 : 'Registration rejected successfully.')
-            setTimeout(() => setToast(''), 4000)
         } catch (requestError) {
             setError(requestError.message)
         } finally {
@@ -102,7 +102,7 @@ function AdminFarmOwnerDetail({ registrationId }) {
 
     return (
         <section className="admin-detail-page">
-            {toast && <div className="admin-toast admin-toast-success" role="status">{toast}</div>}
+            <Toast message={toast} onDismiss={() => setToast('')} duration={4000} />
             <div className="admin-detail-heading">
                 <div>
                     <Link className="admin-back-link" to="/admin/farm-owners">Back to Farm Admin List</Link>

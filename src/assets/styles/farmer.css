@@ -1340,7 +1340,6 @@
 .program-actions button { border: 1px solid #cbd6ce; background: #fff; border-radius: 6px; padding: 6px 12px; cursor: pointer; }
 .program-actions button.active { background: #105621; color: #fff; border-color: #105621; }
 .program-vote-count { font-weight: 700; min-width: 24px; text-align: center; }
-.program-notice { background: #dff3e3; color: #105621; padding: 10px 14px; border-radius: 8px; }
 .program-error { background: #fbe3e1; color: #a02b22; padding: 10px 14px; border-radius: 8px; }
 .program-feed-empty { text-align: center; color: #657269; padding: 24px; }
 .program-modal-backdrop { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: rgba(23, 53, 31, 0.5); padding: 20px; }

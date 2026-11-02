@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import FarmerComment from './FarmerComment.jsx'
+import Toast from '../Toast.jsx'
 import { applyToProgram, createComment, getRequirementId, fetchComments, fetchPrograms, getApiErrorMessage, resolveMediaUrl, setProgramVote } from '../../services/farmerApi.js'
 
 function ProgramComments({ programId, session, onCountChange }) {
@@ -168,7 +169,7 @@ function FarmerPrograms({ session, readOnly = false }) {
                 <p>Benefits and programs offered by Mannalon.</p>
                 {readOnly && <p>MAO program announcements. Contact the MAO office about eligibility and enrollment; participation requires MAO approval.</p>}
             </div>
-            {notice && <p className="program-notice" role="status">{notice}</p>}
+            <Toast message={notice} onDismiss={() => setNotice('')} />
             {error && <p className="program-error" role="alert">{error}</p>}
             {isLoading && <p className="program-feed-empty">Loading Programs...</p>}
             {!isLoading && !programs.length && !error && <p className="program-feed-empty">No Programs have been posted yet.</p>}

@@ -6,6 +6,7 @@ import {
     updateTicketAssignment, updateTicketSeverity, updateTicketStatus,
 } from '../services/ticketingApi.js'
 import { RentalReportSummary, TicketAttachments, TicketFileInput } from './TicketingForms.jsx'
+import Toast from './Toast.jsx'
 
 function Pager({ data, onPage, disabled = false, label }) {
     return data && data.totalPages > 1 ? (
@@ -201,7 +202,7 @@ export default function TicketDetail({ id, session, assignees, adminMode, onClos
             <div className="ticket-actions"><button type="button" onClick={onClose}>Back to tickets</button><button type="button" onClick={() => updated('')}>Refresh details</button></div>
             {detail.error && <p className="ticket-error" role="alert">{detail.error} Details may be out of date. Actions are disabled until refresh succeeds.</p>}
             {detail.loading && <p role="status">Loading ticket details...</p>}
-            {notice && <p className="ticket-success" role="status">{notice}</p>}
+            <Toast message={notice} onDismiss={() => setNotice('')} />
             {ticket && <>
                 <header className="ticket-detail-header">
                     <p className="ticket-eyebrow">{ticket.ticketNumber}</p><h2>{ticket.subject}</h2>

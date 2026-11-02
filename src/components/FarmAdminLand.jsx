@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import FarmLocationEditor from './FarmLocationEditor.jsx'
+import { API_ORIGIN } from '../services/farmerApi.js'
+import { fetchBranchOwners, submitBranchRegistration } from '../services/farmBranchesApi.js'
 
-const API_URL = 'http://localhost:8080/api/farm-admin'
+const API_URL = `${API_ORIGIN}/api/farm-admin`
 
 const FARM_TYPES = ['Rice Farm', 'Rice-Based Farm', 'Other']
 const IRRIGATION_TYPES = ['Irrigated', 'Rainfed', 'Other']
@@ -47,6 +49,32 @@ function FarmAdminLand() {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [submittedFarm, setSubmittedFarm] = useState(null)
     const [selectedFarm, setSelectedFarm] = useState(null)
+    const [branchParent, setBranchParent] = useState(null)
+    const [branchOwners, setBranchOwners] = useState([])
+    const [ownerGlobalId, setOwnerGlobalId] = useState('')
+    const [ownersLoading, setOwnersLoading] = useState(false)
+    const [ownersError, setOwnersError] = useState('')
+    const [ownersRevision, setOwnersRevision] = useState(0)
+
+    useEffect(() => {
+        if (!branchParent) return undefined
+        const controller = new AbortController()
+        async function loadOwners() {
+            try {
+                setOwnersLoading(true)
+                setOwnersError('')
+                setBranchOwners([])
+                const owners = await fetchBranchOwners(branchParent.farmId, controller.signal)
+                if (!controller.signal.aborted) setBranchOwners(owners)
+            } catch (error) {
+                if (!controller.signal.aborted) setOwnersError(error.message)
+            } finally {
+                if (!controller.signal.aborted) setOwnersLoading(false)
+            }
+        }
+        loadOwners()
+        return () => controller.abort()
+    }, [branchParent, ownersRevision])
 
     useEffect(() => {
         let isActive = true
@@ -76,15 +104,28 @@ function FarmAdminLand() {
         setDocuments([emptyDocument()])
         setStep(1)
         setErrorMessage('')
+        setOwnerGlobalId('')
+        setBranchOwners([])
+        setOwnersError('')
     }
 
     function openAddFarm() {
         resetForm()
+        setBranchParent(null)
+        setView('form')
+    }
+
+    function openAddBranch(farm) {
+        resetForm()
+        setBranchParent(farm)
+        setOwnersRevision((value) => value + 1)
         setView('form')
     }
 
     function closeForm() {
+        if (isSubmitting) return
         resetForm()
+        setBranchParent(null)
         setView('list')
     }
 
@@ -151,7 +192,8 @@ function FarmAdminLand() {
 
     function validateStep(stepNumber) {
         if (stepNumber === 1) {
-            return formData.farmName.trim() !== ''
+            return (!branchParent || (!ownersLoading && !ownersError && branchOwners.some((owner) => owner.globalId === Number(ownerGlobalId))))
+                && formData.farmName.trim() !== ''
                 && formData.farmArea !== ''
                 && Number(formData.farmArea) > 0
                 && formData.farmType !== ''
@@ -220,20 +262,28 @@ function FarmAdminLand() {
         try {
             setIsSubmitting(true)
             setErrorMessage('')
-            const response = await fetch(`${API_URL}/registrations`, {
-                method: 'POST',
-                credentials: 'include',
-                body: registrationData,
-            })
-            if (!response.ok) {
-                const responseBody = await response.json().catch(() => null)
-                throw new Error(responseBody?.message || responseBody?.error || 'Unable to submit your farm registration.')
+            let registration
+            if (branchParent) {
+                registration = await submitBranchRegistration(branchParent, Number(ownerGlobalId), registrationData)
+            } else {
+                const response = await fetch(`${API_URL}/registrations`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: registrationData,
+                })
+                if (!response.ok) {
+                    const responseBody = await response.json().catch(() => null)
+                    throw new Error(responseBody?.message || responseBody?.error || 'Unable to submit your farm registration.')
+                }
+                registration = await response.json()
             }
-
-            const registration = await response.json()
             const newFarm = {
                 ...registration,
-                createdAt: registration.submittedAt,
+                createdAt: registration.createdAt || registration.submittedAt,
+                ...(branchParent ? {
+                    parentFarmName: branchParent.farmName,
+                    ownerFullName: branchOwners.find((owner) => owner.globalId === Number(ownerGlobalId))?.fullName,
+                } : {}),
             }
             setFarms((currentFarms) => [newFarm, ...currentFarms])
             setSubmittedFarm(newFarm)
@@ -256,33 +306,42 @@ function FarmAdminLand() {
                         <p className="farm-admin-eyebrow">LAND MANAGEMENT</p>
                         <h2>My Registered Farms</h2>
                     </div>
-                    <button type="button" className="farm-admin-primary-button" onClick={openAddFarm}>+ Add</button>
+                    <button type="button" className="farm-admin-primary-button" onClick={openAddFarm}>+ Register main farm</button>
                 </div>
 
+                <p className="farm-admin-location-intro">Register a new main farm, or add a branch to an approved main farm below. Branches keep the same farm code, belong to a linked Farmer, and require Admin approval.</p>
+                {errorMessage && <div className="farm-admin-error-banner" role="alert">{errorMessage}</div>}
                 <div className="farm-admin-land-table-wrap">
                     {isLoading ? <p className="farm-admin-loading">Loading farm registrations...</p> : hasFarms ? (
                         <div className="fa-card-grid">
                             {farms.map((farm) => (
-                                <button
+                                <article
                                     key={farm.registrationId}
-                                    type="button"
-                                    className={`fa-card${farm.status === 'APPROVED' && farm.farmId ? '' : ' is-disabled'}`}
-                                    onClick={() => openFarmLocation(farm)}
-                                    disabled={farm.status !== 'APPROVED' || !farm.farmId}
+                                    className="fa-card"
                                 >
                                     <div className="fa-card-top">
                                         <span className={`status-badge status-${farm.status.toLowerCase()}`}>{farm.status}</span>
                                         <span className="fa-card-id">{farm.farmCode || 'No code yet'}</span>
                                     </div>
                                     <strong className="fa-card-title">{farm.farmName}</strong>
+                                    <span className="farm-admin-eyebrow">{farm.parentFarmId != null ? 'BRANCH FARM' : 'MAIN FARM'}</span>
                                     <dl className="fa-card-meta">
+                                        {farm.parentFarmId != null && <>
+                                            <dt>Main farm</dt><dd>{farm.parentFarmName || `Farm #${farm.parentFarmId}`}</dd>
+                                            <dt>Farmer owner</dt><dd>{farm.ownerFullName || `Farmer #${farm.ownerGlobalId}`}</dd>
+                                        </>}
                                         <dt>Submitted</dt><dd>{farm.createdAt ? new Date(farm.createdAt).toLocaleDateString() : '—'}</dd>
                                         {farm.rejectionReason && <><dt>Reason</dt><dd>{farm.rejectionReason}</dd></>}
                                         {farm.status === 'APPROVED' && (
-                                            <><dt>Map location</dt><dd>{farm.hasGeolocation ? 'Added' : 'Required — click to add'}</dd></>
+                                            <><dt>Map location</dt><dd>{farm.hasGeolocation ? 'Added' : 'Not added yet'}</dd></>
                                         )}
                                     </dl>
-                                </button>
+                                    {farm.status === 'APPROVED' && farm.farmId && <div className="farm-admin-branch-actions">
+                                        <button type="button" className="farm-admin-secondary-button" onClick={() => openFarmLocation(farm)}>{farm.hasGeolocation ? 'Edit map location' : 'Add map location'}</button>
+                                        {farm.parentFarmId == null && farm.farmCode && <button type="button" className="farm-admin-primary-button" onClick={() => openAddBranch(farm)}>+ Add branch</button>}
+                                    </div>}
+                                    {farm.parentFarmId != null && farm.status === 'PENDING' && <p className="farm-admin-location-intro">Awaiting Admin approval. Geotagging becomes available after approval.</p>}
+                                </article>
                             ))}
                         </div>
                     ) : (
@@ -304,11 +363,15 @@ function FarmAdminLand() {
                 <div className="farm-admin-form-head">
                     <div>
                         <p className="farm-admin-eyebrow">REGISTRATION</p>
-                        <h2>Register Farm</h2>
+                        <h2>{branchParent ? 'Register Branch Farm' : 'Register Farm'}</h2>
                     </div>
-                    <button type="button" className="farm-admin-secondary-button" onClick={closeForm}>Cancel</button>
+                    <button type="button" className="farm-admin-secondary-button" disabled={isSubmitting} onClick={closeForm}>Cancel</button>
                 </div>
 
+                {branchParent && <div className="farm-admin-branch-context">
+                    <strong>Main farm: {branchParent.farmName}</strong>
+                    <p>Shared farm code: <strong>{branchParent.farmCode}</strong>. No new code will be issued. The branch will be pending until an Admin approves it.</p>
+                </div>}
                 <div className="farm-admin-stepper" aria-label="Registration progress">
                     {[1, 2, 3, 4].map((value) => (
                         <span key={value} className={value <= step ? 'farm-admin-step active' : 'farm-admin-step'}>
@@ -319,10 +382,24 @@ function FarmAdminLand() {
 
                 {errorMessage && <div className="farm-admin-error-banner" role="alert">{errorMessage}</div>}
 
+                <fieldset className="farm-admin-registration-fields" disabled={isSubmitting}>
                 <div className="farm-admin-form-body">
                     {step === 1 && (
                         <div className="farm-admin-form-step">
                             <h3>Farm Information</h3>
+                            {branchParent && <div className="farm-admin-branch-owner">
+                                <label className="farm-admin-field">
+                                    <span>Farmer owner <em>*</em></span>
+                                    <select value={ownerGlobalId} disabled={ownersLoading || Boolean(ownersError)} onChange={(event) => setOwnerGlobalId(event.target.value)}>
+                                        <option value="">Select a Farmer linked to {branchParent.farmCode}</option>
+                                        {branchOwners.map((owner) => <option key={owner.globalId} value={owner.globalId}>{owner.fullName} (#{owner.globalId})</option>)}
+                                    </select>
+                                </label>
+                                {ownersLoading && <p role="status">Loading eligible Farmer accounts...</p>}
+                                {ownersError && <p className="farm-admin-error-banner" role="alert">{ownersError}</p>}
+                                {!ownersLoading && !ownersError && branchOwners.length === 0 && <p>No eligible Farmer accounts are linked to this main farm. Approve/link the Farmer account first.</p>}
+                                <button type="button" className="farm-admin-secondary-button" disabled={ownersLoading} onClick={() => { setOwnerGlobalId(''); setOwnersRevision((value) => value + 1) }}>Reload eligible Farmers</button>
+                            </div>}
                             <div className="farm-admin-form-grid">
                                 <label className="farm-admin-field">
                                     <span>Farm Name <em>*</em></span>
@@ -435,6 +512,15 @@ function FarmAdminLand() {
                     {step === 4 && (
                         <div className="farm-admin-form-step">
                             <h3>Review</h3>
+                            {branchParent && <div className="farm-admin-review-section">
+                                <h4>Branch linkage</h4>
+                                <ul>
+                                    <li><strong>Main farm:</strong> {branchParent.farmName}</li>
+                                    <li><strong>Shared code:</strong> {branchParent.farmCode}</li>
+                                    <li><strong>Farmer owner:</strong> {branchOwners.find((owner) => owner.globalId === Number(ownerGlobalId))?.fullName}</li>
+                                    <li>Admin approval is required before branch activation and geotagging.</li>
+                                </ul>
+                            </div>}
                             <div className="farm-admin-review-section">
                                 <h4>Farm Information</h4>
                                 <ul>
@@ -485,10 +571,11 @@ function FarmAdminLand() {
                         <button type="button" className="farm-admin-primary-button" onClick={goToNextStep}>Next</button>
                     ) : (
                         <button type="button" className="farm-admin-primary-button" onClick={submitFarmRegistration} disabled={isSubmitting}>
-                            {isSubmitting ? 'Submitting...' : 'Submit Farm Registration'}
+                            {isSubmitting ? 'Submitting...' : branchParent ? 'Submit Branch for Approval' : 'Submit Farm Registration'}
                         </button>
                     )}
                 </div>
+                </fieldset>
             </div>
         )
     }
@@ -497,14 +584,15 @@ function FarmAdminLand() {
         return (
             <div className="farm-admin-land-panel farm-admin-success-panel">
                 <div className="farm-admin-success-icon">✓</div>
-                <h2>Farm Registration Submitted</h2>
-                <p>Your farm registration has been submitted and is now pending review.</p>
+                <h2>{submittedFarm?.parentFarmId != null ? 'Branch Registration Submitted' : 'Farm Registration Submitted'}</h2>
+                <p>Your {submittedFarm?.parentFarmId != null ? 'branch' : 'farm'} registration is pending Admin review.</p>
+                {submittedFarm?.parentFarmId != null && <p>The branch belongs to {submittedFarm.ownerFullName} under {submittedFarm.parentFarmName}. Its map location can be added after approval.</p>}
                 <div className="farm-admin-success-status">
                     <span>Status:</span>
                     <span className={`status-badge status-${String(submittedFarm?.status || 'PENDING').toLowerCase()}`}>{submittedFarm?.status || 'PENDING'}</span>
                 </div>
                 <div className="farm-admin-success-meta">
-                    <span>Farm Code:</span>
+                    <span>{submittedFarm?.parentFarmId != null ? 'Shared Farm Code:' : 'Farm Code:'}</span>
                     <strong>{submittedFarm?.farmCode || '—'}</strong>
                 </div>
                 <button type="button" className="farm-admin-primary-button" onClick={() => setView('list')}>Back to My Farms</button>
@@ -519,6 +607,7 @@ function FarmAdminLand() {
                     <div>
                         <p className="farm-admin-eyebrow">APPROVED FARM</p>
                         <h2>{selectedFarm?.farmName}</h2>
+                        {selectedFarm?.parentFarmId != null && <p className="farm-admin-branch-context">Branch of {selectedFarm.parentFarmName || `Farm #${selectedFarm.parentFarmId}`} &middot; Shared code: {selectedFarm.farmCode} &middot; Owner: {selectedFarm.ownerFullName || `Farmer #${selectedFarm.ownerGlobalId}`}. This location is independent of the main farm.</p>}
                         <p className="farm-admin-location-intro">
                             {selectedFarm?.hasGeolocation
                                 ? 'Review or update this farm’s exact map location.'

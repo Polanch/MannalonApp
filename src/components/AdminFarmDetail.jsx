@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import Toast from './Toast.jsx'
 
 const API_URL = 'http://localhost:8080/api/farm-admin/registrations'
 
@@ -81,7 +82,6 @@ function AdminFarmDetail({ registrationId }) {
             setToast(action === 'approve'
                 ? 'Farm registration approved successfully.'
                 : 'Farm registration rejected successfully.')
-            setTimeout(() => setToast(''), 4000)
         } catch (requestError) {
             setError(requestError.message)
         } finally {
@@ -96,7 +96,7 @@ function AdminFarmDetail({ registrationId }) {
 
     return (
         <section className="admin-detail-page">
-            {toast && <div className="admin-toast admin-toast-success" role="status">{toast}</div>}
+            <Toast message={toast} onDismiss={() => setToast('')} duration={4000} />
             <div className="admin-detail-heading">
                 <div>
                     <Link className="admin-back-link" to="/admin/farm-management">Back to Farm Registration List</Link>
@@ -107,6 +107,16 @@ function AdminFarmDetail({ registrationId }) {
             </div>
 
             {error && <p className="admin-alert admin-alert-error" role="alert">{error}</p>}
+
+            {registration.parentFarmId != null && <section className="admin-panel">
+                <h3>Branch farm registration</h3>
+                <dl className="admin-info-grid">
+                    <div><dt>Main farm</dt><dd>{registration.parentFarmName || `Farm #${registration.parentFarmId}`}</dd></div>
+                    <div><dt>Shared farm code</dt><dd>{valueOrDash(registration.farmCode)}</dd></div>
+                    <div><dt>Farmer owner</dt><dd>{registration.ownerFullName || `Farmer #${registration.ownerGlobalId}`}</dd></div>
+                </dl>
+                <p>Approval activates a separate branch location under the existing main farm code. It must not issue a new code or move the Farmer account to another farm.</p>
+            </section>}
 
             <div className="admin-detail-grid">
                 <section className="admin-panel">

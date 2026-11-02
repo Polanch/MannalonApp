@@ -92,16 +92,10 @@
     color: #704c31;
 }
 
-.rental-notice,
 .rental-error {
     margin: 0 0 18px;
     padding: 12px 14px;
     border-radius: 8px;
-}
-
-.rental-notice {
-    background: #e9f7e7;
-    color: #285e2e;
 }
 
 .rental-error {

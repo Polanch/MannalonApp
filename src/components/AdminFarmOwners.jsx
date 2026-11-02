@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import Toast from './Toast.jsx'
 
 const API_URL = 'http://localhost:8080/api/admin/farm-admin-applications'
 
@@ -122,7 +123,7 @@ function AdminFarmOwners() {
             </div>
 
             {error && <p className="admin-alert admin-alert-error" role="alert">{error}</p>}
-            {provisionMessage && <p className="admin-toast admin-toast-success" role="status">{provisionMessage}</p>}
+            <Toast message={provisionMessage} onDismiss={() => setProvisionMessage('')} />
             {isLoading ? <p className="admin-loading">Loading Farm-Admin registrations...</p> : (
                 <div className="admin-table-wrap">
                     <table className="admin-data-table">

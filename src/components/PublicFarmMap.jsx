@@ -69,6 +69,11 @@ function PublicFarmMap() {
             const address = document.createElement('div')
             address.textContent = farm.locationAddress
             popup.append(name, address)
+            if (farm.parentFarmId != null) {
+                const branch = document.createElement('div')
+                branch.textContent = `Branch of ${farm.parentFarmName || `Farm #${farm.parentFarmId}`} - ${farm.farmCode || ''}`
+                popup.append(branch)
+            }
             marker.bindPopup(popup)
         })
 

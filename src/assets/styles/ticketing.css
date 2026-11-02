@@ -41,11 +41,10 @@
 .ticket-badge.severity-1 { background: #ffe4df; color: #922a21; }
 .ticket-badge.is-cancelled { background: #ececec; color: #505050; }
 .ticket-muted, .ticket-file-input small, .ticket-attachment small { color: #65735f; font-size: .8rem; line-height: 1.55; overflow-wrap: anywhere; }
-.ticket-error, .ticket-warning, .ticket-success { padding: 12px; border-radius: 8px; line-height: 1.5; overflow-wrap: anywhere; }
+.ticket-error, .ticket-warning { padding: 12px; border-radius: 8px; line-height: 1.5; overflow-wrap: anywhere; }
 .ticket-error { color: #922c24; background: #fff0ed; }
 .ticket-warning { color: #785118; background: #fff5de; }
-.ticket-success { color: #285837; background: #e6f3e4; }
-.ticket-success button, .ticket-error button { margin-left: 12px; }
+.ticket-error button { margin-left: 12px; }
 .ticket-report { margin: 12px 0; padding: 14px; background: #f1f6ed; border: 1px solid #d6e4ce; border-radius: 8px; font-size: .85rem; line-height: 1.5; overflow-wrap: anywhere; }
 .ticket-report p { margin: 5px 0 0; }
 .ticket-report.is-escalated { background: #fff1e7; border-color: #e5b89a; color: #84441f; }

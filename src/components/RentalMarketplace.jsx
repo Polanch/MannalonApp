@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import '../assets/styles/rentals.css'
 import '../assets/styles/ticketing.css'
 import { RentalReportSummary, TicketCreateForm } from './TicketingForms.jsx'
+import Toast from './Toast.jsx'
 import {
     RENTAL_CATEGORIES,
     approveRental,
@@ -194,7 +195,8 @@ function RentalMarketplace({ heading = 'Farm tool rental', adminMode = false, on
                 </section>
             )}
 
-            {notice && <p className="rental-notice" role="status">{notice} {createdTicket && onOpenTicket && <button type="button" onClick={() => onOpenTicket(createdTicket)}>View ticket</button>}</p>}
+            <Toast message={notice} onDismiss={() => setNotice('')}
+                action={createdTicket && onOpenTicket ? { label: 'View ticket', onClick: () => onOpenTicket(createdTicket) } : undefined} />
             {error && !selected && !showCreate && <p className="rental-error" role="alert">{error}</p>}
 
             <div className="rental-toolbar">

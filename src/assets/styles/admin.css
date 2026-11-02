@@ -575,25 +575,6 @@
     color: #8c2a22;
 }
 
-.admin-toast {
-    position: fixed;
-    top: 24px;
-    right: 24px;
-    z-index: 20;
-    max-width: min(360px, calc(100vw - 48px));
-    padding: 14px 18px;
-    border-radius: 6px;
-    box-shadow: 0 8px 24px rgba(7, 26, 53, 0.18);
-    font-size: 14px;
-    font-weight: 700;
-}
-
-.admin-toast-success {
-    border: 1px solid #a9d8b5;
-    background: #e7f7eb;
-    color: #176b32;
-}
-
 .admin-detail-heading {
     align-items: flex-start;
     margin-bottom: 28px;

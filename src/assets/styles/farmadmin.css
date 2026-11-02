@@ -612,6 +612,11 @@
 .farm-admin-roles-heading h1 { margin: 0.25rem 0; font-size: 1.75rem; color: #105621; }
 .farm-admin-roles-heading p { margin: 0; color: #6B7280; }
 .farm-admin-roles-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 1rem; margin-top: 1rem; align-items: start; }
+.farm-admin-registration-fields { min-width: 0; margin: 0; padding: 0; border: 0; }
+.farm-admin-branch-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.farm-admin-branch-context { margin: 14px 0; padding: 16px; border: 1px solid #cdddce; border-radius: 10px; background: #f0f7ef; color: #23472c; line-height: 1.6; overflow-wrap: anywhere; }
+.farm-admin-branch-context p { margin: 8px 0 0; }
+.farm-admin-branch-owner { display: grid; gap: 12px; margin-bottom: 20px; }
 .farm-admin-roles-panel { padding: 1rem; border-radius: 12px; background: #FFFFFF; box-shadow: 0 1px 4px rgba(0,0,0,0.12); }
 .farm-admin-roles-panel h2 { margin: 0 0 0.75rem; font-size: 1.05rem; }
 .farm-admin-roles-panel form { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.25rem; }
@@ -630,8 +635,6 @@
 .farm-admin-roles-table th, .farm-admin-roles-table td { padding: 0.5rem; border-bottom: 1px solid #E5E7EB; text-align: left; }
 .farm-admin-roles-status { color: #6B7280; font-size: 0.875rem; }
 .farm-admin-roles-error { margin: 0.75rem 0 0; padding: 0.6rem 0.8rem; border-radius: 8px; background: #FEE2E2; color: #991B1B; }
-.farm-admin-roles-toast { position: fixed; right: 1.5rem; bottom: 1.5rem; z-index: 50; max-width: 320px; margin: 0; padding: 0.75rem 1rem; border-radius: 10px; background: #105621; color: #FFFFFF; font-size: 0.9rem; box-shadow: 0 6px 20px rgba(0,0,0,0.25); animation: farm-admin-toast-in 0.25s ease; }
-@keyframes farm-admin-toast-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 800px) { .farm-admin-roles-grid { grid-template-columns: 1fr; } }
 
 .farm-admin-home { padding-top: 60px; background: #e0e0e0; min-height: 100vh; box-sizing: border-box; }
@@ -656,7 +659,6 @@
 .farm-admin-announce-submit { padding: 0.55rem; border: 0; border-radius: 8px; background: #105621; color: #FFFFFF; font-weight: 700; cursor: pointer; }
 .farm-admin-announce-submit:disabled { opacity: 0.5; cursor: not-allowed; }
 .farm-admin-announce-error { margin: 0; color: #B91C1C; font-size: 0.8rem; }
-.farm-admin-announce-success { margin: 0; color: #166534; font-size: 0.8rem; }
 
 /* Header profile shortcut */
 .farm-admin-menu .farm-admin-nav-profile {
@@ -1031,12 +1033,6 @@
     border: 1px solid #efb8b2;
     background: #fff1ef;
     color: #8c2a22;
-}
-
-.fa-profile .admin-alert-success {
-    border: 1px solid #b8dfc1;
-    background: #effaf1;
-    color: #1d6b31;
 }
 
 @media (max-width: 720px) {
@@ -1478,4 +1474,3 @@ button.fa-card.is-disabled:focus-visible {
         flex-wrap: wrap;
     }
 }
-
