@@ -9,6 +9,7 @@ const SECTIONS = [
         title: 'Farm Management',
         items: [
             { label: 'Farmers', view: 'farmers' },
+            { label: 'RSBSA Directory', view: 'registry' },
             { label: 'Roles', view: 'roles' },
             { label: 'Land', view: 'land' },
         ],
@@ -28,7 +29,7 @@ const SECTIONS = [
     },
     {
         title: 'Resources',
-        items: [{ label: 'Help' }, { label: 'Mannalon Rules' }, { label: 'Privacy Policy' }, { label: 'User Agreement' }],
+        items: [{ label: 'Ticketing', view: 'tickets' }, { label: 'Help' }, { label: 'Mannalon Rules' }, { label: 'Privacy Policy' }, { label: 'User Agreement' }],
     },
 ]
 

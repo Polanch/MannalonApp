@@ -5,7 +5,7 @@ import AdminSideBar from '../components/AdminSideBar.jsx'
 import Login from '../components/AdminLogin.jsx'
 import AdminFarmOwners from '../components/AdminFarmOwners.jsx'
 import AdminFarmOwnerDetail from '../components/AdminFarmOwnerDetail.jsx'
-import AdminFarmers from '../components/AdminFarmers.jsx'
+import AdminFarmerRegistry from '../components/AdminFarmerRegistry.jsx'
 import AdminPrograms from '../components/AdminPrograms.jsx'
 import AdminMarket from '../components/AdminMarket.jsx'
 import AdminDashboard from '../components/AdminDashboard.jsx'
@@ -15,6 +15,7 @@ import RentalMarketplace from '../components/RentalMarketplace.jsx'
 import BookLibrary from '../components/BookLibrary.jsx'
 import AdminUserManagement from '../components/AdminUserManagement.jsx'
 import AdminChatbotRecords from '../components/AdminChatbotRecords.jsx'
+import TicketingPage from '../components/TicketingPage.jsx'
 import { accountError, logoutAccount } from '../services/userManagementApi.js'
 import { clearLocalAccount } from '../services/accountAccess.js'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -25,7 +26,7 @@ function Admin() {
     const [logoutError, setLogoutError] = useState('')
     const [isLoggingOut, setIsLoggingOut] = useState(false)
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
-    const { registrationId } = useParams()
+    const { registrationId, ticketId } = useParams()
     const location = useLocation()
     const navigate = useNavigate()
 
@@ -51,6 +52,9 @@ function Admin() {
     }
 
     function renderAdminSection() {
+        if (location.pathname.startsWith('/admin/tickets')) {
+            return <TicketingPage key={ticketId || 'list'} initialTicketId={ticketId ? Number(ticketId) : null} />
+        }
         if (location.pathname === '/admin/chat-records') {
             return <AdminChatbotRecords />
         }
@@ -73,11 +77,11 @@ function Admin() {
         }
 
         if (location.pathname === '/admin/rentals') {
-            return <RentalMarketplace heading="MAO tool rental" adminMode />
+            return <RentalMarketplace heading="MAO tool rental" adminMode onOpenTicket={(id) => navigate(`/admin/tickets/${id}`)} />
         }
 
         if (location.pathname === '/admin/farmers') {
-            return <AdminFarmers />
+            return <AdminFarmerRegistry adminMode />
         }
 
         if (location.pathname === '/admin/farm-management') {

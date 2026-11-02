@@ -1,5 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import AdminTicketOverview from './AdminTicketOverview.jsx'
+import PublicFarmMap from './PublicFarmMap.jsx'
+import useTicketResource from '../hooks/useTicketResource.js'
+import { fetchTicketInsights, TICKET_STATUSES } from '../services/ticketingApi.js'
 
 const API = 'http://localhost:8080/api/admin'
 
@@ -16,18 +20,29 @@ async function countOf(path) {
 
 function AdminDashboard() {
     const navigate = useNavigate()
-    const [stats, setStats] = useState({ pendingFarmers: null, approvedFarmers: null, programs: null })
+    const [stats, setStats] = useState({ approvedFarmers: null, programs: null })
+    const loadTickets = useCallback(async (signal) => {
+        // The insights endpoint otherwise defaults to tickets created in the last 30 days.
+        const data = await fetchTicketInsights({
+            from: '1970-01-01T00:00:00', to: new Date().toISOString().slice(0, -1),
+        }, signal)
+        if (TICKET_STATUSES.some((status) => data.byStatus.filter((group) => group.key === status).length !== 1)
+            || data.byStatus.some((group) => !Number.isInteger(group.count) || group.count < 0)) {
+            throw new Error('The backend returned incomplete or invalid ticket status counts.')
+        }
+        return data
+    }, [])
+    const tickets = useTicketResource(loadTickets)
 
     useEffect(() => {
         let isActive = true
 
         async function load() {
-            const [pendingFarmers, approvedFarmers, programs] = await Promise.all([
-                countOf('/farmer-registrations?status=PENDING_ADMIN'),
+            const [approvedFarmers, programs] = await Promise.all([
                 countOf('/farmer-registrations?status=APPROVED'),
                 countOf('/programs'),
             ])
-            if (isActive) setStats({ pendingFarmers, approvedFarmers, programs })
+            if (isActive) setStats({ approvedFarmers, programs })
         }
 
         load()
@@ -35,13 +50,12 @@ function AdminDashboard() {
     }, [])
 
     const cards = [
-        { label: 'Farmers awaiting RSBSA validation', value: stats.pendingFarmers, path: '/admin/farmers', tone: 'warn' },
-        { label: 'Active Farmers', value: stats.approvedFarmers, path: '/admin/farmers', tone: 'ok' },
+        { label: 'Approved Farmer accounts', value: stats.approvedFarmers, path: '/admin/users', tone: 'ok' },
         { label: 'Programs', value: stats.programs, path: '/admin/programs', tone: 'info' },
     ]
 
     const shortcuts = [
-        { label: 'Review Farmer RSBSA', description: 'Validate Farmers approved by their Farm-Admin.', path: '/admin/farmers' },
+        { label: 'Open RSBSA directory', description: 'Look up registry records or upload an updated directory.', path: '/admin/farmers' },
         { label: 'Create a Program', description: 'Publish benefits and set eligibility requirements.', path: '/admin/programs' },
         { label: 'Review Farm Admins', description: 'Check Farm-Admin registrations.', path: '/admin/farm-owners' },
     ]
@@ -65,6 +79,8 @@ function AdminDashboard() {
                 ))}
             </div>
 
+            <AdminTicketOverview resource={tickets} onOpenTickets={() => navigate('/admin/tickets')} />
+
             <h3 className="admin-dashboard-subtitle">Quick actions</h3>
             <div className="admin-shortcut-grid">
                 {shortcuts.map((shortcut) => (
@@ -73,6 +89,9 @@ function AdminDashboard() {
                         <span>{shortcut.description}</span>
                     </button>
                 ))}
+            </div>
+            <div className="admin-dashboard-map">
+                <PublicFarmMap />
             </div>
         </section>
     )

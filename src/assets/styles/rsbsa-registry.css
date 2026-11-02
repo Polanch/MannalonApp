@@ -1,0 +1,332 @@
+.rsbsa-registry {
+    --rsbsa-green: #105621;
+    --rsbsa-ink: #20352a;
+    --rsbsa-muted: #68766d;
+    --rsbsa-border: #dce5df;
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    color: var(--rsbsa-ink);
+}
+
+.rsbsa-heading,
+.rsbsa-table-heading,
+.rsbsa-pagination,
+.rsbsa-pagination > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.rsbsa-heading {
+    margin-bottom: 24px;
+}
+
+.rsbsa-eyebrow {
+    margin: 0 0 7px;
+    color: var(--rsbsa-green);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+}
+
+.rsbsa-heading h1,
+.rsbsa-import-card h2,
+.rsbsa-table-heading h2 {
+    margin: 0;
+    color: var(--rsbsa-ink);
+}
+
+.rsbsa-heading h1 {
+    font-size: clamp(24px, 3vw, 32px);
+}
+
+.rsbsa-heading > div:first-child > p:last-child,
+.rsbsa-import-card > div > p:last-child,
+.rsbsa-table-heading p {
+    margin: 7px 0 0;
+    color: var(--rsbsa-muted);
+    line-height: 1.5;
+}
+
+.rsbsa-total {
+    display: grid;
+    min-width: 150px;
+    padding: 14px 18px;
+    border: 1px solid var(--rsbsa-border);
+    border-radius: 10px;
+    background: #fff;
+    text-align: center;
+}
+
+.rsbsa-total strong {
+    color: var(--rsbsa-green);
+    font-size: 24px;
+}
+
+.rsbsa-total span,
+.rsbsa-file-name,
+.rsbsa-pagination {
+    color: var(--rsbsa-muted);
+    font-size: 13px;
+}
+
+.rsbsa-import-card,
+.rsbsa-table-card {
+    margin-bottom: 18px;
+    border: 1px solid var(--rsbsa-border);
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 6px 20px rgba(7, 26, 53, 0.04);
+}
+
+.rsbsa-import-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.8fr);
+    gap: 28px;
+    align-items: center;
+    padding: 22px;
+    border-left: 4px solid #e8ad16;
+}
+
+.rsbsa-import-card h2,
+.rsbsa-table-heading h2 {
+    font-size: 17px;
+}
+
+.rsbsa-upload-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 9px 12px;
+    align-items: center;
+}
+
+.rsbsa-upload-form label {
+    grid-column: 1 / -1;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.rsbsa-upload-form input,
+.rsbsa-search input {
+    min-width: 0;
+    min-height: 40px;
+    padding: 8px 10px;
+    border: 1px solid #c9d5cc;
+    border-radius: 6px;
+    background: #fff;
+    color: var(--rsbsa-ink);
+    font: inherit;
+}
+
+.rsbsa-upload-form input {
+    grid-column: 1 / -1;
+}
+
+.rsbsa-file-name {
+    grid-column: 1 / -1;
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.rsbsa-primary-button,
+.rsbsa-reset-button {
+    min-height: 38px;
+    padding: 0 13px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.rsbsa-primary-button {
+    background: var(--rsbsa-green);
+    color: #fff;
+}
+
+.rsbsa-reset-button {
+    border-color: #cbd6ce;
+    background: #fff;
+    color: #425048;
+}
+
+.rsbsa-primary-button:disabled,
+.rsbsa-reset-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.rsbsa-search {
+    display: grid;
+    grid-template-columns: auto minmax(180px, 1fr) auto auto;
+    gap: 10px;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.rsbsa-search label {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.rsbsa-table-card {
+    overflow: hidden;
+}
+
+.rsbsa-table-heading {
+    padding: 18px 20px;
+}
+
+.rsbsa-table-heading p {
+    font-size: 13px;
+}
+
+.rsbsa-table-scroll {
+    overflow-x: auto;
+}
+
+.rsbsa-table-scroll table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    text-align: left;
+}
+
+.rsbsa-table-scroll th {
+    padding: 12px 14px;
+    background: #f1f5f1;
+    color: #45554a;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.rsbsa-table-scroll td {
+    padding: 13px 14px;
+    border-top: 1px solid #edf1ed;
+    white-space: nowrap;
+}
+
+.rsbsa-table-scroll tbody tr:hover {
+    background: #f8faf8;
+}
+
+.rsbsa-table-state {
+    height: 110px;
+    color: var(--rsbsa-muted);
+    text-align: center;
+}
+
+.rsbsa-pagination {
+    padding: 14px 18px;
+    border-top: 1px solid var(--rsbsa-border);
+}
+
+.rsbsa-pagination > div {
+    gap: 10px;
+}
+
+.rsbsa-pagination > div > span {
+    min-width: 80px;
+    text-align: center;
+}
+
+.rsbsa-message {
+    margin: 12px 0;
+    padding: 12px 14px;
+    border-radius: 7px;
+    font-size: 13px;
+}
+
+.rsbsa-message-error {
+    border: 1px solid #ecc8c5;
+    background: #fff5f4;
+    color: #8d2921;
+}
+
+.rsbsa-message-success {
+    display: grid;
+    gap: 5px;
+    border: 1px solid #c9dfcb;
+    background: #f2f8f2;
+    color: #24552d;
+}
+
+.rsbsa-message-success ul {
+    margin: 4px 0 0;
+    padding-left: 20px;
+}
+
+.rsbsa-account-note {
+    color: var(--rsbsa-muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.rsbsa-upload-form input:focus-visible,
+.rsbsa-search input:focus-visible,
+.rsbsa-primary-button:focus-visible,
+.rsbsa-reset-button:focus-visible {
+    outline: 2px solid #e8ad16;
+    outline-offset: 2px;
+}
+
+@media (max-width: 760px) {
+    .rsbsa-heading,
+    .rsbsa-import-card {
+        align-items: stretch;
+        grid-template-columns: 1fr;
+    }
+
+    .rsbsa-heading {
+        flex-direction: column;
+    }
+
+    .rsbsa-total {
+        grid-template-columns: auto 1fr;
+        align-items: center;
+        gap: 8px;
+        text-align: left;
+    }
+
+    .rsbsa-search {
+        grid-template-columns: 1fr auto;
+    }
+
+    .rsbsa-search label,
+    .rsbsa-search input {
+        grid-column: 1 / -1;
+    }
+
+    .rsbsa-pagination {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .rsbsa-pagination > div {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+@media (max-width: 520px) {
+    .rsbsa-table-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .rsbsa-upload-form {
+        grid-template-columns: 1fr;
+    }
+
+    .rsbsa-upload-form input,
+    .rsbsa-upload-form label,
+    .rsbsa-file-name {
+        grid-column: 1;
+    }
+}

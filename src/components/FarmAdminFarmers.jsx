@@ -189,7 +189,7 @@ function FarmAdminFarmers() {
             setIsRejectModalOpen(false)
             setRejectionReason('')
             setToast(action === 'approve'
-                ? 'Farmer registration approved successfully.'
+                ? 'Farmer registration approved. The Farmer account is now active.'
                 : 'Farmer registration rejected successfully.')
             setRefreshKey((currentKey) => currentKey + 1)
         } catch (requestError) {
@@ -331,7 +331,6 @@ function FarmAdminFarmers() {
                             <span>Status</span>
                             <select value={status} onChange={(event) => setStatus(event.target.value)}>
                                 <option value="PENDING">Pending</option>
-                                <option value="PENDING_ADMIN">Forwarded to Admin (RSBSA)</option>
                                 <option value="APPROVED">Approved</option>
                                 <option value="REJECTED">Rejected</option>
                                 <option value="ALL">All statuses</option>

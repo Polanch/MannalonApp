@@ -9,12 +9,13 @@ export const NAV_SECTIONS = [
         label: 'Users',
         items: [
             { path: '/admin/farm-owners', label: 'Farm Admins', icon: 'M3 21V9l9-6 9 6v12 M9 21v-6h6v6' },
-            { path: '/admin/farmers', label: 'Farmers', icon: 'M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8z M4 21c0-4 3.6-7 8-7s8 3 8 7' },
+            { path: '/admin/farmers', label: 'RSBSA Registry', icon: 'M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8z M4 21c0-4 3.6-7 8-7s8 3 8 7' },
         ],
     },
     {
         label: 'Management',
         items: [
+            { path: '/admin/tickets', label: 'Ticketing', icon: 'M4 4h16v5a3 3 0 0 0 0 6v5H4v-5a3 3 0 0 0 0-6z M12 7v10' },
             { path: '/admin/users', label: 'User Management', icon: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M9 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8 M20 8v6 M17 11h6' },
             { path: '/admin/chat-records', label: 'AI Chat Records', icon: 'M21 11a8 8 0 0 1-8 8H7l-5 3V11a8 8 0 0 1 8-8h3a8 8 0 0 1 8 8z M7 8h9 M7 12h6' },
             { path: '/admin/farm-management', label: 'Farm Management', icon: 'M5 21c0-9 5-15 15-16-1 10-7 15-15 16z M5 21c2-5 5-8 9-10' },

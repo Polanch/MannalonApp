@@ -5,19 +5,21 @@ import FarmAdminDashboard from '../components/FarmAdminDashboard';
 import FarmAdminShell from '../components/FarmAdminShell.jsx';
 import FarmAdminLand from '../components/FarmAdminLand';
 import FarmAdminFarmers from '../components/FarmAdminFarmers.jsx';
+import AdminFarmerRegistry from '../components/AdminFarmerRegistry.jsx'
 import FarmAdminFarmTE from '../components/FarmAdminFarmTE.jsx';
 import FarmAdminRoles from '../components/FarmAdminRoles.jsx';
 import FarmAdminProfile from '../components/FarmAdminProfile.jsx';
 import FarmAdminWeather from '../components/FarmAdminWeather.jsx';
 import RentalMarketplace from '../components/RentalMarketplace.jsx';
 import BookLibrary from '../components/BookLibrary.jsx';
+import TicketingPage from '../components/TicketingPage.jsx'
 import FarmerMarket from '../components/farmer_components/FarmerMarket.jsx'
 import FarmerPrograms from '../components/farmer_components/FarmerPrograms.jsx'
 import FarmAdminLeftNavigation from '../components/farmadmin_components/FarmAdminLeftNavigation.jsx'
 import SocialProvider from '../components/social/SocialProvider.jsx'
 import UserProfileView from '../components/social/UserProfileView.jsx'
 import LandingPage from './LandingPage.jsx'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { accountError, logoutAccount } from '../services/userManagementApi.js'
 import { clearLocalAccount } from '../services/accountAccess.js'
 
@@ -26,16 +28,20 @@ const FARM_ADMIN_VIEWED_USER_KEY = 'farmAdminViewedUserId'
 
 function FarmAdmin() {
     const navigate = useNavigate()
+    const location = useLocation()
+    const { ticketId } = useParams()
+    const isTicketRoute = location.pathname.startsWith('/farmadmin/tickets')
     const [isAuthenticated, setIsAuthenticated] = useState(() => sessionStorage.getItem('farmAdminAuthenticated') === 'true')
     const [isLogoutConfirmationOpen, setIsLogoutConfirmationOpen] = useState(false)
     const [logoutError, setLogoutError] = useState('')
     const [isLoggingOut, setIsLoggingOut] = useState(false)
     const [viewedUserId, setViewedUserId] = useState(() => sessionStorage.getItem(FARM_ADMIN_VIEWED_USER_KEY) || '')
-    const [activeView, setActiveView] = useState(() => {
+    const [storedView, setActiveView] = useState(() => {
         const savedView = sessionStorage.getItem(FARM_ADMIN_VIEW_KEY)
         if (savedView === 'user' && sessionStorage.getItem(FARM_ADMIN_VIEWED_USER_KEY)) return 'user'
-        return ['land', 'farmers', 'roles', 'farmte', 'profile', 'market', 'community', 'weather', 'rentals', 'library'].includes(savedView) ? savedView : 'dashboard'
+        return ['land', 'farmers', 'registry', 'roles', 'farmte', 'profile', 'market', 'community', 'weather', 'rentals', 'library'].includes(savedView) ? savedView : 'dashboard'
     })
+    const activeView = isTicketRoute ? 'tickets' : storedView === 'tickets' ? 'dashboard' : storedView
     const [profileName, setProfileName] = useState(() => sessionStorage.getItem('farmAdminName') || '')
     const [profilePictureUrl, setProfilePictureUrl] = useState(() => sessionStorage.getItem('farmAdminProfilePictureUrl') || '')
 
@@ -46,7 +52,9 @@ function FarmAdmin() {
     const selectView = useCallback((view) => {
         sessionStorage.setItem(FARM_ADMIN_VIEW_KEY, view)
         setActiveView(view)
-    }, [])
+        if (view === 'tickets') navigate('/farmadmin/tickets')
+        else if (isTicketRoute) navigate('/farmadmin')
+    }, [navigate, isTicketRoute])
 
     const openUserProfile = useCallback((userId) => {
         sessionStorage.setItem(FARM_ADMIN_VIEWED_USER_KEY, userId)
@@ -105,7 +113,7 @@ function FarmAdmin() {
 
     return (
         <SocialProvider session={socialSession} onOpenProfile={openUserProfile} onOpenOwnProfile={openOwnProfile} onLogout={requestLogout}>
-        <div className={`farm-admin-container${activeView === 'library' ? ' farm-admin-library' : ''}`}>
+        <div className={`farm-admin-container${activeView === 'library' ? ' farm-admin-library' : ''}${activeView === 'tickets' ? ' farm-admin-tickets' : ''}`}>
             <FarmAdminHeader
                 activeView={activeView}
                 onHomeClick={() => selectView('dashboard')}
@@ -131,6 +139,8 @@ function FarmAdmin() {
                         <FarmAdminLand />
                     ) : activeView === 'farmers' ? (
                         <FarmAdminFarmers />
+                    ) : activeView === 'registry' ? (
+                        <AdminFarmerRegistry />
                     ) : activeView === 'farmte' ? (
                         <FarmAdminFarmTE />
                     ) : activeView === 'roles' ? (
@@ -142,9 +152,11 @@ function FarmAdmin() {
                     ) : activeView === 'weather' ? (
                         <FarmAdminWeather />
                     ) : activeView === 'rentals' ? (
-                        <RentalMarketplace />
+                        <RentalMarketplace onOpenTicket={(id) => navigate(`/farmadmin/tickets/${id}`)} />
                     ) : activeView === 'library' ? (
                         <BookLibrary />
+                    ) : activeView === 'tickets' ? (
+                        <TicketingPage key={ticketId || 'list'} initialTicketId={ticketId ? Number(ticketId) : null} />
                     ) : (
                         <FarmAdminDashboard />
                     )}

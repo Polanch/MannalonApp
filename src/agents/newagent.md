@@ -1,19 +1,16 @@
-as an Admin, I want a tool for User Management.
+As an Admin I want another tab for bulk upload feature. 
 
-I can view all approved farmers and farmadmins.
--I can edit their information
--I have the option to temporarily block a user's access
--if a blocked user attempts to login, a page Appeal.jsx will be loaded.
--I can delete but I can't add new users directly. All account creation should follow the process, no shortcuts, Admin included.
+I have an excel file with data inside as a sample. I want to display this as a table on my site. This table will be used as a validation table for farmadmins to check for the registration of farmers.
 
-There should be a separate tab under the User management feature where I can Add new Admin accounts. SImple info needed:
-1. Full name for the user_name 
-2. user_password (to be set by the current admin)
-3. user_role : MAO-Admin
-4. user_id is the employee ID (to be set by the current admin)
-5. set immediately as active
+To be clear:
+This table includes all farmers with rsbsa. But in our system MAnnalon App, not all farmers have an online account so this is a separate table to e used only for validating wether that farmer exist.
 
-Do not remove the default admin account we currently use. As the developer this is my personal development acc for now.
+Make it presentable and it should match the current style.
 
-On the bottom of this account management for admins, there should be a "Deactivate Account".
-This way, this test account for Admin can be removed.
+Don't edit the backend immediately, tell me what I shoukd tell Backend Copilot from Intelli on what he should do. 
+
+For reference I will provide you the excel file that I will upload on my own here after you finish.
+
+Let
+s change something real quick with the registration of Farmer accounts. Approval by the FarmAdmin should be enough as a validation for the Farmer account but, the feature still exist on Admin side so he can still block or disable an account.
+

@@ -114,12 +114,16 @@ function FarmerLogin({ onClose, initialView = 'login' }) {
                 <div className="farmer-login-header">
                     <h1>Hello !</h1>
                     <p>Welcome back to MannalonApp</p>
+                    <img
+                        src={isRegistering && !isReturningToLogin ? rice3 : rice2}
+                        alt=""
+                        className="farmer-auth-decoration"
+                    />
                 </div>
                 <div className="farmer-auth-viewport">
                     <div className={`farmer-auth-track${isRegistering && !isReturningToLogin ? ' register-active' : ''}`}>
                         <form className="farmer-login-form" onSubmit={handleLoginSubmit} noValidate>
                             <div className="farmer-login-subheader">
-                                <img src={rice2} alt="Rice" className="rice2" />
                                 <h1>Login</h1>
                             </div>
                             <div className="farmer-login-inputs">
@@ -158,7 +162,6 @@ function FarmerLogin({ onClose, initialView = 'login' }) {
                         </form>
                         <div className="farmer-register-form-panel">
                             <div className="farmer-login-subheader">
-                                <img src={rice3} alt="Rice" className="rice2" />
                                 <h1>Register</h1>
                             </div>
                             <FarmerRegister

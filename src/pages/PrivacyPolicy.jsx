@@ -11,14 +11,15 @@ function PrivacyPolicy() {
             <p>When you send a chatbot question, Mannalon stores your account identifier, conversation identifier,
                 question, full AI reply, AI-assigned category, short response summary, cited IRRI links, timestamps,
                 model information, token counts and the version of this notice. Authorized administrators can view these records.</p>
-            <h2>OpenAI and IRRI</h2>
+            <h2>Local Ollama and IRRI</h2>
             <p>Your question and up to six recent question-and-answer pairs in the same conversation are sent to
-                OpenAI to generate an Ilokano response. OpenAI performs web searches restricted to irri.org and its
-                subdomains. The generated answer and current question are also sent to OpenAI to create a category
-                and summary. This feature uses OpenAI API services, not your personal ChatGPT account.</p>
-            <p>Mannalon requests that API responses are not stored as OpenAI response objects using the API store=false setting.
-                This does not eliminate OpenAI processing or all provider retention.
-                See <a href="https://openai.com/policies/api-data-usage-policies/" target="_blank" rel="noopener noreferrer">OpenAI API data policies</a>.
+                the backend&apos;s configured local Ollama service to generate an Ilokano response using stored passages
+                from approved IRRI pages. The current question is also processed locally for retrieval.
+                The generated answer and current question are processed by Ollama to create a category and summary.
+                The active chatbot flow does not send questions to OpenAI or perform a live web search.</p>
+            <p>During source ingestion, the backend requests approved IRRI pages and their robots.txt rules over the
+                internet, then stores source passages and embeddings. These website requests do not include your chatbot
+                conversation. Stored sources may not reflect the latest website updates.
                 IRRI is a source of information, not an endorsement of Mannalon or a guarantee that AI answers are correct.</p>
             <h2>Why chats are saved</h2>
             <p>Records support service review, understanding farmers&apos; questions, and possible preparation of a future
@@ -29,7 +30,7 @@ function PrivacyPolicy() {
                 check rights to use source-derived content. Creating an account is not, by itself, proof of
                 legally valid consent for every future use.</p>
             <h2>Your choices and record retention</h2>
-            <p>Chatbot use is optional. A notice is shown before you send a question. Do not send passwords, contact
+            <p>Chatbot use is optional. The AI usage and privacy policy is available from a link above the conversation. Do not send passwords, contact
                 details, financial information or other sensitive personal information. Starting a new chat
                 does not delete previous records.</p>
             <p>Chat records currently have no automatic expiry and remain in the database until removed by an
@@ -37,7 +38,7 @@ function PrivacyPolicy() {
                 request access, correction, deletion, or to raise a concern about data use. There is currently
                 no self-service deletion control.</p>
             <h2>Ilokano a pakdaar</h2>
-            <p>Maipatulod iti OpenAI ken maidulin iti Mannalon dagiti saludsod ken sungbatmo. Makita dagiti
+            <p>Maproseso iti lokal nga Ollama ken maidulin iti Mannalon dagiti saludsod ken sungbatmo. Makita dagiti
                 awtorisado nga admin dagitoy a rekord. Saan nga automatiko a masursuruan ti AI babaen iti
                 saritaan. Dika mangipatulod iti personal wenno sensitibo nga impormasion. Mabalinmo a saan
                 nga usaren ti chatbot ken makiuman iti administrador no adda pakaseknam.</p>

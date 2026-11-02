@@ -1323,12 +1323,13 @@ Orange: #FFA02E
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 10;
+    z-index: 2000;
 }
 
 .farmer-login-box{
-    width: 500px;
-    height: min(760px, calc(100vh - 72px));
+    width: min(500px, calc(100vw - 24px));
+    height: min(760px, calc(100vh - 24px));
+    height: min(760px, calc(100dvh - 24px));
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
@@ -1366,6 +1367,8 @@ Orange: #FFA02E
     flex: 0 0 50%;
     box-sizing: border-box;
     min-width: 0;
+    min-height: 0;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -1382,9 +1385,8 @@ Orange: #FFA02E
     width: calc(100% + 40px);
     min-width: 0;
     min-height: 0;
-    margin: 40px -20px -20px;
-    overflow-x: clip;
-    overflow-y: visible;
+    margin: 16px -20px -20px;
+    overflow: hidden;
     border-top-left-radius: 30px;
     border-top-right-radius: 30px;
 }
@@ -1407,6 +1409,7 @@ Orange: #FFA02E
     flex-direction: column;
     box-sizing: border-box;
     min-width: 0;
+    min-height: 0;
     padding: 0 20px 20px;
     background-color: #fff;
 }
@@ -1417,11 +1420,13 @@ Orange: #FFA02E
 }
 
 .farmer-login-header{
-    flex: 0 0 180px;
+    flex: 0 0 auto;
     z-index: 3;
     position: relative;
     width: 100%;
-    height: 180px;
+    box-sizing: border-box;
+    height: clamp(64px, 18vh, 140px);
+    height: clamp(64px, 18dvh, 140px);
     padding-left: 20px;
     display: flex;
     flex-direction: column;
@@ -1445,14 +1450,17 @@ Orange: #FFA02E
 .farmer-login-subheader{
     position: relative;
     width: 100%;
-    height: 80px;
-    padding: 2rem;
+    flex: 0 0 64px;
+    min-height: 64px;
+    box-sizing: border-box;
+    padding: 12px 20px;
     color:#105621;
     display: flex;
     align-items: center;
 }
 
 .rice1{
+    pointer-events: none;
     width:100%;
     height: auto;
     position: absolute;
@@ -1460,19 +1468,23 @@ Orange: #FFA02E
     transform: rotate(105deg) translateX(-80px) translateY(200px);
     opacity: 0.2;
 }
-.rice2{
-    width:150px;
+.farmer-auth-decoration{
+    pointer-events: none;
+    width: 150px;
     height: auto;
+    max-height: calc(100% + 34px);
+    object-fit: contain;
+    object-position: bottom;
     position: absolute;
-    right: 0;
-    bottom: 30px;
+    right: 20px;
+    bottom: -50px;
 }
 
 .farmer-login-inputs{
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    padding: 2rem;
+    gap: 1rem;
+    padding: 0 20px 16px;
 }
 
 .farmer-login-field{
@@ -1488,7 +1500,10 @@ Orange: #FFA02E
 
 
 .farmer-login-inputs input{
-    padding: 15px;
+    min-height: 44px;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 12px 15px;
     background: none;
     background-color: white;
     border:none;
@@ -1511,7 +1526,8 @@ Orange: #FFA02E
 }
 
 .farmer-login-submit{
-    padding: 15px;
+    min-height: 44px;
+    padding: 12px 15px;
     background-color: #105621;
     color: white;
     border: none;
@@ -1525,7 +1541,7 @@ Orange: #FFA02E
 }
 
 .farmer-login-inputs p{
-    margin-top: 20px;
+    margin: 0;
     font-size: 14px;
     color: #105621;
     text-align: center;

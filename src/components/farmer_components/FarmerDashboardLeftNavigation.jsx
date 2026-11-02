@@ -14,6 +14,7 @@ const menuSections = [
             { label: 'Library', path: '/farmer/library' },
             { label: 'Maps', path: '/farmer/maps' },
             { label: 'Rental', path: '/farmer/rentals' },
+            { label: 'Ticketing', path: '/farmer/tickets' },
         ],
     },
     {

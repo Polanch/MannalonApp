@@ -23,10 +23,14 @@ function App() {
         <Route path="/admin/library" element={<Admin />} />
         <Route path="/admin/users" element={<Admin />} />
         <Route path="/admin/chat-records" element={<Admin />} />
+        <Route path="/admin/tickets" element={<Admin />} />
+        <Route path="/admin/tickets/:ticketId" element={<Admin />} />
         <Route path="/admin/farm-management" element={<Admin />} />
         <Route path="/admin/farm-management/:registrationId" element={<Admin />} />
         <Route path="/admin/:registrationId" element={<Admin />} />
         <Route path="/farmadmin" element={<FarmAdmin />} />
+        <Route path="/farmadmin/tickets" element={<FarmAdmin />} />
+        <Route path="/farmadmin/tickets/:ticketId" element={<FarmAdmin />} />
         <Route path="/farmer" element={<Farmer />} />
         <Route path="/farmer/profile" element={<Farmer />} />
         <Route path="/farmer/community" element={<Farmer />} />
@@ -37,6 +41,8 @@ function App() {
         <Route path="/farmer/maps" element={<Farmer />} />
         <Route path="/farmer/rentals" element={<Farmer />} />
         <Route path="/farmer/library" element={<Farmer />} />
+        <Route path="/farmer/tickets" element={<Farmer />} />
+        <Route path="/farmer/tickets/:ticketId" element={<Farmer />} />
         <Route path="/farmer/user/:userId" element={<Farmer />} />
       </Routes>
     </BrowserRouter>

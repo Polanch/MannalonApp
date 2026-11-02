@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import '../assets/styles/rentals.css'
+import '../assets/styles/ticketing.css'
+import { RentalReportSummary, TicketCreateForm } from './TicketingForms.jsx'
 import {
     RENTAL_CATEGORIES,
     approveRental,
@@ -60,7 +62,7 @@ function statusLabel(status) {
     }[status] || status
 }
 
-function RentalMarketplace({ heading = 'Farm tool rental', adminMode = false }) {
+function RentalMarketplace({ heading = 'Farm tool rental', adminMode = false, onOpenTicket }) {
     const [workspace, setWorkspace] = useState({ items: [], listings: [], borrowed: [], lent: [] })
     const [activeTab, setActiveTab] = useState('browse')
     const [category, setCategory] = useState('ALL')
@@ -73,6 +75,9 @@ function RentalMarketplace({ heading = 'Farm tool rental', adminMode = false }) 
     const [isSaving, setIsSaving] = useState(false)
     const [error, setError] = useState('')
     const [notice, setNotice] = useState('')
+    const [showReport, setShowReport] = useState(false)
+    const [createdTicket, setCreatedTicket] = useState(null)
+    const [reportSubmitting, setReportSubmitting] = useState(false)
 
     const loadWorkspace = useCallback(async () => {
         try {
@@ -109,6 +114,7 @@ function RentalMarketplace({ heading = 'Farm tool rental', adminMode = false }) 
     }, [activeTab, category, workspace])
 
     function closeDetail() {
+        setShowReport(false)
         setSelected(null)
         setReturnAt('')
         setError('')
@@ -188,7 +194,7 @@ function RentalMarketplace({ heading = 'Farm tool rental', adminMode = false }) 
                 </section>
             )}
 
-            {notice && <p className="rental-notice" role="status">{notice}</p>}
+            {notice && <p className="rental-notice" role="status">{notice} {createdTicket && onOpenTicket && <button type="button" onClick={() => onOpenTicket(createdTicket)}>View ticket</button>}</p>}
             {error && !selected && !showCreate && <p className="rental-error" role="alert">{error}</p>}
 
             <div className="rental-toolbar">
@@ -227,7 +233,7 @@ function RentalMarketplace({ heading = 'Farm tool rental', adminMode = false }) 
                         const item = entry.item || entry
                         const status = entry.status || item.status
                         return (
-                            <button className="rental-card" type="button" key={entry.bookingId || item.itemId} onClick={() => { setError(''); setSelected(entry) }}>
+                            <button className="rental-card" type="button" key={entry.bookingId || item.itemId} onClick={() => { setError(''); setShowReport(false); setSelected(entry) }}>
                                 <img src={rentalImageUrl(item.imageUrl)} alt={item.name} />
                                 <span className={`rental-status is-${status.toLowerCase()}`}>{statusLabel(status)}</span>
                                 <span className="rental-card-body">
@@ -236,6 +242,7 @@ function RentalMarketplace({ heading = 'Farm tool rental', adminMode = false }) 
                                     <span>{formatMoney(item.pricePerDay)} / day</span>
                                     <small>{activeTab === 'lent' ? `Renter: ${entry.renterName}` : `Owner: ${item.ownerName}`}</small>
                                     {entry.requestedReturnAt && <small>Return by {formatDateTime(entry.requestedReturnAt)}</small>}
+                                    {entry.reportSummary && <small>Report: {formatCategory(entry.reportSummary.reportType)} - {formatCategory(entry.reportSummary.status)}{entry.reportSummary.escalated ? ' - Escalated to Admin' : ''}</small>}
                                 </span>
                             </button>
                         )
@@ -244,9 +251,9 @@ function RentalMarketplace({ heading = 'Farm tool rental', adminMode = false }) 
             )}
 
             {selectedItem && (
-                <div className="rental-modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && closeDetail()}>
+                <div className="rental-modal-backdrop" role="presentation" onMouseDown={(event) => !reportSubmitting && event.target === event.currentTarget && closeDetail()}>
                     <section className="rental-detail-modal" role="dialog" aria-modal="true" aria-labelledby="rental-detail-title">
-                        <button className="rental-modal-close" type="button" aria-label="Close rental details" onClick={closeDetail}>×</button>
+                        <button className="rental-modal-close" type="button" disabled={reportSubmitting} aria-label="Close rental details" onClick={closeDetail}>×</button>
                         <img className="rental-detail-image" src={rentalImageUrl(selectedItem.imageUrl)} alt={selectedItem.name} />
                         <div className="rental-detail-content">
                             <div className="rental-detail-heading">
@@ -269,6 +276,18 @@ function RentalMarketplace({ heading = 'Farm tool rental', adminMode = false }) 
                                 {selectedBooking?.returnedAt && <div><dt>Returned</dt><dd>{formatDateTime(selectedBooking.returnedAt)}</dd></div>}
                             </dl>
                             {selectedBooking?.overdue && <p className="rental-overdue-message">This tool is overdue and should be returned immediately.</p>}
+                            <RentalReportSummary report={selectedBooking?.reportSummary} />
+                            {selectedBooking && selectedItem.ownedByCurrentUser && ['ACTIVE', 'RETURNED'].includes(selectedBooking.status) && (
+                                <div className="ticket-create">
+                                    {!showReport ? <button type="button" disabled={isSaving} onClick={() => setShowReport(true)}>Report rental issue</button>
+                                        : <TicketCreateForm booking={selectedBooking} onSubmittingChange={setReportSubmitting} onCancel={() => setShowReport(false)} onCreated={(detail) => {
+                                            setCreatedTicket(detail.ticket.id)
+                                            setNotice(`${detail.ticket.ticketNumber} submitted. Follow updates in Ticketing.`)
+                                            closeDetail()
+                                            loadWorkspace()
+                                        }} />}
+                                </div>
+                            )}
                             {error && <p className="rental-error" role="alert">{error}</p>}
                             {!selectedBooking && !selectedItem.ownedByCurrentUser && selectedItem.status === 'AVAILABLE' && (
                                 <div className="rental-request-panel">
@@ -284,17 +303,17 @@ function RentalMarketplace({ heading = 'Farm tool rental', adminMode = false }) 
                             )}
                             {selectedBooking?.canApprove && (
                                 <div className="rental-detail-actions">
-                                    <button className="rental-secondary-button is-danger" type="button" disabled={isSaving} onClick={() => perform(() => rejectRental(selectedBooking.bookingId), 'Rental request rejected.')}>Reject</button>
-                                    <button className="rental-primary-button" type="button" disabled={isSaving} onClick={() => perform(() => approveRental(selectedBooking.bookingId), 'Cash handoff confirmed. The rental is now active.')}>Grant</button>
+                                    <button className="rental-secondary-button is-danger" type="button" disabled={isSaving || reportSubmitting} onClick={() => perform(() => rejectRental(selectedBooking.bookingId), 'Rental request rejected.')}>Reject</button>
+                                    <button className="rental-primary-button" type="button" disabled={isSaving || reportSubmitting} onClick={() => perform(() => approveRental(selectedBooking.bookingId), 'Cash handoff confirmed. The rental is now active.')}>Grant</button>
                                 </div>
                             )}
                             {selectedBooking?.canCancel && (
-                                <button className="rental-secondary-button is-danger" type="button" disabled={isSaving} onClick={() => perform(() => cancelRental(selectedBooking.bookingId), 'Request cancelled. The tool is available again.')}>
+                                <button className="rental-secondary-button is-danger" type="button" disabled={isSaving || reportSubmitting} onClick={() => perform(() => cancelRental(selectedBooking.bookingId), 'Request cancelled. The tool is available again.')}>
                                     Cancel request
                                 </button>
                             )}
                             {selectedBooking?.canMarkReturned && (
-                                <button className="rental-primary-button" type="button" disabled={isSaving} onClick={() => perform(() => markRentalReturned(selectedBooking.bookingId), 'Tool marked as returned and available again.')}>
+                                <button className="rental-primary-button" type="button" disabled={isSaving || reportSubmitting} onClick={() => perform(() => markRentalReturned(selectedBooking.bookingId), 'Tool marked as returned and available again.')}>
                                     Confirm tool returned
                                 </button>
                             )}

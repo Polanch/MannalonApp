@@ -1,5 +1,73 @@
 # React + Vite
 
+## Ticketing and rental reports
+
+- The **Admin Dashboard** shows all-time counts for all six ticket statuses and
+  an ongoing total (Open + Assigned + In Progress + On Hold), refreshing every
+  15 seconds. Failed refreshes are shown explicitly; unavailable counts are not
+  presented as zero. **Manage tickets** opens the ticketing center.
+- The bottom of the Admin Dashboard includes the existing community farm map,
+  showing approved farms with shared locations through `/api/farm-locations`.
+
+- **Farmer:** FarmTools > Ticketing (`/farmer/tickets`).
+- **Farm-Admin:** Resources > Ticketing (`/farmadmin/tickets`).
+- **Admin / MAO-Admin:** Ticketing in the sidebar (`/admin/tickets`).
+- Farmers and Farm-Admins can create categorized tickets with evidence. Reported
+  renters can respond to cases involving them. Lists show status, severity,
+  assignment, attachment count, and latest comment author/time. The API currently
+  supplies author IDs rather than names, so authors display as `User #globalId`.
+- Open ticket details include private image previews/downloads, paginated comments,
+  and audit history. Lists, details, comments, history, and visible Admin insights
+  refresh every **15 seconds**; polling stops when those views unmount.
+- Admins can assign active Admins, change severity (3 default, 1 highest), and
+  manage status. On-hold requires a reason; resolution/cancellation requires a
+  closing report. Closed tickets are read-only. Admin forms capture versions and
+  require review/reset when polling detects changes; HTTP 409 never auto-retries.
+- Rental owners open an active/returned booking in **Granted** and choose
+  **Report rental issue**. Non-return is offered only for active overdue rentals.
+  Rental cards/details show the backend report status, grace deadline, and
+  escalation. Newly submitted reports link to their ticket.
+- Deadlines are enforced by the backend in UTC, not by browser timers.
+  Offset-free backend timestamps are interpreted as UTC and displayed in local
+  time. Creation-date filter inputs are explicitly **UTC**.
+- Non-return grace ends seven days after the original due time; rule-violation
+  grace ends seven days after reporting. Escalation is separate from severity.
+- Attachments: up to five per request, each at most **10 MiB** (backend's 10 MB
+  limit), supporting JPG/JPEG/PNG/WebP/PDF/TXT/CSV. Previews/downloads use
+  cookie-authenticated backend endpoints and temporary blob URLs, not public paths.
+- Insights use backend aggregates. Ticket metrics use the selected creation-date
+  range; the current backend's rental report totals are all-time. Average closure
+  time includes resolved and cancelled tickets.
+
+### Frontend configuration
+
+Set `VITE_API_ORIGIN` in `.env.local` (default `http://localhost:8080`) and restart
+Vite. This shared origin is used by ticketing and existing clients importing
+`API_ORIGIN`. Session cookies and backend CORS must permit the actual frontend
+origin. No actor IDs are sent to authenticate ticket actions.
+
+### Rental settlement
+
+`ticket.rentalReport.version` contains the actual rental-report optimistic-lock
+version. **Confirm settlement** submits it as `expectedReportVersion`, together
+with the captured ticket version as `expectedTicketVersion`. Reporting owners
+and Admins can settle open reports; renters cannot. If either version changes,
+review the latest details and reset the settlement form before retrying.
+
+Restart/deploy the updated backend to expose the report version. Responses from
+older backends that omit it keep settlement disabled with an explicit explanation;
+the frontend never substitutes the ticket version or a constant. Admin status
+closure is not a substitute: the current backend cancels an open linked rental
+report when closing by status, which the UI warns about.
+
+### Ticketing validation
+
+`npm test` covers UTC timestamps, exact attachment limits, multipart fields,
+session credentials, pagination/filters, optimistic-lock payloads, private downloads,
+explicit 400/403/409 errors, returned report versions, and the missing-version settlement guard.
+`npm run build` validates production compilation. Backend persistence and scheduler
+tests remain the responsibility of the separate backend repository.
+
 ## User Management
 
 Admins open **User Management** in the sidebar (`/admin/users`).
@@ -128,9 +196,9 @@ synthetic book/file fixtures and do not upload test books to the real archive.
 ## Farmer AI chatbot
 
 The farmer **Chatbot** menu opens `/farmer/chatbot`. The Spring Boot backend calls
-OpenAI's Responses API using `gpt-4.1` by default. A ChatGPT subscription does not
-include API usage: configure an OpenAI API project, billing, and a project budget
-before enabling this feature.
+local Ollama and retrieves stored passages from approved IRRI pages. Installing
+a model alone does not populate the source collection. The active flow does not
+use OpenAI or live web search.
 
 ### Backend setup
 
@@ -138,16 +206,28 @@ Use Java 21 or newer and the existing MySQL configuration. Set environment varia
 in the same PowerShell process that starts Spring Boot:
 
 ```powershell
-$env:OPENAI_API_KEY = '<your OpenAI API key>'
-$env:OPENAI_MODEL = 'gpt-4.1'
+ollama pull deepseek-r1:8b
+ollama pull nomic-embed-text
+$env:OLLAMA_BASE_URL = 'http://localhost:11434'
+$env:OLLAMA_CHAT_MODEL = 'deepseek-r1:8b'
+$env:OLLAMA_EMBEDDING_MODEL = 'nomic-embed-text'
+$env:CHATBOT_RAG_INGEST_ENABLED = 'true'
+$env:CHATBOT_RAG_INGEST_ON_STARTUP = 'false'
 .\backend\mvnw.cmd -f backend\pom.xml spring-boot:run
 ```
 
-Set the key privately in your local terminal or deployment secret manager, never
-in source code, chat, or a `VITE_` variable. The root `.env.example` documents the
-variables; Spring Boot does **not** automatically load a root `.env` file.
-The model can also be configured with `chatbot.openai.model`; use a model that
-supports Responses API web search with domain filters and structured outputs.
+The root `.env.example` documents the variables; Spring Boot does **not**
+automatically load a root `.env` file. IntelliJ users can set the same variables
+in the backend run configuration. Model selection in the Ollama desktop app
+does not override backend configuration. No API key is needed for local inference.
+
+Set `CHATBOT_RAG_APPROVED_URLS` to a comma-separated list of permitted, relevant
+IRRI article URLs. The importer reads these pages, not every linked article.
+An authenticated Admin/MAO-Admin can trigger ingestion with
+`POST /api/admin/chatbot/ingest-irri`. Review its ingestion report for skipped
+pages and warnings. Alternatively enable `CHATBOT_RAG_INGEST_ON_STARTUP` for an
+initial ingestion, then turn it off. Keep the same embedding model for ingestion
+and questions; changing it requires rebuilding the stored embeddings.
 
 In another terminal, run `npm run dev`. The app uses the existing backend address,
 `http://localhost:8080`, and session cookies. Existing backend CORS permits
@@ -161,24 +241,28 @@ Privacy guidance and technical details are collapsed by default.
 
 - The assistant is instructed to reply in simple Ilokano. Have a fluent Ilokano
   speaker review real answers before launch; language accuracy is not guaranteed.
-- Every answer requests live web search with an `irri.org` domain allowlist,
-  including IRRI subdomains such as `knowledgebank.irri.org`.
+- Retrieval uses stored IRRI-source chunks, including approved subdomains such
+  as `knowledgebank.irri.org`. Sources can be stale until ingestion runs again.
 - Clickable source citations are shown inline and below the answer. The server
-  checks citation URLs and requires a completed search. Missing/invalid citations
-  produce a clearly marked Ilokano "no verified IRRI source" reply, not unsourced advice.
+  builds source metadata from retrieved chunks. Inline offsets use UTF-16 string
+  positions; a `0,0` source-only reference appears in the list without an empty
+  inline link. The frontend reports malformed references and does not link
+  non-IRRI URLs. Empty retrieval produces a clearly marked Ilokano
+  "no verified IRRI source" reply.
 - Domain filtering/citation checks reduce risk but do not mathematically prove
   that every generated claim is supported. Human agricultural review remains necessary.
 - Only six recent saved turns are supplied as context; the last 20 turns of the
   latest conversation are restored when the chatbot is reopened.
 - A second, tool-free structured-output call creates the English admin summary
   and category. Supported categories are pests, diseases, water, soil, planting,
-  harvesting, and other. Both calls incur token costs; search also incurs tool costs.
+  harvesting, and other. Both calls consume local inference time and memory.
+  The backend removes model thinking text before returning and storing replies.
   No-source replies are still categorized by the AI and explicitly flagged in the records.
 - Errors are shown explicitly. Failed provider calls are not recorded as successful
   chat turns, and the reply is returned only after the database save succeeds.
 - Requests are limited to 2,000 characters and one question per 15 seconds per
-  session. This is an accidental-use guard, **not** a production-wide spending cap.
-  Set provider budgets and add deployment-level rate limits before public rollout.
+  session. This is an accidental-use guard, not a deployment-wide resource limit.
+  Add deployment-level rate limits and capacity monitoring before public rollout.
 
 ### Stored records, privacy, and future training
 
@@ -191,7 +275,10 @@ table with expandable full responses. Farmers cannot access that endpoint or
 another farmer's conversation; identities come from the server session, not request data.
 
 The Privacy Policy is at `/privacy-policy`, linked from the landing footer, farmer
-sidebar, registration form, and chatbot. Chatbot use displays a recording notice.
+sidebar, registration form, and chatbot. The chatbot uses English controls with an
+Ilokano greeting and answers. Its **AI usage & privacy policy** link opens a modal
+with the recording notice, source limitations, responsible-use guidance, and a
+link to the full policy. The popup supports keyboard focus, Escape, and a Close button.
 `policy_version` identifies the notice shown by the feature; it is **not** a
 separate explicit-consent audit record or proof of valid training consent.
 The policy text describes this chatbot feature and needs operator/legal review
@@ -205,23 +292,44 @@ content. Do not simply train on model mistakes or copyrighted IRRI passages.
 Records currently have no automatic expiry or self-service deletion; operators
 must establish retention/deletion procedures before launch.
 
-OpenAI requests use `store: false`; this prevents response-object storage but
-does not promise zero provider retention. Questions, conversation context, and
-the metadata input are still processed by OpenAI.
+Generation and embedding requests go to the configured local Ollama service.
+Source ingestion fetches approved IRRI pages over the internet without sending
+farmer conversations. Configuring a remote/cloud provider would require revisiting
+the privacy notice. Coordinate any notice-version change with the backend's
+stored `policy_version`; old records must retain their original version.
 
 ### Validation
 
 ```powershell
 .\backend\mvnw.cmd -f backend\pom.xml '-Dtest=OpenAiChatClientTest,ChatbotServiceTest,ChatbotAccessTest,ChatbotPersistenceTest' test
+npm test
 npm run build
 ```
 
-The provider and access tests use mocked OpenAI responses, never a real key.
+The frontend contract tests use synthetic responses and render the actual
+components. They cover UTF-16 citation positions, repeated/source-only citations,
+invalid references, no-source notices, registry query parameters, multipart
+imports, row errors, and failed/invalid responses.
 `ChatbotPersistenceTest` uses the configured MySQL database and Flyway, like the
 existing integration tests, and rolls back its test account/chat records.
-Live OpenAI/IRRI retrieval and Ilokano quality must also be checked after
-configuring an API key. Backend code lives in the separately versioned, ignored
+Live Ollama/IRRI retrieval and Ilokano quality must also be checked after
+configuring models and ingesting sources. Backend code lives in the separately versioned, ignored
 `backend` repository; include its changes when deploying, not just the React repository.
+
+## RSBSA directory
+
+Admins open **RSBSA Registry** at `/admin/farmers` to search or upload `.xlsx`
+and `.csv` files (maximum 10 MiB). Farm Admins open **RSBSA Directory** from
+their left navigation for read-only lookup. Records are independent of online
+accounts; importing does not create or activate users. Farm Admin approval is
+the final farmer-account approval; Admin retains block/inactive controls in
+User Management.
+
+The table uses `GET /api/rsbsa-registry` with search and zero-based pages of 20.
+Search and refresh return to the first page. Import uses multipart field `file`
+at `POST /api/admin/rsbsa-registry/import`. Results show added, updated and skipped
+counts, with every returned row error available in an expandable list. Keep mobile
+numbers and identifiers as text in the workbook to preserve leading zeros.
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const API_ORIGIN = 'http://localhost:8080'
+export const API_ORIGIN = (import.meta.env.VITE_API_ORIGIN || 'http://localhost:8080').replace(/\/+$/, '')
 const FARMER_API = `${API_ORIGIN}/api/farmer`
 const SESSION_KEY = 'farmerSession'
 
