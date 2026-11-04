@@ -41,6 +41,7 @@ function App() {
         <Route path="/farmer/maps" element={<Farmer />} />
         <Route path="/farmer/rentals" element={<Farmer />} />
         <Route path="/farmer/library" element={<Farmer />} />
+        <Route path="/farmer/search" element={<Farmer />} />
         <Route path="/farmer/tickets" element={<Farmer />} />
         <Route path="/farmer/tickets/:ticketId" element={<Farmer />} />
         <Route path="/farmer/user/:userId" element={<Farmer />} />

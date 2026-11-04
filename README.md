@@ -1,5 +1,83 @@
 # React + Vite
 
+## Mock Farm Code messages
+
+Farm-Admin → RSBSA Directory includes **Send Farm Code (MOCK ONLY)**.
+Select rows across pages/searches, select an approved main farm, review the
+message/recipients, then confirm **Send mock messages**. Philippine mobile
+numbers are normalized; invalid and duplicate numbers are explicitly skipped.
+Main farms without approval/code and branches cannot be selected.
+The message contains the requested demo address `Mannalon.com` (not verified).
+No messaging API is called, no SMS/email is delivered, and no account or farm
+membership is changed. Results/selections are held only in view memory and are
+cleared on navigation/reload; they are not a persistent delivery audit.
+
+## Farmer unified search
+
+The Farmer header's **Search MannalonApp** bar opens `/farmer/search?q=...`
+from any Farmer page. Enter 2-200 characters. Results appear in this order:
+books (title, description, author, or indexed PDF text), people, then matching post text sorted
+newest first. Book results are paginated and open the existing Library reader.
+People results use the existing directory API, which returns up to 20 active
+matching accounts, excluding the current account.
+
+**IRRI resources** appears after Posts and fetches integrated external results
+through the implemented backend endpoint `GET /api/search/irri?q={query}&page=0&size=10`.
+The frontend expects `{ items: [{ title, url, snippet }], page, size, hasNext }`.
+Titles/snippets are plain text; links must use HTTPS on `irri.org` or its
+subdomains, without credentials or nonstandard ports. Resources open in new tabs.
+This searches the maintained backend IRRI index, not the entire live website,
+and is not a claim of peer review. No browser scraping or LLM-generated results
+are used. Deploy/restart the updated backend; if searches return no matches,
+check coverage and refresh the index through the existing Admin ingestion flow.
+Missing support/provider errors are shown explicitly, not as zero matches.
+Requests are cancelled on navigation/query changes and time out after 20 seconds.
+
+**Admin → AI Chat Records → IRRI resource index** queues a background crawl
+through `POST /api/admin/chatbot/ingest-irri` (HTTP 202) and monitors
+`GET /api/admin/chatbot/ingest-irri/progress` every 15 seconds while open.
+Progress shows discovered/indexed/unchanged/skipped/failed counts, last refresh,
+and crawl-limit warnings. QUEUED/RUNNING jobs are not completed indexing.
+Failed refreshes preserve the last known progress with an explicit stale warning.
+A 404 before any job exists is shown explicitly; the start button remains usable.
+
+Apply Flyway migration `V31__irri_crawl_jobs_and_frontier.sql` and restart the
+backend. Approved URLs are now seeds for permitted robots/sitemap/link discovery,
+not the entire source list. Configure `chatbot.rag.crawl.enabled=true` and the
+backend page/depth/batch/concurrency/pacing/timeout/response/sitemap/link limits.
+Coverage is bounded and HTML-only: this crawler skips PDFs and has no OCR.
+This differs from Library PDF indexing, which supports uploaded text-based PDFs.
+
+Backend settings (not frontend/Vite variables):
+- `IRRI_SEARCH_ENABLED=true`
+- `IRRI_SEARCH_CACHE_SECONDS=120`
+- `IRRI_SEARCH_RATE_LIMIT_COUNT=30`
+- `IRRI_SEARCH_RATE_LIMIT_WINDOW_SECONDS=60`
+- `IRRI_SEARCH_PROVIDER_BATCH_SIZE=80`
+
+Only active Farmer sessions can call this endpoint. HTTP 429 means rate-limited;
+502/503/504 indicate provider failure, unavailable configuration, or timeout.
+Frontend contract tests pass; live authenticated search against the deployed
+backend still needs verification.
+
+Library results show a **Match inside PDF** label and plain-text excerpt when
+`matchesDocumentContent` is true. PDF indexing states are shown in search and
+the Library: PENDING, PROCESSING, INDEXED, NO_TEXT, FAILED. Metadata search and
+reading remain available regardless of indexing state. OCR is not included:
+scanned/image-only PDFs are NO_TEXT; encrypted/unreadable PDFs are FAILED.
+Admin/MAO-Admin Library controls can queue a retry through
+`POST /api/library/books/{id}/content-index/retry` or backfill existing PDFs through
+`POST /api/library/content-index/backfill`. HTTP 202 means queued, not completed.
+Use **Refresh books and indexing status** to check progress. Older responses
+without indexing fields show status unavailable, not a guessed successful state.
+
+The backend has no post-search endpoint. Post search therefore scans all accessible feed pages sequentially,
+shows progress and partial matches, and supports stopping/restarting. Navigating
+away or changing the query cancels outstanding requests. A large feed can take
+time to scan; server-side indexed post search is the recommended future upgrade.
+Newly published/deleted posts during a scan may shift offset-based feed pages;
+rerun the search to refresh results. No backend files are changed by this feature.
+
 ## Toast notifications
 
 All toast notifications use the shared `Toast` component and the `toast-root`

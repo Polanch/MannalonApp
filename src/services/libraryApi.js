@@ -36,10 +36,28 @@ export async function setLibraryBookSaved(id, saved) {
     else await api.delete(`/books/${id}/saved`)
 }
 
+export async function retryLibraryContentIndex(id) {
+    const response = await api.post(`/books/${id}/content-index/retry`)
+    if (response.status !== 202 || response.data?.bookId !== id || response.data.contentIndexStatus !== 'PENDING') {
+        throw new Error('The server did not confirm that PDF indexing was queued. Refresh before retrying.')
+    }
+    return response.data
+}
+
+export async function backfillLibraryContentIndex() {
+    const response = await api.post('/content-index/backfill')
+    if (response.status !== 202 || !Number.isInteger(response.data?.queuedBooks) || response.data.queuedBooks < 0) {
+        throw new Error('The server did not confirm the indexing backfill. Refresh before retrying.')
+    }
+    return response.data
+}
+
 export function libraryError(error) {
-    if (error.response?.status === 401 || error.response?.status === 403) {
+    if (error.response?.status === 401) {
         return 'Please log in with an authorized account to access the library.'
     }
+    if (error.response?.status === 403) return 'Permission denied. Your account cannot perform this Library action.'
+    if (error.response?.status === 409) return 'Library data changed or indexing is already queued. Refresh before retrying.'
     const data = error.response?.data
-    return data?.errors ? Object.values(data.errors).join(' ') : data?.message || data?.detail || 'Library request failed. Check your connection and try again.'
+    return data?.errors ? Object.values(data.errors).join(' ') : data?.message || data?.detail || error.message || 'Library request failed. Check your connection and try again.'
 }

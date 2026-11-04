@@ -4,7 +4,7 @@ import SocialHeaderActions from './social/SocialHeaderActions.jsx'
 import { resolveMediaUrl } from '../services/farmerApi.js'
 import { initialsOf } from '../services/socialApi.js'
 
-function AppHeader({ logo, logoAlt = 'MannalonApp', fixed = false, profileName, profilePictureUrl, isProfileActive = false, onProfileClick, children }) {
+function AppHeader({ logo, logoAlt = 'MannalonApp', fixed = false, profileName, profilePictureUrl, isProfileActive = false, onProfileClick, onSearch, searchQuery = '', children }) {
     const pictureUrl = resolveMediaUrl(profilePictureUrl)
 
     return (
@@ -13,8 +13,12 @@ function AppHeader({ logo, logoAlt = 'MannalonApp', fixed = false, profileName, 
                 <img src={logo} alt={logoAlt} className="app-header-logo" />
                 <span className="app-header-title">MannalonApp</span>
             </div>
-            <form className="app-header-search" role="search" onSubmit={(event) => event.preventDefault()}>
-                <input type="search" placeholder="Search MannalonApp" aria-label="Search" />
+            <form key={searchQuery} className="app-header-search" role="search" onSubmit={(event) => {
+                event.preventDefault()
+                const query = new FormData(event.currentTarget).get('search').trim()
+                if (onSearch) onSearch(query)
+            }}>
+                <input name="search" type="search" placeholder="Search MannalonApp" aria-label="Search" maxLength={200} defaultValue={searchQuery} />
                 <button type="submit" aria-label="Search">
                     <img src={searchIcon} alt="" />
                 </button>

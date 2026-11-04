@@ -47,7 +47,7 @@ function Farmer() {
 
     return (
       <SocialProvider session={session} onOpenProfile={openProfile} onOpenOwnProfile={openOwnProfile} onLogout={handleLogout}>
-      <div className={`farmer-page${location.pathname.startsWith('/farmer/chatbot') ? ' farmer-page-chatbot' : ''}${location.pathname.startsWith('/farmer/library') ? ' farmer-page-library' : ''}${location.pathname.startsWith('/farmer/tickets') ? ' farmer-page-tickets' : ''}`}>
+      <div className={`farmer-page${location.pathname.startsWith('/farmer/chatbot') ? ' farmer-page-chatbot' : ''}${location.pathname.startsWith('/farmer/library') ? ' farmer-page-library' : ''}${location.pathname.startsWith('/farmer/tickets') ? ' farmer-page-tickets' : ''}${location.pathname.startsWith('/farmer/search') ? ' farmer-page-search' : ''}`}>
       <FarmerHeader session={session}/>
       {logoutError && <p className="um-error" role="alert">{logoutError}</p>}
       {viewedUserId
@@ -56,7 +56,7 @@ function Farmer() {
         ? <FarmerProfile session={session} onSessionUpdate={handleSessionUpdate}/>
         : location.pathname.startsWith('/farmer/weather')
         ? <FarmerDashboard session={session} view="weather"/>
-        : <FarmerDashboard session={session} view={['community', 'farmte', 'market', 'maps', 'rentals', 'chatbot', 'library', 'tickets'].find((view) => location.pathname.startsWith(`/farmer/${view}`)) || 'home'}/>}
+        : <FarmerDashboard session={session} view={['community', 'farmte', 'market', 'maps', 'rentals', 'chatbot', 'library', 'tickets', 'search'].find((view) => location.pathname.startsWith(`/farmer/${view}`)) || 'home'}/> }
       </div>
       </SocialProvider>
     );

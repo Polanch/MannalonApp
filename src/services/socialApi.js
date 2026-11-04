@@ -3,8 +3,8 @@ import { API_ORIGIN } from './farmerApi.js'
 
 const SOCIAL_API = `${API_ORIGIN}/api/social`
 
-async function get(path, params) {
-    const response = await axios.get(`${SOCIAL_API}${path}`, { params, withCredentials: true })
+async function get(path, params, signal) {
+    const response = await axios.get(`${SOCIAL_API}${path}`, { params, withCredentials: true, signal })
     return response.data
 }
 
@@ -21,8 +21,8 @@ export function fetchUserProfile({ userId, targetUserId }) {
     return get(`/users/${encodeURIComponent(targetUserId)}`, { userId })
 }
 
-export function searchUsers({ userId, query }) {
-    return get('/users/search', { userId, q: query })
+export function searchUsers({ userId, query }, signal) {
+    return get('/users/search', { userId, q: query }, signal)
 }
 
 export function fetchFriends({ userId }) {

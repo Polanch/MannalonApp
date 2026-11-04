@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { chatbotError, fetchChatbotRecords } from '../services/chatbotApi.js'
 import ChatbotAnswer from './ChatbotAnswer.jsx'
+import AdminIrriCrawl from './AdminIrriCrawl.jsx'
 import '../assets/styles/chatbot.css'
 
 const categories = [
@@ -40,6 +41,7 @@ function AdminChatbotRecords() {
                 <div><p className="chatbot-records-eyebrow">MANAGEMENT</p><h2 id="chatbot-records-title">AI Chat Records</h2><p>Farmer questions and AI replies.</p></div>
                 <button type="button" onClick={() => changeQuery({})}>Refresh</button>
             </header>
+            <AdminIrriCrawl />
             <div className="chatbot-records-toolbar">
                 <label htmlFor="chatbot-category">Category
                     <select id="chatbot-category" value={query.category} onChange={(event) => changeQuery({ category: event.target.value, page: 0 })}>

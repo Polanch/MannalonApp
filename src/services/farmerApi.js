@@ -48,10 +48,11 @@ export function getApiErrorMessage(error, fallback) {
     return data?.message || data?.detail || data?.error || fallback
 }
 
-export async function fetchPosts({ userId, authorId, page, size }) {
+export async function fetchPosts({ userId, authorId, page, size }, signal) {
     const response = await axios.get(`${FARMER_API}/posts`, {
         params: { userId, authorId, page, size },
         withCredentials: true,
+        signal,
     })
     return response.data
 }

@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
-import { createLibraryGenre, fetchLibraryBook, fetchLibraryBooks, fetchLibraryGenres, libraryError, setLibraryBookSaved } from '../services/libraryApi.js'
+import { backfillLibraryContentIndex, createLibraryGenre, fetchLibraryBook, fetchLibraryBooks, fetchLibraryGenres, libraryError, retryLibraryContentIndex, setLibraryBookSaved } from '../services/libraryApi.js'
 import { resolveMediaUrl } from '../services/farmerApi.js'
 import LibraryBookForm from './LibraryBookForm.jsx'
 import Toast from './Toast.jsx'
+import LibraryContentStatus from './LibraryContentStatus.jsx'
 import '../assets/styles/library.css'
 
-function BookLibrary({ adminMode = false }) {
+function BookLibrary({ adminMode = false, initialBookId = null }) {
     const [genres, setGenres] = useState([])
     const [genreError, setGenreError] = useState('')
     const [genreRevision, setGenreRevision] = useState(0)
@@ -17,14 +18,33 @@ function BookLibrary({ adminMode = false }) {
     const [catalogError, setCatalogError] = useState('')
     const [selected, setSelected] = useState(null)
     const [selectedError, setSelectedError] = useState('')
-    const [selectedLoading, setSelectedLoading] = useState(false)
+    const [selectedLoading, setSelectedLoading] = useState(Boolean(initialBookId))
     const [savingId, setSavingId] = useState(null)
     const [actionError, setActionError] = useState('')
     const [editor, setEditor] = useState(null)
     const [notice, setNotice] = useState(null)
+    const [indexBusy, setIndexBusy] = useState(false)
     const detailController = useRef(null)
     const readerRef = useRef(null)
     const editorRef = useRef(null)
+
+    useEffect(() => {
+        if (!initialBookId) return undefined
+        const controller = new AbortController()
+        detailController.current = controller
+        fetchLibraryBook(initialBookId, controller.signal).then((book) => {
+            if (!controller.signal.aborted) {
+                setSelected(book)
+                setSelectedLoading(false)
+            }
+        }).catch((failure) => {
+            if (!controller.signal.aborted) {
+                setSelectedError(libraryError(failure))
+                setSelectedLoading(false)
+            }
+        })
+        return () => controller.abort()
+    }, [initialBookId])
 
     useEffect(() => {
         let active = true
@@ -122,6 +142,31 @@ function BookLibrary({ adminMode = false }) {
         changeQuery({})
     }
 
+    async function queueIndexing(book) {
+        if (indexBusy) return
+        setIndexBusy(true)
+        setActionError('')
+        try {
+            const result = book ? await retryLibraryContentIndex(book.id) : await backfillLibraryContentIndex()
+            if (book) {
+                detailController.current?.abort()
+                setSelectedLoading(false)
+                setSelected((current) => current?.id === book.id ? { ...current, contentIndexStatus: result.contentIndexStatus, contentIndexedAt: null } : current)
+            }
+            setNotice({ message: book ? 'PDF indexing retry queued. Refresh to check progress.' : `${result.queuedBooks} books queued for PDF indexing. Refresh to check progress.` })
+            changeQuery({})
+        } catch (failure) {
+            setActionError(libraryError(failure))
+        } finally {
+            setIndexBusy(false)
+        }
+    }
+
+    function refreshIndexing() {
+        changeQuery({})
+        if (selected) openBook(selected)
+    }
+
     return (
         <section className="book-library" aria-labelledby="library-title">
             <header className="library-header">
@@ -132,6 +177,12 @@ function BookLibrary({ adminMode = false }) {
                 </button>}
             </header>
             <Toast message={notice?.message} onDismiss={() => setNotice(null)} />
+            <div className="library-actions">
+                <button type="button" disabled={indexBusy || selectedLoading} onClick={refreshIndexing}>Refresh books and indexing status</button>
+                {adminMode && <button type="button" disabled={indexBusy} onClick={() => queueIndexing()}>
+                    {indexBusy ? 'Queueing...' : 'Index existing PDFs'}
+                </button>}
+            </div>
             {adminMode && (
                 <details className="library-genres">
                     <summary>Genres <span className="library-genre-count">{genres.length}</span></summary>
@@ -158,6 +209,7 @@ function BookLibrary({ adminMode = false }) {
                             <div><span className="library-genre">{selected.genre.name}</span><h2>{selected.title}</h2>
                                 <p>By {selected.author}</p><p>Published {selected.publishDate}</p>
                                 <p className="library-description">{selected.description}</p>
+                                <LibraryContentStatus book={selected} onRetry={adminMode ? queueIndexing : undefined} busy={indexBusy} />
                                 <div className="library-actions">
                                     <button type="button" disabled={savingId !== null} onClick={() => toggleSaved(selected)}>{selected.saved ? 'Unsave book' : 'Save book'}</button>
                                     {adminMode && <button type="button" onClick={() => setEditor({ book: selected })}>Edit details</button>}
@@ -177,7 +229,7 @@ function BookLibrary({ adminMode = false }) {
                 <button type="button" aria-pressed={query.savedOnly} onClick={() => changeQuery({ savedOnly: true, page: 0 })}>My Library</button>
             </div>
             <form className="library-filters" onSubmit={(event) => { event.preventDefault(); changeQuery({ search: searchInput.trim(), page: 0 }) }}>
-                <label>Search books<input type="search" maxLength={200} value={searchInput} onChange={(event) => setSearchInput(event.target.value)} placeholder="Search title or author..." /></label>
+                <label>Search books<input type="search" maxLength={200} value={searchInput} onChange={(event) => setSearchInput(event.target.value)} placeholder="Search title, description, author, or PDF text..." /></label>
                 <div className="library-field"><label htmlFor="library-filter-genre">Genre</label>
                 <select id="library-filter-genre" value={query.genreId} onChange={(event) => changeQuery({ genreId: event.target.value, page: 0 })}>
                     <option value="">All genres</option>{genres.map((genre) => <option key={genre.id} value={genre.id}>{genre.name}</option>)}
@@ -206,6 +258,7 @@ function BookLibrary({ adminMode = false }) {
                             <h2><button type="button" className="library-title-button" onClick={() => openBook(book)}>{book.title}</button></h2>
                             <p className="library-author">{book.author}</p>
                             <p className="library-preview">{book.description}</p>
+                            <LibraryContentStatus book={book} showMatch={Boolean(query.search.trim())} onRetry={adminMode ? queueIndexing : undefined} busy={indexBusy} />
                             <div className="library-actions">
                                 <button type="button" onClick={() => openBook(book)}>Read</button>
                                 <button type="button" disabled={savingId !== null} aria-label={`${book.saved ? 'Unsave' : 'Save'} ${book.title}`} onClick={() => toggleSaved(book)}>{book.saved ? 'Saved' : '+ Save'}</button>

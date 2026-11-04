@@ -1,0 +1,4 @@
+.library-content-status { margin: 10px 0; color: #596b5f; font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
+.library-content-status p { margin: 6px 0; }
+.library-content-match { padding: 10px 12px; border-left: 3px solid #39794a; border-radius: 4px; background: #edf6ea; color: #254e31; }
+.library-content-match p { white-space: pre-wrap; }

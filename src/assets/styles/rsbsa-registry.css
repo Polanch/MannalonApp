@@ -9,6 +9,20 @@
     color: var(--rsbsa-ink);
 }
 
+.farm-code-sender { margin: 20px 0; padding: 20px; background: #f4faf2; border: 1px solid #dce5df; border-radius: 12px; }
+.farm-code-sender h2 { margin: 0 0 12px; }
+.farm-code-sender h2 span { display: inline-block; padding: 4px 8px; color: #785118; background: #fff5de; font-size: 12px; border-radius: 6px; }
+.farm-code-sender p { margin: 12px 0; line-height: 1.5; }
+.farm-code-sender label { display: grid; gap: 8px; }
+.farm-code-sender select { width: 100%; min-width: 0; padding: 10px; border: 1px solid #bacfbd; border-radius: 8px; font: inherit; }
+.farm-code-sender button { padding: 9px 12px; border: 1px solid #bacfbd; border-radius: 8px; background: white; color: #235d32; font: inherit; cursor: pointer; }
+.farm-code-sender button:disabled { opacity: .5; cursor: not-allowed; }
+.farm-code-sender :focus-visible { outline: 2px solid #39794a; outline-offset: 3px; }
+.farm-code-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 16px 0; }
+.farm-code-preview { margin-top: 16px; padding: 16px; background: white; border: 1px solid #dce5df; border-radius: 8px; overflow-wrap: anywhere; }
+.farm-code-preview pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; line-height: 1.5; margin: 12px 0; }
+.farm-code-sender ul { padding-left: 20px; }
+
 .rsbsa-heading,
 .rsbsa-table-heading,
 .rsbsa-pagination,

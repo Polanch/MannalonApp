@@ -10,11 +10,16 @@ import RentalMarketplace from './RentalMarketplace.jsx'
 import FarmerChatbot from './farmer_components/FarmerChatbot.jsx'
 import BookLibrary from './BookLibrary.jsx'
 import TicketingPage from './TicketingPage.jsx'
-import { useNavigate, useParams } from 'react-router-dom'
+import FarmerSearch from './FarmerSearch.jsx'
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 function FarmerDashboard({ session, view = 'home' }) {
     const navigate = useNavigate()
+    const location = useLocation()
     const { ticketId } = useParams()
+    const [searchParams] = useSearchParams()
+    const searchQuery = searchParams.get('q') || ''
+    const bookId = searchParams.get('book')
     return (
         <div className="farmer-dashboard">
             <FarmerDashboardLeftNavigation/>
@@ -25,7 +30,8 @@ function FarmerDashboard({ session, view = 'home' }) {
                 : view === 'maps' ? <PublicFarmMap/>
                 : view === 'rentals' ? <RentalMarketplace onOpenTicket={(id) => navigate(`/farmer/tickets/${id}`)}/>
                 : view === 'chatbot' ? <FarmerChatbot/>
-                : view === 'library' ? <BookLibrary/>
+                : view === 'library' ? <BookLibrary key={bookId || 'catalog'} initialBookId={bookId}/>
+                : view === 'search' ? <FarmerSearch key={location.key} query={searchQuery} session={session}/>
                 : view === 'tickets' ? <TicketingPage key={ticketId || 'list'} initialTicketId={ticketId ? Number(ticketId) : null}/>
                 : <FarmerDashboardMiddleNavigation session={session}/>}
             <FarmerDashboardRightNavigation session={session}/>

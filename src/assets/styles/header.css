@@ -80,6 +80,11 @@
     background: #f1f3f1;
 }
 
+.app-header-search:focus-within {
+    outline: 2px solid #b8dfc1;
+    outline-offset: 3px;
+}
+
 .app-header-search button img {
     width: 18px;
     height: 18px;
@@ -203,5 +208,29 @@
 @media (max-width: 960px) {
     .app-header-search {
         display: none;
+    }
+
+    .farmer-page .app-header {
+        height: auto;
+        flex-basis: auto;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .farmer-page .app-header-right { margin-left: auto; }
+
+    .farmer-page .app-header-search {
+        display: flex;
+        order: 2;
+        flex: 1 1 100%;
+    }
+
+    .farmer-page .app-header-nav {
+        order: 3;
+        flex: 1 1 100%;
+        min-width: 0;
+        overflow-x: auto;
+        justify-content: flex-start;
     }
 }

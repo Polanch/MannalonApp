@@ -20,6 +20,8 @@ function FarmerHeader({ session }) {
             profilePictureUrl={session?.profilePictureUrl}
             isProfileActive={location.pathname.startsWith('/farmer/profile')}
             onProfileClick={() => navigate('/farmer/profile')}
+            searchQuery={location.pathname === '/farmer/search' ? new URLSearchParams(location.search).get('q') || '' : ''}
+            onSearch={(query) => navigate(`/farmer/search?q=${encodeURIComponent(query)}`)}
         >
             {NAV_ITEMS.map(({ to, label, end }) => (
                 <NavLink key={to} to={to} end={end} className={({ isActive }) => `app-header-link${isActive ? ' is-active' : ''}`}>

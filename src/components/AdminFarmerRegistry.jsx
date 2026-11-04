@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { fetchRsbsaRegistry, importRsbsaRegistry } from '../services/rsbsaRegistryApi.js'
 import '../assets/styles/rsbsa-registry.css'
+import FarmCodeSender from './FarmCodeSender.jsx'
 
 const PAGE_SIZE = 20
 const MAX_FILE_SIZE = 10 * 1024 * 1024
@@ -17,7 +18,8 @@ const COLUMNS = [
     ['registrationStatus', 'Registry status'],
 ]
 
-function AdminFarmerRegistry({ adminMode = false }) {
+function AdminFarmerRegistry({ adminMode = false, farmCodeMode = false }) {
+    const [selectedFarmers, setSelectedFarmers] = useState({})
     const [searchInput, setSearchInput] = useState('')
     const [search, setSearch] = useState('')
     const [page, setPage] = useState(0)
@@ -101,6 +103,7 @@ function AdminFarmerRegistry({ adminMode = false }) {
     const error = isLoading ? '' : requestState?.error || ''
     const total = registry?.total ?? 0
     const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE))
+    const columnCount = COLUMNS.length + (farmCodeMode ? 1 : 0)
 
     return (
         <section className="rsbsa-registry" aria-labelledby="rsbsa-title">
@@ -115,6 +118,12 @@ function AdminFarmerRegistry({ adminMode = false }) {
                     <span>directory records</span>
                 </div>
             </header>
+            {farmCodeMode && <FarmCodeSender selected={Object.values(selectedFarmers)} onClear={() => setSelectedFarmers({})}
+                onSimulated={(farmerIds) => setSelectedFarmers((current) => {
+                    const next = { ...current }
+                    farmerIds.forEach((id) => { delete next[`farmer:${id}`] })
+                    return next
+                })} />}
 
             {adminMode && (
                 <section className="rsbsa-import-card" aria-labelledby="rsbsa-import-title">
@@ -189,13 +198,34 @@ function AdminFarmerRegistry({ adminMode = false }) {
                 <div className="rsbsa-table-scroll">
                     <table>
                         <thead>
-                            <tr>{COLUMNS.map(([, label]) => <th scope="col" key={label}>{label}</th>)}</tr>
+                            <tr>{farmCodeMode && <th scope="col"><input type="checkbox" aria-label="Select all rows on this page"
+                                disabled={isLoading || !registry?.items.length}
+                                checked={Boolean(registry?.items.length) && registry.items.every((farmer) => selectedFarmers[`farmer:${farmer.farmerId}`])}
+                                onChange={(event) => {
+                                    const checked = event.target.checked
+                                    setSelectedFarmers((current) => {
+                                        const next = { ...current }
+                                        registry.items.forEach((farmer) => { if (checked) next[`farmer:${farmer.farmerId}`] = farmer; else delete next[`farmer:${farmer.farmerId}`] })
+                                        return next
+                                    })
+                                }} /></th>}{COLUMNS.map(([, label]) => <th scope="col" key={label}>{label}</th>)}</tr>
                         </thead>
                         <tbody>
                             {isLoading ? (
-                                <tr><td className="rsbsa-table-state" colSpan={COLUMNS.length} role="status">Loading directory…</td></tr>
+                                <tr><td className="rsbsa-table-state" colSpan={columnCount} role="status">Loading directory…</td></tr>
                             ) : registry?.items.length ? registry.items.map((farmer) => (
                                 <tr key={farmer.farmerId}>
+                                    {farmCodeMode && <td data-label="Select"><input type="checkbox" aria-label={`Select ${farmer.firstName} ${farmer.lastName} (${farmer.farmerId})`}
+                                        checked={Boolean(selectedFarmers[`farmer:${farmer.farmerId}`])}
+                                        onChange={(event) => {
+                                            const checked = event.target.checked
+                                            setSelectedFarmers((current) => {
+                                                const next = { ...current }
+                                                if (checked) next[`farmer:${farmer.farmerId}`] = farmer
+                                                else delete next[`farmer:${farmer.farmerId}`]
+                                                return next
+                                            })
+                                        }} /></td>}
                                     {COLUMNS.map(([field, label]) => (
                                         <td key={field} data-label={label}>
                                             {farmer[field] === null || farmer[field] === undefined || farmer[field] === ''
@@ -207,7 +237,7 @@ function AdminFarmerRegistry({ adminMode = false }) {
                                     ))}
                                 </tr>
                             )) : (
-                                <tr><td className="rsbsa-table-state" colSpan={COLUMNS.length}>
+                                <tr><td className="rsbsa-table-state" colSpan={columnCount}>
                                     {error ? 'Directory records could not be loaded.' : search ? 'No matching farmers found.' : 'No directory records are available yet.'}
                                 </td></tr>
                             )}

@@ -1,0 +1,12 @@
+.admin-irri-crawl { margin: 20px 0; padding: 20px; border: 1px solid #dce7df; border-radius: 12px; background: #f7faf5; color: #243c30; }
+.admin-irri-crawl p { margin: 12px 0; line-height: 1.5; overflow-wrap: anywhere; }
+.irri-crawl-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.irri-crawl-actions button { padding: 10px 14px; border: 1px solid #bacfbd; border-radius: 8px; color: #235d32; background: white; font: inherit; cursor: pointer; }
+.irri-crawl-actions button:disabled { opacity: .55; cursor: not-allowed; }
+.irri-crawl-actions button:focus-visible { outline: 2px solid #39794a; outline-offset: 3px; }
+.irri-crawl-hint { font-size: 13px; color: #596b5f; }
+.irri-crawl-progress dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 12px; margin: 16px 0; }
+.irri-crawl-progress dl > div { padding: 10px; border: 1px solid #dce7df; border-radius: 8px; background: white; }
+.irri-crawl-progress dt { font-size: 13px; }
+.irri-crawl-progress dd { margin: 6px 0 0; font-size: 22px; font-weight: 700; }
+.irri-crawl-warning { padding: 12px; border-radius: 8px; color: #785118; background: #fff5de; }

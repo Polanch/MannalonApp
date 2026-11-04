@@ -140,7 +140,7 @@ function FarmAdmin() {
                     ) : activeView === 'farmers' ? (
                         <FarmAdminFarmers />
                     ) : activeView === 'registry' ? (
-                        <AdminFarmerRegistry />
+                        <AdminFarmerRegistry farmCodeMode />
                     ) : activeView === 'farmte' ? (
                         <FarmAdminFarmTE />
                     ) : activeView === 'roles' ? (

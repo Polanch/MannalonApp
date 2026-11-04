@@ -1417,6 +1417,20 @@ Orange: #FFA02E
 .farmer-login-box:not(.is-registering) .farmer-register-form-panel{
     height: 0;
     padding-bottom: 0;
+    overflow: hidden;
+}
+
+.farmer-login-box:not(.is-registering){
+    height: auto;
+    max-height: calc(100dvh - 24px);
+}
+
+.farmer-login-box:not(.is-registering) .farmer-auth-track{
+    height: auto;
+}
+
+.farmer-login-box:not(.is-registering) .farmer-login-form{
+    max-height: calc(100dvh - clamp(64px, 18dvh, 140px) - 60px);
 }
 
 .farmer-login-header{

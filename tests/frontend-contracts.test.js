@@ -3,6 +3,7 @@ import { after, before, test } from 'node:test'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { createServer } from 'vite'
+import axios from 'axios'
 
 let server
 let ChatbotAnswer
@@ -13,6 +14,15 @@ let TicketCreateForm
 let RentalReportSummary
 let AdminTicketOverview
 let branchesApi
+let globalSearch
+let FarmerSearch
+let LibraryContentStatus
+let libraryApi
+let irriApi
+let IrriResourceList
+let crawlApi
+let IrriCrawlProgress
+let farmCodeMock
 
 before(async () => {
     server = await createServer({
@@ -28,6 +38,15 @@ before(async () => {
     RentalReportSummary = forms.RentalReportSummary
     AdminTicketOverview = (await server.ssrLoadModule('/src/components/AdminTicketOverview.jsx')).default
     branchesApi = await server.ssrLoadModule('/src/services/farmBranchesApi.js')
+    globalSearch = await server.ssrLoadModule('/src/services/globalSearch.js')
+    FarmerSearch = (await server.ssrLoadModule('/src/components/FarmerSearch.jsx')).default
+    LibraryContentStatus = (await server.ssrLoadModule('/src/components/LibraryContentStatus.jsx')).default
+    libraryApi = await server.ssrLoadModule('/src/services/libraryApi.js')
+    irriApi = await server.ssrLoadModule('/src/services/irriSearchApi.js')
+    IrriResourceList = (await server.ssrLoadModule('/src/components/IrriSearchResults.jsx')).IrriResourceList
+    crawlApi = await server.ssrLoadModule('/src/services/irriCrawlApi.js')
+    IrriCrawlProgress = (await server.ssrLoadModule('/src/components/AdminIrriCrawl.jsx')).IrriCrawlProgress
+    farmCodeMock = await server.ssrLoadModule('/src/services/farmCodeMock.js')
 })
 
 after(async () => {
@@ -35,6 +54,250 @@ after(async () => {
 })
 
 const sourceUrl = 'https://knowledgebank.irri.org/water'
+test('unified search displays books, people, and posts in that order and validates queries', () => {
+    const session = { userId: 'F-101' }
+    const html = renderToStaticMarkup(createElement(FarmerSearch, { query: 'rice', session }))
+    assert.ok(html.indexOf('id="search-books"') < html.indexOf('id="search-people"'))
+    assert.ok(html.indexOf('id="search-people"') < html.indexOf('id="search-posts"'))
+    assert.ok(html.indexOf('id="search-posts"') < html.indexOf('id="search-irri"'))
+    assert.match(html, /indexed PDF text/)
+    for (const query of ['', ' ', 'a', 'a'.repeat(201)]) {
+        const invalid = renderToStaticMarkup(createElement(FarmerSearch, { query, session }))
+        assert.match(invalid, /Enter between 2 and 200 characters/)
+        assert.doesNotMatch(invalid, /id="search-books"/)
+    }
+})
+
+test('mock Farm Code messages normalize mobile numbers and skip invalid/duplicate recipients', () => {
+    const farm = { farmId: 4, farmName: 'Main farm', status: 'APPROVED', farmCode: 'FARM-0004' }
+    const recipients = [
+        { farmerId: 'A', firstName: 'Alice', mobileNumber: '09171234567' },
+        { farmerId: 'B', mobileNumber: '+63 917 123 4567' },
+        { farmerId: 'C', mobileNumber: 'invalid' },
+        { farmerId: 'D', mobileNumber: '639181234567' },
+    ]
+    const batch = farmCodeMock.prepareFarmCodeMock(farm, recipients)
+    assert.deepEqual(batch.recipients.map((item) => item.status), ['READY', 'DUPLICATE_NUMBER', 'INVALID_NUMBER', 'READY'])
+    assert.equal(batch.recipients[0].phone, '+639171234567')
+    assert.match(batch.message, /Farm Code: FARM-0004/)
+    assert.match(batch.message, /Mannalon.com/)
+    assert.equal(recipients[0].mobileNumber, '09171234567')
+})
+
+test('mock Farm Code messages require an approved main farm and a valid selected recipient', () => {
+    const main = { farmId: 4, status: 'APPROVED', farmCode: 'FARM-0004' }
+    for (const farm of [null, { ...main, status: 'PENDING' }, { ...main, parentFarmId: 1 }, { ...main, farmCode: null },
+        { ...main, farmCode: '   ' }, { ...main, farmId: -1 }, { ...main, farmId: 'invalid' }]) {
+        assert.throws(() => farmCodeMock.prepareFarmCodeMock(farm, [{ mobileNumber: '09171234567' }]), /approved main farm/)
+    }
+    assert.throws(() => farmCodeMock.prepareFarmCodeMock(main, []), /at least one/)
+    assert.throws(() => farmCodeMock.prepareFarmCodeMock(main, [{ mobileNumber: '' }]), /valid, unique/)
+    assert.equal(farmCodeMock.approvedCodeFarms([main, { ...main, parentFarmId: 1 }]).length, 1)
+    for (const number of ['+19999999999', '0917123456', '091712345678', '09abc123456']) {
+        assert.equal(farmCodeMock.normalizeFarmCodePhone(number), '')
+    }
+})
+
+test('Admin IRRI crawl uses session-only queue/progress requests and accepts an existing running job', async (context) => {
+    const signal = new AbortController().signal
+    const progress = { jobId: 12, status: 'RUNNING', discovered: 143, indexed: 96, unchanged: 31, skipped: 10, failed: 6, lastRefresh: null, limitsReached: false, message: 'Running' }
+    context.mock.method(axios.Axios.prototype, '_request', async function (config) {
+        assert.equal(this.defaults.withCredentials, true)
+        assert.equal(config.params, undefined)
+        assert.equal(config.data, undefined)
+        if (config.method === 'post') return { status: 202, data: { jobId: 12, status: 'RUNNING', message: 'Already queued' } }
+        assert.equal(config.url, '/progress')
+        assert.equal(config.signal, signal)
+        return { data: progress }
+    })
+    assert.equal((await crawlApi.queueIrriCrawl()).status, 'RUNNING')
+    assert.deepEqual(await crawlApi.fetchIrriCrawlProgress(signal), progress)
+})
+
+test('Admin IRRI crawl rejects invalid confirmations/counts and distinguishes unavailable progress', async (context) => {
+    context.mock.method(axios.Axios.prototype, '_request', async () => ({ status: 200, data: { jobId: 12, status: 'QUEUED', message: 'Queued' } }))
+    await assert.rejects(() => crawlApi.queueIrriCrawl(), /did not confirm/)
+    await assert.rejects(() => crawlApi.fetchIrriCrawlProgress(), /invalid IRRI crawl progress/)
+    assert.match(crawlApi.irriCrawlError({ response: { status: 404 } }), /no job yet/)
+    assert.match(crawlApi.irriCrawlError({ response: { status: 403 } }), /Permission denied/)
+    assert.match(crawlApi.irriCrawlError({ response: { status: 503 } }), /disabled or unavailable/)
+})
+
+test('Admin IRRI progress shows limits and failed pages without claiming full site coverage', () => {
+    const data = { jobId: 12, status: 'COMPLETED', discovered: 143, indexed: 96, unchanged: 31, skipped: 10, failed: 6, lastRefresh: null, limitsReached: true, message: '<script>unsafe</script>' }
+    const html = renderToStaticMarkup(createElement(IrriCrawlProgress, { data }))
+    assert.match(html, /Crawl limits reached/)
+    assert.match(html, /completed with failed pages/)
+    assert.match(html, /does not mean every IRRI page/)
+    assert.match(html, /&lt;script&gt;/)
+    assert.match(html, /Not reported yet/)
+    const failed = renderToStaticMarkup(createElement(IrriCrawlProgress, { data: { ...data, status: 'FAILED' } }))
+    assert.match(failed, /This crawl failed/)
+})
+
+test('IRRI search uses the backend with session credentials, cancellation, and pagination', async (context) => {
+    const signal = new AbortController().signal
+    const data = { items: [{ title: 'Rice growing', url: 'https://www.irri.org/rice', snippet: 'Rice resource' }], page: 2, size: 10, hasNext: false }
+    context.mock.method(axios.Axios.prototype, '_request', async (config) => {
+        assert.equal(new URL(config.url).pathname, '/api/search/irri')
+        assert.deepEqual(config.params, { q: 'rice', page: 2, size: 10 })
+        assert.equal(config.withCredentials, true)
+        assert.equal(config.signal, signal)
+        assert.equal(config.timeout, 20000)
+        return { data }
+    })
+    assert.deepEqual(await irriApi.searchIrri({ query: 'rice', page: 2 }, signal), data)
+})
+
+test('IRRI search rejects non-IRRI links, unsafe protocols, malformed results, and wrong pages', async (context) => {
+    let item = { title: 'Rice', url: 'https://irri.org/rice', snippet: '' }
+    let result = { items: [item], page: 0, size: 10, hasNext: false }
+    context.mock.method(axios.Axios.prototype, '_request', async () => ({ data: result }))
+    for (const url of ['https://irri.org.evil.example/rice', 'https://evil-irri.org', 'http://irri.org/rice', 'javascript:alert(1)', 'https://user:password@irri.org', 'https://irri.org:8080', 'invalid']) {
+        result = { items: [{ ...item, url }], page: 0, size: 10, hasNext: false }
+        await assert.rejects(() => irriApi.searchIrri({ query: 'rice' }), /invalid|unverified/)
+    }
+    for (const invalid of [
+        { items: [], page: 1, size: 10, hasNext: false },
+        { items: [], page: 0, size: 10, hasNext: true },
+        { items: [{ ...item, title: '' }], page: 0, size: 10, hasNext: false },
+        { items: [{ ...item, snippet: null }], page: 0, size: 10, hasNext: false },
+    ]) {
+        result = invalid
+        await assert.rejects(() => irriApi.searchIrri({ query: 'rice' }), /invalid|unverified/)
+    }
+    result = { items: [], page: 0, size: 10, hasNext: false }
+    assert.equal((await irriApi.searchIrri({ query: 'rice' })).items.length, 0)
+})
+
+test('IRRI result links open original pages in new tabs and escape provider text', () => {
+    const html = renderToStaticMarkup(createElement(IrriResourceList, { items: [{
+        title: '<b>Rice resource</b>', url: 'https://knowledgebank.irri.org/rice', snippet: '<script>not executable</script>',
+    }] }))
+    assert.match(html, /target="_blank"/)
+    assert.match(html, /rel="noopener noreferrer"/)
+    assert.match(html, /&lt;b&gt;/)
+    assert.match(html, /&lt;script&gt;/)
+    assert.doesNotMatch(html, /<script>|<b>/)
+})
+
+test('IRRI search distinguishes unavailable support, permission, rate limits, and provider failures', () => {
+    for (const [status, pattern] of [[404, /not available on the backend/], [403, /Permission denied/], [429, /rate-limited/], [503, /provider is unavailable/], [401, /sign in again/]]) {
+        assert.match(irriApi.irriSearchError({ response: { status } }), pattern)
+    }
+})
+
+test('Library PDF matches display a plain-text escaped excerpt only for document matches', () => {
+    const book = { contentIndexStatus: 'INDEXED', matchesDocumentContent: true, contentMatchSnippet: '<script>alert("test")</script> Rice planting' }
+    const html = renderToStaticMarkup(createElement(LibraryContentStatus, { book, showMatch: true }))
+    assert.match(html, /Match inside PDF/)
+    assert.match(html, /&lt;script&gt;/)
+    assert.doesNotMatch(html, /<script>/)
+    for (const props of [{ book }, { book: { ...book, matchesDocumentContent: false }, showMatch: true }]) {
+        const hidden = renderToStaticMarkup(createElement(LibraryContentStatus, props))
+        assert.doesNotMatch(hidden, /Match inside PDF|Rice planting/)
+    }
+})
+
+test('Library indexing statuses explain OCR and failure limitations without hiding books', () => {
+    const labels = { PENDING: /queued/, PROCESSING: /in progress/, INDEXED: /searchable/, NO_TEXT: /Scanned documents need OCR/, FAILED: /can still be read/ }
+    for (const [contentIndexStatus, label] of Object.entries(labels)) {
+        const html = renderToStaticMarkup(createElement(LibraryContentStatus, { book: { contentIndexStatus }, onRetry: () => {} }))
+        assert.match(html, label)
+        assert.equal(html.includes('Retry PDF indexing'), ['INDEXED', 'NO_TEXT', 'FAILED'].includes(contentIndexStatus))
+    }
+    const old = renderToStaticMarkup(createElement(LibraryContentStatus, { book: {} }))
+    assert.match(old, /status is unavailable/)
+    assert.doesNotMatch(old, /PDF text is searchable/)
+    const busy = renderToStaticMarkup(createElement(LibraryContentStatus, { book: { contentIndexStatus: 'FAILED' }, onRetry: () => {}, busy: true }))
+    assert.match(busy, /disabled=""/)
+    assert.match(busy, /Queueing/)
+})
+
+test('Library indexing queue requests use session credentials and validate HTTP 202 confirmations', async (context) => {
+    const calls = []
+    context.mock.method(axios.Axios.prototype, '_request', async function (config) {
+        assert.equal(this.defaults.withCredentials, true)
+        assert.equal(config.method, 'post')
+        assert.equal(config.data, undefined)
+        calls.push(config.url)
+        return { status: 202, data: config.url.includes('/retry')
+            ? { bookId: 7, contentIndexStatus: 'PENDING' } : { queuedBooks: 0 } }
+    })
+    assert.equal((await libraryApi.retryLibraryContentIndex(7)).contentIndexStatus, 'PENDING')
+    assert.equal((await libraryApi.backfillLibraryContentIndex()).queuedBooks, 0)
+    assert.deepEqual(calls, ['/books/7/content-index/retry', '/content-index/backfill'])
+})
+
+test('Library indexing rejects unconfirmed queue responses and surfaces permission/conflict errors', async (context) => {
+    context.mock.method(axios.Axios.prototype, '_request', async () => ({ status: 200, data: { bookId: 7, contentIndexStatus: 'PENDING', queuedBooks: 3 } }))
+    await assert.rejects(() => libraryApi.retryLibraryContentIndex(7), /did not confirm/)
+    await assert.rejects(() => libraryApi.backfillLibraryContentIndex(), /did not confirm/)
+    assert.match(libraryApi.libraryError({ response: { status: 403 } }), /Permission denied/)
+    assert.match(libraryApi.libraryError({ response: { status: 409 } }), /Refresh before retrying/)
+})
+
+test('post search matches text case-insensitively and sorts newest first with stable ID ties', () => {
+    const posts = [
+        { id: 1, content: 'Rice farming', createdAt: '2026-01-01T10:00:00' },
+        { id: 2, content: 'corn', createdAt: '2026-11-01T10:00:00' },
+        { id: 3, content: 'RICE harvest', createdAt: '2026-02-01T10:00:00' },
+        { id: 4, content: 'rice seeds', createdAt: '2026-02-01T10:00:00' },
+    ]
+    assert.deepEqual(globalSearch.matchingPosts(posts, ' RICE ').map((post) => post.id), [4, 3, 1])
+    assert.deepEqual(globalSearch.matchingPosts(posts, ''), [])
+    assert.equal(posts[0].id, 1)
+})
+
+test('post search scans beyond the first page, deduplicates results, and marks completion only at the end', async () => {
+    const progress = []
+    const signal = new AbortController().signal
+    const pages = [
+        { content: [{ id: 4, content: 'corn', createdAt: '2026-11-01T00:00:00' }], hasNext: true },
+        { content: [{ id: 2, content: 'Rice', createdAt: '2026-10-01T00:00:00' }], hasNext: true },
+        { content: [{ id: 2, content: 'Rice', createdAt: '2026-10-01T00:00:00' }, { id: 1, content: 'rice', createdAt: '2026-09-01T00:00:00' }], hasNext: false },
+    ]
+    const requests = []
+    await globalSearch.scanPosts({ userId: 'F-101', query: 'rice', signal, onProgress: (state) => progress.push(state) },
+        async (request, requestSignal) => {
+            assert.equal(requestSignal, signal)
+            assert.equal(request.userId, 'F-101')
+            assert.equal(request.size, 50)
+            requests.push(request.page)
+            return pages[request.page]
+        })
+    assert.deepEqual(requests, [0, 1, 2])
+    assert.equal(progress[0].complete, false)
+    assert.equal(progress[0].items.length, 0)
+    assert.equal(progress[2].complete, true)
+    assert.equal(progress[2].scanned, 4)
+    assert.deepEqual(progress[2].items.map((post) => post.id), [2, 1])
+})
+
+test('post search stops on cancellation and never publishes an aborted response', async () => {
+    const controller = new AbortController()
+    let updates = 0
+    await assert.rejects(() => globalSearch.scanPosts({
+        userId: 'F-101', query: 'rice', signal: controller.signal, onProgress: () => { updates += 1 },
+    }, async () => {
+        controller.abort()
+        return { content: [], hasNext: false }
+    }), { name: 'AbortError' })
+    assert.equal(updates, 0)
+})
+
+test('post search surfaces invalid pages and request failures without claiming completion', async () => {
+    for (const response of [{ items: [], hasNext: false }, { content: [] }, { content: [], hasNext: true }]) {
+        await assert.rejects(() => globalSearch.scanPosts({
+            userId: 'F-101', query: 'rice', signal: new AbortController().signal,
+            onProgress: () => assert.fail('Invalid pages must not publish success'),
+        }, async () => response), /invalid post page|could not advance/)
+    }
+    await assert.rejects(() => globalSearch.scanPosts({
+        userId: 'F-101', query: 'rice', signal: new AbortController().signal, onProgress: () => {},
+    }, async () => { throw new Error('Permission denied') }), /Permission denied/)
+})
+
 test('branch owner lookup is session-scoped to the chosen main farm', async (context) => {
     const owners = [{ globalId: 101, fullName: 'Synthetic Farmer' }]
     context.mock.method(globalThis, 'fetch', async (url, options) => {
